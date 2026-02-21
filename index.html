@@ -15,7 +15,7 @@
     --text: rgba(255,255,255,.92);
     --muted: rgba(255,255,255,.58);
     --shadow: 0 16px 52px rgba(0,0,0,.44);
-    --shadow2: 0 10px 26px rgba(0,0,0,.30);
+    --shadow2: 0 10px 22px rgba(0,0,0,.24);
     --maxw: 980px;
   }
   @media (prefers-color-scheme: light){
@@ -28,7 +28,7 @@
       --text: rgba(17,24,39,.92);
       --muted: rgba(17,24,39,.54);
       --shadow: 0 18px 60px rgba(17,24,39,.10);
-      --shadow2: 0 10px 24px rgba(17,24,39,.10);
+      --shadow2: 0 10px 22px rgba(17,24,39,.10);
     }
   }
 
@@ -46,19 +46,18 @@
       var(--bg);
   }
 
+  /* 关键：整体上移一点，让第一屏更平衡 */
   .wrap{
     width:min(var(--maxw), 92vw);
-    margin: 26px auto 46px;
+    margin: 18px auto 44px;
     text-align:center;
   }
 
-  /* top chips */
+  /* top time chip */
   .top{
     display:flex;
     justify-content:center;
-    gap:10px;
-    margin: 8px 0 18px;
-    flex-wrap:wrap;
+    margin: 6px 0 16px;
   }
   .chip{
     display:inline-flex;
@@ -74,25 +73,25 @@
   .chip .t{ font-weight: 760; letter-spacing:.2px; }
   .chip .d{ color: var(--muted); font-weight: 600; }
 
-  /* search */
+  /* search – ultra clean */
   .search{
     width:min(860px, 92vw);
-    margin: 0 auto 22px;
+    margin: 0 auto 18px;
     display:flex;
     align-items:center;
     gap:12px;
-    padding: 12px 14px;
+    padding: 11px 14px;
     border-radius: 999px;
     background: var(--glass);
     border: 1px solid var(--border);
     box-shadow: var(--shadow2);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
-    transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+    transition: border-color .15s ease, box-shadow .15s ease, background .15s ease, transform .08s ease;
   }
   .search:focus-within{
     border-color: var(--border2);
-    box-shadow: 0 16px 40px rgba(0,0,0,.34);
+    box-shadow: 0 16px 34px rgba(0,0,0,.28);
     background: var(--glass2);
   }
   .search .sicon{ width:18px;height:18px; opacity:.70; }
@@ -111,51 +110,55 @@
     border-radius: 999px;
     background: transparent;
     color: var(--muted);
-    font-weight: 650;
+    font-weight: 800;
+    letter-spacing:.02em;
   }
   .search button:hover{ color: var(--text); }
+  .search:active{ transform: translateY(1px); }
 
-  /* section header */
+  /* section header – system-like */
   .row{
     width:min(860px, 92vw);
-    margin: 8px auto 8px;
+    margin: 12px auto 10px;
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap:12px;
+    opacity:.92;
   }
   .hint{
     text-align:left;
-    color: var(--muted);
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing:.2px;
+    color: color-mix(in srgb, var(--muted) 92%, transparent);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .18em;
+    text-transform: uppercase;
   }
   .btn{
-    border:1px solid var(--border);
-    background: var(--glass);
-    color: var(--text);
-    padding: 8px 12px;
+    border:1px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    padding: 8px 10px;
     border-radius: 999px;
     cursor:pointer;
-    font-weight: 650;
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    transition: transform .12s ease, border-color .12s ease, background .12s ease;
+    font-weight: 800;
+    letter-spacing:.02em;
+    transition: background .12s ease, border-color .12s ease, color .12s ease, transform .08s ease;
   }
   .btn:hover{
-    transform: translateY(-1px);
-    border-color: var(--border2);
-    background: var(--glass2);
+    color: var(--text);
+    background: var(--glass);
+    border-color: var(--border);
   }
+  .btn:active{ transform: translateY(1px); }
 
   /* grid */
   .grid{
     width:min(860px, 92vw);
-    margin: 10px auto 0;
+    margin: 8px auto 0;
     display:grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 22px 16px;
+    gap: 20px 16px;
     justify-items:center;
   }
   @media (max-width: 980px){ .grid{ grid-template-columns: repeat(4,1fr);} }
@@ -164,16 +167,16 @@
   .item{
     text-decoration:none;
     color:inherit;
-    width: 120px;
+    width: 108px;
     display:flex;
     flex-direction:column;
     align-items:center;
-    gap:10px;
+    gap:9px;
   }
 
   .bubble{
-    width: 66px;
-    height: 66px;
+    width: 62px;
+    height: 62px;
     border-radius: 999px;
     background: var(--glass);
     border: 1px solid var(--border);
@@ -189,11 +192,12 @@
     background: var(--glass2);
     border-color: var(--border2);
   }
+  .item:active .bubble{ transform: translateY(-1px) scale(.985); }
 
   .plate{
-    width: 42px;
-    height: 42px;
-    border-radius: 14px;
+    width: 40px;
+    height: 40px;
+    border-radius: 13px;
     background: rgba(255,255,255,.96);
     display:grid;
     place-items:center;
@@ -202,28 +206,33 @@
       0 8px 18px rgba(0,0,0,.18);
   }
   @media (prefers-color-scheme: light){
-    .plate{ background: rgba(255,255,255,.99); box-shadow: 0 1px 0 rgba(255,255,255,.65) inset, 0 10px 18px rgba(17,24,39,.10); }
+    .plate{
+      background: rgba(255,255,255,.99);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.65) inset,
+        0 10px 18px rgba(17,24,39,.10);
+    }
   }
 
   .plate img{
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
     object-fit: contain;
     display:block;
     border-radius: 10px;
     image-rendering: -webkit-optimize-contrast;
   }
   .name{
-    font-size: 13px;
+    font-size: 12.5px;
     color: var(--muted);
-    font-weight: 600;
+    font-weight: 650;
     letter-spacing:.1px;
   }
   .fallback{
-    width:42px; height:42px;
-    border-radius:14px;
+    width:40px; height:40px;
+    border-radius:13px;
     display:grid; place-items:center;
-    font-weight: 850;
+    font-weight: 900;
     color: rgba(17,24,39,.9);
     background: rgba(255,255,255,.96);
     box-shadow:
@@ -245,13 +254,6 @@
     display:none;
   }
   .more.show{ display:block; }
-
-  .footer{
-    margin-top: 24px;
-    font-size: 12px;
-    color: var(--muted);
-    opacity: .55;
-  }
 </style>
 </head>
 
@@ -261,11 +263,6 @@
       <div class="chip">
         <span class="t" id="time">--:--</span>
         <span class="d" id="date">----</span>
-      </div>
-      <!-- 天气位（默认隐藏，你要时我再给你加 Open-Meteo） -->
-      <div class="chip" id="weatherChip" style="display:none;">
-        <span class="t" id="weather">--</span>
-        <span class="d" id="city">--</span>
       </div>
     </div>
 
@@ -290,12 +287,10 @@
     <div class="more" id="moreBox">
       <div class="row" style="margin:0 0 10px;">
         <div class="hint">More</div>
-        <div class="hint" style="text-align:right;">Less clutter, same power.</div>
+        <div class="hint" style="text-align:right; opacity:.70; font-weight:700;">Less clutter.</div>
       </div>
       <div class="grid" id="gridMore"></div>
     </div>
-
-    <div class="footer">nav.harveyi.com</div>
   </div>
 
 <script>
@@ -322,7 +317,6 @@
   // Stable favicons
   const favicon = (u) => `https://www.google.com/s2/favicons?domain=${encodeURIComponent(u)}&sz=128`;
 
-  // 👇 只留第一屏 12 个（最常用 + 你业务相关）
   const mainLinks = [
     { name:"Gmail", url:"https://mail.google.com" },
     { name:"ChatGPT", url:"https://chatgpt.com" },
@@ -339,7 +333,6 @@
     { name:"RackNerd", url:"https://my.racknerd.com" },
   ];
 
-  // More：娱乐/社区/杂项
   const moreLinks = [
     { name:"AWS", url:"https://aws.amazon.com" },
     { name:"Wikipedia", url:"https://wikipedia.org" },
@@ -379,7 +372,6 @@
   render(document.getElementById("gridMain"), mainLinks);
   render(document.getElementById("gridMore"), moreLinks);
 
-  // More toggle
   const moreBox = document.getElementById("moreBox");
   const btn = document.getElementById("toggle");
   btn.addEventListener("click", () => {
