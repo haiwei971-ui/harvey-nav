@@ -14,8 +14,9 @@
     --border2: rgba(255,255,255,.18);
     --text: rgba(255,255,255,.92);
     --muted: rgba(255,255,255,.58);
-    --shadow: 0 16px 52px rgba(0,0,0,.44);
-    --shadow2: 0 10px 22px rgba(0,0,0,.24);
+    --muted2: rgba(255,255,255,.42);
+    --shadow: 0 18px 60px rgba(0,0,0,.42);
+    --shadow2: 0 12px 26px rgba(0,0,0,.22);
     --maxw: 980px;
   }
   @media (prefers-color-scheme: light){
@@ -27,15 +28,16 @@
       --border2: rgba(17,24,39,.18);
       --text: rgba(17,24,39,.92);
       --muted: rgba(17,24,39,.54);
+      --muted2: rgba(17,24,39,.40);
       --shadow: 0 18px 60px rgba(17,24,39,.10);
       --shadow2: 0 10px 22px rgba(17,24,39,.10);
     }
   }
 
   *{ box-sizing:border-box; }
+  html,body{ height:100%; }
   body{
     margin:0;
-    min-height:100vh;
     color:var(--text);
     font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
       Roboto, Helvetica, Arial, "PingFang SC","Hiragino Sans GB","Microsoft YaHei";
@@ -46,37 +48,47 @@
       var(--bg);
   }
 
-  /* 关键：整体上移一点，让第一屏更平衡 */
   .wrap{
     width:min(var(--maxw), 92vw);
-    margin: 18px auto 44px;
+    margin: 18px auto 46px;
     text-align:center;
   }
 
-  /* top time chip */
+  /* ===== Top: greeting + time ===== */
   .top{
     display:flex;
     justify-content:center;
-    margin: 6px 0 16px;
+    margin: 6px 0 14px;
   }
-  .chip{
-    display:inline-flex;
-    gap:10px;
-    align-items:center;
-    padding: 9px 13px;
+  .topcard{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    padding: 10px 14px;
     border-radius: 999px;
     background: var(--glass);
     border: 1px solid var(--border);
+    box-shadow: var(--shadow2);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
   }
-  .chip .t{ font-weight: 760; letter-spacing:.2px; }
-  .chip .d{ color: var(--muted); font-weight: 600; }
+  .greet{
+    font-weight: 780;
+    letter-spacing:.2px;
+  }
+  .mono{
+    font-family: ui-monospace, "JetBrains Mono", "SF Mono", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-weight: 800;
+    letter-spacing:.06em;
+    color: var(--muted);
+    font-size: 13px;
+    white-space: nowrap;
+  }
 
-  /* search – ultra clean */
+  /* ===== Search ===== */
   .search{
     width:min(860px, 92vw);
-    margin: 0 auto 18px;
+    margin: 0 auto 16px;
     display:flex;
     align-items:center;
     gap:12px;
@@ -87,13 +99,14 @@
     box-shadow: var(--shadow2);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
-    transition: border-color .15s ease, box-shadow .15s ease, background .15s ease, transform .08s ease;
+    transition: border-color .18s ease, box-shadow .18s ease, background .18s ease, transform .08s ease;
   }
   .search:focus-within{
     border-color: var(--border2);
-    box-shadow: 0 16px 34px rgba(0,0,0,.28);
     background: var(--glass2);
+    box-shadow: 0 18px 44px rgba(0,0,0,.30);
   }
+  .search:active{ transform: translateY(1px); }
   .search .sicon{ width:18px;height:18px; opacity:.70; }
   .search input{
     flex:1;
@@ -103,6 +116,14 @@
     color:var(--text);
     font-size:16px;
   }
+  .search .hint{
+    color: var(--muted2);
+    font-weight: 700;
+    font-size: 12px;
+    padding-right: 6px;
+    user-select:none;
+    white-space: nowrap;
+  }
   .search button{
     border:0;
     cursor:pointer;
@@ -110,13 +131,12 @@
     border-radius: 999px;
     background: transparent;
     color: var(--muted);
-    font-weight: 800;
+    font-weight: 850;
     letter-spacing:.02em;
   }
   .search button:hover{ color: var(--text); }
-  .search:active{ transform: translateY(1px); }
 
-  /* section header – system-like */
+  /* ===== Section header ===== */
   .row{
     width:min(860px, 92vw);
     margin: 12px auto 10px;
@@ -126,11 +146,11 @@
     gap:12px;
     opacity:.92;
   }
-  .hint{
+  .label{
     text-align:left;
     color: color-mix(in srgb, var(--muted) 92%, transparent);
     font-size: 12px;
-    font-weight: 800;
+    font-weight: 850;
     letter-spacing: .18em;
     text-transform: uppercase;
   }
@@ -141,7 +161,7 @@
     padding: 8px 10px;
     border-radius: 999px;
     cursor:pointer;
-    font-weight: 800;
+    font-weight: 850;
     letter-spacing:.02em;
     transition: background .12s ease, border-color .12s ease, color .12s ease, transform .08s ease;
   }
@@ -152,117 +172,138 @@
   }
   .btn:active{ transform: translateY(1px); }
 
-  /* grid */
+  /* ===== Grid ===== */
   .grid{
     width:min(860px, 92vw);
     margin: 8px auto 0;
     display:grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 20px 16px;
+    gap: 18px 16px;
     justify-items:center;
   }
   @media (max-width: 980px){ .grid{ grid-template-columns: repeat(4,1fr);} }
-  @media (max-width: 560px){ .grid{ grid-template-columns: repeat(3,1fr); gap:18px 14px; } }
+  @media (max-width: 560px){ .grid{ grid-template-columns: repeat(3,1fr); gap:16px 14px; } }
 
   .item{
     text-decoration:none;
     color:inherit;
-    width: 108px;
+    width: 112px;
     display:flex;
     flex-direction:column;
     align-items:center;
-    gap:9px;
+    gap:8px;
   }
 
-  .bubble{
-    width: 62px;
-    height: 62px;
+  /* Icon (no base, unified) */
+  .icon{
+    width: 54px;
+    height: 54px;
     border-radius: 999px;
-    background: var(--glass);
+    background: rgba(255,255,255,.02);
     border: 1px solid var(--border);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     display:grid;
     place-items:center;
-    transition: transform .14s ease, box-shadow .14s ease, background .14s ease, border-color .14s ease;
+    transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease;
   }
-  .item:hover .bubble{
+  .item:hover .icon{
     transform: translateY(-2px);
     box-shadow: var(--shadow);
-    background: var(--glass2);
+    background: rgba(255,255,255,.04);
     border-color: var(--border2);
   }
-  .item:active .bubble{ transform: translateY(-1px) scale(.985); }
+  .item:active .icon{ transform: translateY(-1px) scale(.985); }
 
-  .plate{
-    width: 40px;
-    height: 40px;
-    border-radius: 13px;
-    background: rgba(255,255,255,.96);
-    display:grid;
-    place-items:center;
-    box-shadow:
-      0 1px 0 rgba(255,255,255,.55) inset,
-      0 8px 18px rgba(0,0,0,.18);
-  }
-  @media (prefers-color-scheme: light){
-    .plate{
-      background: rgba(255,255,255,.99);
-      box-shadow:
-        0 1px 0 rgba(255,255,255,.65) inset,
-        0 10px 18px rgba(17,24,39,.10);
-    }
-  }
-
-  .plate img{
-    width: 28px;
-    height: 28px;
+  /* Favicon unify: default monochrome-ish, hover shows brand color */
+  .icon img{
+    width: 26px;
+    height: 26px;
     object-fit: contain;
     display:block;
-    border-radius: 10px;
+    filter: grayscale(1) saturate(0) brightness(1.55);
+    opacity: .78;
+    transition: filter .16s ease, opacity .16s ease, transform .16s ease;
     image-rendering: -webkit-optimize-contrast;
+  }
+  .item:hover .icon img{
+    filter: none;
+    opacity: 1;
+    transform: translateY(-.5px);
+  }
+
+  .meta{
+    display:flex;
+    align-items:baseline;
+    gap:8px;
   }
   .name{
     font-size: 12.5px;
     color: var(--muted);
-    font-weight: 650;
+    font-weight: 680;
     letter-spacing:.1px;
   }
+  kbd{
+    font-family: ui-monospace, "JetBrains Mono", "SF Mono", SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 10.5px;
+    font-weight: 850;
+    color: color-mix(in srgb, var(--muted) 92%, transparent);
+    padding: 2px 6px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,.03);
+    opacity: .75;
+    transform: translateY(-.5px);
+  }
+  .item:hover kbd{ opacity: .95; }
+
   .fallback{
-    width:40px; height:40px;
-    border-radius:13px;
-    display:grid; place-items:center;
+    width: 26px;
+    height: 26px;
+    border-radius: 9px;
+    display:grid;
+    place-items:center;
     font-weight: 900;
-    color: rgba(17,24,39,.9);
-    background: rgba(255,255,255,.96);
-    box-shadow:
-      0 1px 0 rgba(255,255,255,.55) inset,
-      0 8px 18px rgba(0,0,0,.18);
+    letter-spacing:.02em;
+    color: rgba(255,255,255,.86);
+    opacity:.78;
   }
 
-  /* more panel */
+  /* ===== More panel with spring-ish animation ===== */
   .more{
     width:min(860px, 92vw);
     margin: 14px auto 0;
-    padding: 14px 14px 6px;
+    padding: 14px 14px 10px;
     border-radius: 22px;
     background: var(--glass);
     border: 1px solid var(--border);
     box-shadow: var(--shadow2);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
-    display:none;
+
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-6px) scale(.985);
+    transition:
+      max-height .38s cubic-bezier(.2,.9,.2,1),
+      opacity .22s ease,
+      transform .28s cubic-bezier(.2,.9,.2,1);
   }
-  .more.show{ display:block; }
+  .more.show{
+    max-height: 520px; /* enough for grid; adjust if you add more */
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 </style>
 </head>
 
 <body>
   <div class="wrap">
     <div class="top">
-      <div class="chip">
-        <span class="t" id="time">--:--</span>
-        <span class="d" id="date">----</span>
+      <div class="topcard">
+        <span class="greet" id="greet">Good evening.</span>
+        <span class="mono" id="clock">--:-- · ----</span>
       </div>
     </div>
 
@@ -273,12 +314,13 @@
         <path d="M16.5 16.5 21 21"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".9"/>
       </svg>
-      <input id="q" placeholder="Search Google or type a URL" autocomplete="off" />
+      <input id="q" placeholder='Try: "/y 测评"  "/g repo"  "/r ai"' autocomplete="off" />
+      <span class="hint">/ focus · Esc close</span>
       <button type="submit">Search</button>
     </form>
 
     <div class="row">
-      <div class="hint">Essentials</div>
+      <div class="label">Essentials</div>
       <button class="btn" id="toggle">More</button>
     </div>
 
@@ -286,74 +328,83 @@
 
     <div class="more" id="moreBox">
       <div class="row" style="margin:0 0 10px;">
-        <div class="hint">More</div>
-        <div class="hint" style="text-align:right; opacity:.70; font-weight:700;">Less clutter.</div>
+        <div class="label">More</div>
+        <div class="label" style="text-align:right; opacity:.70; font-weight:700;">Clean. Fast. Quiet.</div>
       </div>
       <div class="grid" id="gridMore"></div>
     </div>
   </div>
 
 <script>
-  // Search
-  document.getElementById("searchForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const q = document.getElementById("q").value.trim();
-    if (!q) return;
-    const isUrl = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/.*)?$/i.test(q);
-    if (isUrl) location.href = q.startsWith("http") ? q : "https://" + q;
-    else location.href = "https://www.google.com/search?q=" + encodeURIComponent(q);
-  });
+  const NAME = "Harvey";
 
-  // Time
+  // ---------- Time + Greeting ----------
   const pad = (n) => String(n).padStart(2, "0");
+  function greetByHour(h){
+    if (h < 5) return `Good night, ${NAME}.`;
+    if (h < 12) return `Good morning, ${NAME}.`;
+    if (h < 18) return `Good afternoon, ${NAME}.`;
+    return `Good evening, ${NAME}.`;
+  }
   function tick(){
     const d = new Date();
-    document.getElementById("time").textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    const h = d.getHours();
+    const m = d.getMinutes();
+    document.getElementById("greet").textContent = greetByHour(h);
     const opt = { weekday:"short", year:"numeric", month:"short", day:"numeric" };
-    document.getElementById("date").textContent = d.toLocaleDateString(undefined, opt);
+    const ds = d.toLocaleDateString(undefined, opt);
+    document.getElementById("clock").textContent = `${pad(h)}:${pad(m)} · ${ds}`;
   }
   tick(); setInterval(tick, 1000);
 
-  // Stable favicons
+  // ---------- Auto focus search ----------
+  window.addEventListener("DOMContentLoaded", () => {
+    const q = document.getElementById("q");
+    q.focus({ preventScroll:true });
+  });
+
+  // ---------- Stable favicons ----------
   const favicon = (u) => `https://www.google.com/s2/favicons?domain=${encodeURIComponent(u)}&sz=128`;
 
+  // ---------- Links ----------
   const mainLinks = [
-    { name:"Gmail", url:"https://mail.google.com" },
-    { name:"ChatGPT", url:"https://chatgpt.com" },
-    { name:"GitHub", url:"https://github.com" },
-    { name:"Cloudflare", url:"https://dash.cloudflare.com" },
-    { name:"Google", url:"https://google.com" },
-    { name:"YouTube", url:"https://youtube.com" },
+    { name:"Gmail",      key:"M", url:"https://mail.google.com" },
+    { name:"ChatGPT",    key:"C", url:"https://chatgpt.com" },
+    { name:"GitHub",     key:"H", url:"https://github.com" },
+    { name:"Cloudflare", key:"F", url:"https://dash.cloudflare.com" },
+    { name:"Google",     key:"G", url:"https://google.com" },
+    { name:"YouTube",    key:"Y", url:"https://youtube.com" },
 
-    { name:"Drive", url:"https://drive.google.com" },
-    { name:"Calendar", url:"https://calendar.google.com" },
-    { name:"Microsoft", url:"https://www.microsoft.com" },
-    { name:"Vultr", url:"https://my.vultr.com" },
-    { name:"Oracle", url:"https://cloud.oracle.com" },
-    { name:"RackNerd", url:"https://my.racknerd.com" },
+    { name:"Drive",      key:"D", url:"https://drive.google.com" },
+    { name:"Calendar",   key:"L", url:"https://calendar.google.com" },
+    { name:"Microsoft",  key:"",  url:"https://www.microsoft.com" },
+    { name:"Vultr",      key:"V", url:"https://my.vultr.com" },
+    { name:"Oracle",     key:"O", url:"https://cloud.oracle.com" },
+    { name:"RackNerd",   key:"R", url:"https://my.racknerd.com" },
   ];
 
   const moreLinks = [
-    { name:"AWS", url:"https://aws.amazon.com" },
-    { name:"Wikipedia", url:"https://wikipedia.org" },
-    { name:"X", url:"https://x.com" },
-    { name:"Reddit", url:"https://reddit.com" },
-    { name:"Telegram", url:"https://web.telegram.org" },
-    { name:"Discord", url:"https://discord.com" },
-    { name:"Netflix", url:"https://netflix.com" },
-    { name:"Apple", url:"https://apple.com" },
-    { name:"Speedtest", url:"https://www.speedtest.net" },
+    { name:"AWS",        key:"", url:"https://aws.amazon.com" },
+    { name:"Wikipedia",  key:"W", url:"https://wikipedia.org" },
+    { name:"X",          key:"", url:"https://x.com" },
+    { name:"Reddit",     key:"", url:"https://reddit.com" },
+    { name:"Telegram",   key:"", url:"https://web.telegram.org" },
+    { name:"Discord",    key:"", url:"https://discord.com" },
+    { name:"Netflix",    key:"", url:"https://netflix.com" },
+    { name:"Apple",      key:"", url:"https://apple.com" },
+    { name:"Speedtest",  key:"", url:"https://www.speedtest.net" },
   ];
 
   function render(el, arr){
     el.innerHTML = arr.map(l => `
-      <a class="item" href="${l.url}" target="_blank" rel="noreferrer">
-        <div class="bubble">
-          <div class="plate">
-            <img class="iconimg" src="${favicon(l.url)}" alt="${l.name}">
-          </div>
+      <a class="item" href="${l.url}" target="_blank" rel="noreferrer" data-key="${(l.key||"").toLowerCase()}">
+        <div class="icon" aria-hidden="true">
+          <img class="iconimg" src="${favicon(l.url)}" alt="${l.name}">
         </div>
-        <div class="name">${l.name}</div>
+        <div class="meta">
+          <div class="name">${l.name}</div>
+          ${l.key ? `<kbd>${l.key}</kbd>` : ``}
+        </div>
       </a>
     `).join("");
 
@@ -372,12 +423,98 @@
   render(document.getElementById("gridMain"), mainLinks);
   render(document.getElementById("gridMore"), moreLinks);
 
+  // ---------- More toggle ----------
   const moreBox = document.getElementById("moreBox");
   const btn = document.getElementById("toggle");
-  btn.addEventListener("click", () => {
-    const show = !moreBox.classList.contains("show");
+  function setMore(show){
     moreBox.classList.toggle("show", show);
     btn.textContent = show ? "Less" : "More";
+  }
+  btn.addEventListener("click", () => setMore(!moreBox.classList.contains("show")));
+
+  // ---------- Bang search ----------
+  function goSearch(raw){
+    const q = raw.trim();
+    if (!q) return;
+
+    // URL direct
+    const isUrl = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/.*)?$/i.test(q);
+    if (isUrl) { location.href = q.startsWith("http") ? q : "https://" + q; return; }
+
+    // Commands
+    // /y xxx => YouTube
+    // /g xxx => GitHub (按你要求)
+    // /r xxx => Reddit
+    // /w xxx => Wikipedia
+    // /c     => ChatGPT
+    const cmd = q.match(/^\/([a-z]+)\s*(.*)$/i);
+    if (cmd){
+      const c = cmd[1].toLowerCase();
+      const rest = (cmd[2] || "").trim();
+
+      if (c === "c"){ location.href = "https://chatgpt.com"; return; }
+      if (!rest){ return; }
+
+      if (c === "y"){ location.href = "https://www.youtube.com/results?search_query=" + encodeURIComponent(rest); return; }
+      if (c === "g"){ location.href = "https://github.com/search?q=" + encodeURIComponent(rest); return; }
+      if (c === "r"){ location.href = "https://www.reddit.com/search/?q=" + encodeURIComponent(rest); return; }
+      if (c === "w"){ location.href = "https://en.wikipedia.org/w/index.php?search=" + encodeURIComponent(rest); return; }
+    }
+
+    // default: Google
+    location.href = "https://www.google.com/search?q=" + encodeURIComponent(q);
+  }
+
+  document.getElementById("searchForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    goSearch(document.getElementById("q").value);
+  });
+
+  // ---------- Keyboard shortcuts ----------
+  // "/" focus search; Esc close more & blur
+  // G Google, Y YouTube, C ChatGPT, H GitHub, M Gmail, D Drive, L Calendar, F Cloudflare, V Vultr, O Oracle, R RackNerd, W Wikipedia
+  const quick = {
+    g: "https://google.com",
+    y: "https://youtube.com",
+    c: "https://chatgpt.com",
+    h: "https://github.com",
+    m: "https://mail.google.com",
+    d: "https://drive.google.com",
+    l: "https://calendar.google.com",
+    f: "https://dash.cloudflare.com",
+    v: "https://my.vultr.com",
+    o: "https://cloud.oracle.com",
+    r: "https://my.racknerd.com",
+    w: "https://wikipedia.org",
+  };
+
+  document.addEventListener("keydown", (e) => {
+    const q = document.getElementById("q");
+    const typing = document.activeElement === q;
+
+    // Esc
+    if (e.key === "Escape"){
+      setMore(false);
+      if (typing) q.blur();
+      return;
+    }
+
+    // "/" focus
+    if (e.key === "/" && !typing){
+      e.preventDefault();
+      q.focus({ preventScroll:true });
+      return;
+    }
+
+    // single-letter shortcuts only when NOT typing
+    if (typing) return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.key.length !== 1) return;
+
+    const k = e.key.toLowerCase();
+    if (quick[k]){
+      location.href = quick[k];
+    }
   });
 </script>
 </body>
