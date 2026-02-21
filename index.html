@@ -7,86 +7,105 @@
 
 <style>
   :root{
-    --bg:#ffffff;
-    --text:#111827;
-    --muted:#6b7280;
-    --card:#f3f4f6;
-    --card2:#eef2f7;
-    --ring:#e5e7eb;
-    --shadow: 0 6px 22px rgba(0,0,0,.08);
-    --maxw: 980px;
+    --bg: #0b1020;
+    --panel: rgba(255,255,255,.06);
+    --panel2: rgba(255,255,255,.08);
+    --border: rgba(255,255,255,.10);
+    --text: rgba(255,255,255,.92);
+    --muted: rgba(255,255,255,.60);
+    --shadow: 0 18px 60px rgba(0,0,0,.55);
+    --shadow2: 0 10px 28px rgba(0,0,0,.35);
+    --radius: 20px;
+    --maxw: 1040px;
   }
-  @media (prefers-color-scheme: dark){
+
+  @media (prefers-color-scheme: light){
     :root{
-      --bg:#0b0f17;
-      --text:#e5e7eb;
-      --muted:#9ca3af;
-      --card:#111827;
-      --card2:#0f172a;
-      --ring:#1f2937;
-      --shadow: 0 10px 28px rgba(0,0,0,.35);
+      --bg: #f6f7fb;
+      --panel: rgba(17,24,39,.04);
+      --panel2: rgba(17,24,39,.06);
+      --border: rgba(17,24,39,.10);
+      --text: rgba(17,24,39,.92);
+      --muted: rgba(17,24,39,.55);
+      --shadow: 0 18px 60px rgba(17,24,39,.10);
+      --shadow2: 0 10px 28px rgba(17,24,39,.10);
     }
   }
 
+  *{ box-sizing:border-box; }
   body{
     margin:0;
     min-height:100vh;
-    background:var(--bg);
     color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei";
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+      Roboto, Helvetica, Arial, "PingFang SC","Hiragino Sans GB","Microsoft YaHei";
+    background:
+      radial-gradient(1200px 700px at 20% 10%, rgba(99,102,241,.18), transparent 55%),
+      radial-gradient(1000px 600px at 80% 20%, rgba(16,185,129,.14), transparent 55%),
+      radial-gradient(900px 700px at 50% 100%, rgba(59,130,246,.16), transparent 60%),
+      var(--bg);
   }
 
   .wrap{
     width:min(var(--maxw), 92vw);
-    margin: 22px auto 40px;
+    margin: 26px auto 50px;
     text-align:center;
   }
 
-  /* 顶部时间/日期 */
-  .topbar{
+  /* 顶部时间 */
+  .top{
     display:flex;
-    align-items:center;
     justify-content:center;
-    gap:10px;
-    margin-top: 6px;
-    margin-bottom: 10px;
-    color:var(--muted);
-    font-size:14px;
+    margin: 6px 0 16px;
   }
-  .pill{
+  .chip{
     display:inline-flex;
+    gap:10px;
     align-items:center;
-    gap:8px;
-    padding:8px 12px;
-    border:1px solid var(--ring);
-    border-radius:999px;
-    background: color-mix(in srgb, var(--card2) 70%, transparent);
-    box-shadow:none;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
   }
-  .time{
-    font-weight:700;
-    color:var(--text);
-    letter-spacing:.2px;
+  .chip .t{
+    font-weight: 750;
+    letter-spacing: .2px;
+  }
+  .chip .d{
+    color: var(--muted);
+    font-weight: 550;
   }
 
-  /* Google 风格搜索 */
-  .logo{
-    font-size: 46px;
-    font-weight: 700;
-    letter-spacing: .5px;
-    margin: 18px 0 18px;
+  /* 标题 */
+  .title{
+    font-size: 56px;
+    font-weight: 850;
+    letter-spacing: -0.8px;
+    margin: 6px 0 18px;
   }
+  @media (max-width: 560px){
+    .title{ font-size: 44px; }
+  }
+
+  /* 搜索框（更克制） */
   .search{
-    width:min(860px, 92vw);
+    width:min(920px, 92vw);
     margin: 0 auto 26px;
     display:flex;
     align-items:center;
-    gap:10px;
-    padding: 14px 18px;
-    border-radius:999px;
-    border:1px solid var(--ring);
-    background: color-mix(in srgb, var(--card2) 85%, transparent);
-    box-shadow: var(--shadow);
+    gap:12px;
+    padding: 14px 16px;
+    border-radius: 999px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow2);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .search .icon{
+    width:18px;height:18px; opacity:.72;
   }
   .search input{
     flex:1;
@@ -99,100 +118,131 @@
   .search button{
     border:0;
     cursor:pointer;
-    padding:10px 14px;
-    border-radius:999px;
-    background: color-mix(in srgb, var(--card) 75%, transparent);
-    color:var(--text);
-    font-weight:600;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: var(--panel2);
+    color: var(--text);
+    font-weight: 650;
   }
+  .search button:active{ transform: translateY(1px); }
 
-  /* 图标网格：圆形 + 文字 */
+  /* 网格：更像 Chrome 新标签 */
   .grid{
-    width:min(860px, 92vw);
-    margin: 6px auto 0;
+    width:min(920px, 92vw);
+    margin: 8px auto 0;
     display:grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 22px 18px;
+    gap: 22px 16px;
+    justify-items:center;
   }
-  @media (max-width: 980px){
-    .grid{ grid-template-columns: repeat(4, 1fr); }
-  }
-  @media (max-width: 560px){
-    .grid{ grid-template-columns: repeat(3, 1fr); gap:18px 14px; }
-    .logo{ font-size: 38px; }
-  }
+  @media (max-width: 980px){ .grid{ grid-template-columns: repeat(4,1fr);} }
+  @media (max-width: 560px){ .grid{ grid-template-columns: repeat(3,1fr); gap:18px 14px; } }
 
   .item{
     text-decoration:none;
     color:inherit;
+    width: 120px;
     display:flex;
     flex-direction:column;
     align-items:center;
-    gap:8px;
-    user-select:none;
+    gap:10px;
   }
+
   .bubble{
-    width:64px;
-    height:64px;
-    border-radius:999px;
-    border:1px solid var(--ring);
-    background: color-mix(in srgb, var(--card2) 88%, transparent);
+    width: 66px;
+    height: 66px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.10);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     display:grid;
     place-items:center;
     box-shadow: none;
-    transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+    transition: transform .14s ease, box-shadow .14s ease, background .14s ease;
   }
-  .item:hover .bubble{
-    transform: translateY(-2px);
-    box-shadow: var(--shadow);
-    background: color-mix(in srgb, var(--card) 72%, transparent);
-  }
-  .bubble img{
-    width:34px;
-    height:34px;
-    object-fit:contain;
-    display:block;
-  }
-  .name{
-    font-size:13px;
-    color: color-mix(in srgb, var(--text) 86%, var(--muted));
+  @media (prefers-color-scheme: light){
+    .bubble{
+      background: rgba(17,24,39,.05);
+      border: 1px solid rgba(17,24,39,.10);
+    }
   }
 
-  /* 兜底：图标加载失败显示字母 */
+  .item:hover .bubble{
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+    background: rgba(255,255,255,.09);
+  }
+  @media (prefers-color-scheme: light){
+    .item:hover .bubble{ background: rgba(17,24,39,.07); }
+  }
+
+  .bubble img{
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+    display:block;
+    border-radius: 10px;
+    filter: saturate(1.05) contrast(1.05);
+  }
+
+  /* 如果图标太暗：自动加一层微弱白底托起 */
+  .bubble .plate{
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.92);
+    display:grid;
+    place-items:center;
+  }
+  @media (prefers-color-scheme: dark){
+    .bubble .plate{ background: rgba(255,255,255,.90); }
+  }
+  @media (prefers-color-scheme: light){
+    .bubble .plate{ background: rgba(255,255,255,.98); }
+  }
+
+  .name{
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  /* 兜底 */
   .fallback{
-    width:34px;height:34px;
-    display:grid;place-items:center;
-    border-radius:10px;
-    border:1px solid var(--ring);
-    font-weight:800;
-    color:var(--text);
-    background: color-mix(in srgb, var(--card) 70%, transparent);
+    width:40px; height:40px;
+    border-radius:12px;
+    display:grid; place-items:center;
+    font-weight: 850;
+    color: rgba(17,24,39,.9);
+    background: rgba(255,255,255,.92);
   }
 
   .footer{
-    margin-top: 26px;
+    margin-top: 30px;
     font-size: 12px;
     color: var(--muted);
-    opacity:.75;
+    opacity: .75;
   }
 </style>
 </head>
 
 <body>
   <div class="wrap">
-    <div class="topbar">
-      <div class="pill">
-        <span class="time" id="time">--:--</span>
-        <span id="date">----</span>
-      </div>
-      <div class="pill" id="weatherPill" style="display:none;">
-        <span id="weatherText"></span>
+    <div class="top">
+      <div class="chip">
+        <span class="t" id="time">--:--</span>
+        <span class="d" id="date">----</span>
       </div>
     </div>
 
-    <div class="logo">Google</div>
+    <div class="title">Harvey</div>
 
     <form class="search" id="searchForm">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2" opacity=".9"/>
+        <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".9"/>
+      </svg>
       <input id="q" placeholder="Search Google or type a URL" autocomplete="off" />
       <button type="submit">Search</button>
     </form>
@@ -203,74 +253,65 @@
   </div>
 
 <script>
-  // 1) 搜索
+  // 搜索：URL 直接跳转，否则 Google
   document.getElementById("searchForm").addEventListener("submit", (e) => {
     e.preventDefault();
     const q = document.getElementById("q").value.trim();
     if (!q) return;
-    // 简单判断：像 URL 就直接跳转，否则 Google 搜索
     const isUrl = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/.*)?$/i.test(q);
-    if (isUrl) {
-      const url = q.startsWith("http") ? q : "https://" + q;
-      location.href = url;
-    } else {
-      location.href = "https://www.google.com/search?q=" + encodeURIComponent(q);
-    }
+    if (isUrl) location.href = q.startsWith("http") ? q : "https://" + q;
+    else location.href = "https://www.google.com/search?q=" + encodeURIComponent(q);
   });
 
-  // 2) 时间/日期
+  // 时间/日期
   const pad = (n) => String(n).padStart(2, "0");
   function tick(){
     const d = new Date();
-    const hh = pad(d.getHours());
-    const mm = pad(d.getMinutes());
-    document.getElementById("time").textContent = `${hh}:${mm}`;
+    document.getElementById("time").textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
     const opt = { weekday:"short", year:"numeric", month:"short", day:"numeric" };
     document.getElementById("date").textContent = d.toLocaleDateString(undefined, opt);
   }
-  tick();
-  setInterval(tick, 1000);
+  tick(); setInterval(tick, 1000);
 
-  // 3) 站点（你可以随时增删）
+  // 站点：使用更稳定的 favicon 源（很多站自己的图会 403）
+  const favicon = (u) => `https://www.google.com/s2/favicons?domain=${encodeURIComponent(u)}&sz=128`;
+
   const links = [
-    { name:"Google", url:"https://google.com", icon:"https://www.google.com/favicon.ico" },
-    { name:"Gmail", url:"https://mail.google.com", icon:"https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico" },
-    { name:"YouTube", url:"https://youtube.com", icon:"https://www.youtube.com/s/desktop/7f9d63d7/img/favicon_144x144.png" },
+    { name:"Google", url:"https://google.com", plate:true },
+    { name:"Gmail", url:"https://mail.google.com", plate:true },
+    { name:"YouTube", url:"https://youtube.com", plate:true },
+    { name:"GitHub", url:"https://github.com", plate:true },
+    { name:"Microsoft", url:"https://www.microsoft.com", plate:true },
+    { name:"ChatGPT", url:"https://chatgpt.com", plate:true },
 
-    { name:"GitHub", url:"https://github.com", icon:"https://github.githubassets.com/favicons/favicon.svg" },
-    { name:"Microsoft", url:"https://www.microsoft.com", icon:"https://www.microsoft.com/favicon.ico" },
-    { name:"ChatGPT", url:"https://chatgpt.com", icon:"https://chatgpt.com/favicon.ico" },
+    { name:"Oracle", url:"https://cloud.oracle.com", plate:true },
+    { name:"AWS", url:"https://aws.amazon.com", plate:true },
+    { name:"Cloudflare", url:"https://dash.cloudflare.com", plate:true },
+    { name:"Vultr", url:"https://my.vultr.com", plate:true },
+    { name:"RackNerd", url:"https://my.racknerd.com", plate:true },
+    { name:"Wikipedia", url:"https://wikipedia.org", plate:true },
 
-    { name:"Oracle", url:"https://cloud.oracle.com", icon:"https://www.oracle.com/favicon.ico" },
-    { name:"AWS", url:"https://aws.amazon.com", icon:"https://aws.amazon.com/favicon.ico" },
-    { name:"Cloudflare", url:"https://dash.cloudflare.com", icon:"https://www.cloudflare.com/favicon.ico" },
-
-    { name:"Vultr", url:"https://my.vultr.com", icon:"https://www.vultr.com/favicon.ico" },
-    { name:"RackNerd", url:"https://my.racknerd.com", icon:"https://www.racknerd.com/favicon.ico" },
-    { name:"Wikipedia", url:"https://wikipedia.org", icon:"https://www.wikipedia.org/static/favicon/wikipedia.ico" },
-
-    { name:"X", url:"https://x.com", icon:"https://abs.twimg.com/favicons/twitter.2.ico" },
-    { name:"Reddit", url:"https://reddit.com", icon:"https://www.redditstatic.com/desktop2x/img/favicon/favicon-32x32.png" },
-    { name:"Telegram", url:"https://web.telegram.org", icon:"https://telegram.org/favicon.ico" },
-
-    { name:"Discord", url:"https://discord.com", icon:"https://discord.com/assets/847541504914fd33810e70a0ea73177e.ico" },
-    { name:"Netflix", url:"https://netflix.com", icon:"https://assets.nflxext.com/us/ffe/siteui/common/icons/nficon2016.ico" },
-    { name:"Apple", url:"https://apple.com", icon:"https://www.apple.com/favicon.ico" },
+    { name:"X", url:"https://x.com", plate:true },
+    { name:"Reddit", url:"https://reddit.com", plate:true },
+    { name:"Telegram", url:"https://web.telegram.org", plate:true },
+    { name:"Discord", url:"https://discord.com", plate:true },
+    { name:"Netflix", url:"https://netflix.com", plate:true },
+    { name:"Apple", url:"https://apple.com", plate:true },
   ];
 
-  // 渲染网格
   const grid = document.getElementById("grid");
   grid.innerHTML = links.map(l => `
     <a class="item" href="${l.url}" target="_blank" rel="noreferrer">
       <div class="bubble">
-        <img class="icon" src="${l.icon}" alt="${l.name}">
+        ${l.plate ? `<div class="plate"><img class="iconimg" src="${favicon(l.url)}" alt="${l.name}"></div>`
+                  : `<img class="iconimg" src="${favicon(l.url)}" alt="${l.name}">`}
       </div>
       <div class="name">${l.name}</div>
     </a>
   `).join("");
 
-  // 图标失败：替换为首字母
-  document.querySelectorAll("img.icon").forEach(img => {
+  // 图标加载失败：字母兜底
+  document.querySelectorAll("img.iconimg").forEach(img => {
     img.addEventListener("error", () => {
       const name = img.getAttribute("alt") || "";
       const letter = (name.trim()[0] || "•").toUpperCase();
@@ -280,9 +321,6 @@
       img.replaceWith(fb);
     });
   });
-
-  // （可选）天气：先留接口位，默认隐藏
-  // 想加天气我下一条给你“零密钥”版本（Open-Meteo），只要开启浏览器定位即可。
 </script>
 </body>
 </html>
