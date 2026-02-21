@@ -1,264 +1,595 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 
-<title>Harvey — Home</title>
-<link rel="icon" href="data:,">
-<meta name="theme-color" content="#070A12">
+  <!-- ✅ 关键：明确 title + favicon，避免 Safari 出现 New Tab -->
+  <title>Harvey — Home</title>
+  <link rel="icon" href="data:,">
+  <meta name="theme-color" content="#070A12" />
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <!-- 字体：更“产品级”的质感（可选，失败也不影响显示） -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 
-<style>
-:root{
---bg0:#070A12;
---bg1:#09112A;
---text:rgba(255,255,255,.92);
---muted:rgba(255,255,255,.6);
---hair:rgba(255,255,255,.08);
---ease:cubic-bezier(.34,1.56,.64,1);
---ease2:cubic-bezier(.22,.61,.36,1);
-}
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#09112A;
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.62);
+      --hair2: rgba(255,255,255,.08);
+      --ease: cubic-bezier(.34,1.56,.64,1);
+      --ease2: cubic-bezier(.22,.61,.36,1);
+    }
 
-*{box-sizing:border-box}
-body{
-margin:0;
-font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
--webkit-font-smoothing:antialiased;
-background:
-radial-gradient(1000px 700px at 20% 20%, rgba(100,80,255,.18), transparent 55%),
-radial-gradient(900px 700px at 80% 30%, rgba(0,200,255,.12), transparent 55%),
-linear-gradient(180deg,var(--bg1),var(--bg0));
-color:var(--text);
-min-height:100vh;
-display:flex;
-justify-content:center;
-padding:40px 20px;
-}
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      color:var(--text);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      background:
+        radial-gradient(1000px 700px at 16% 20%, rgba(90,80,255,.20), transparent 55%),
+        radial-gradient(900px 700px at 78% 24%, rgba(0,210,255,.12), transparent 55%),
+        radial-gradient(900px 700px at 60% 90%, rgba(0,255,170,.07), transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg0));
+      overflow-x:hidden;
+    }
 
-.container{
-width:min(980px,100%);
-}
+    /* 轻微磨砂颗粒（高级感） */
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      pointer-events:none;
+      opacity:.08;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay;
+    }
 
-.top{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:18px;
-}
+    .wrap{
+      min-height:100%;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding: calc(18px + env(safe-area-inset-top)) 18px calc(18px + env(safe-area-inset-bottom));
+    }
 
-.greet{
-font-size:18px;
-opacity:.8;
-}
+    .shell{
+      width:min(980px, 100%);
+      padding: 18px 18px 22px;
+    }
 
-.clock{
-font-family:"JetBrains Mono",monospace;
-font-weight:600;
-letter-spacing:.02em;
-}
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-top: 10px;
+      margin-bottom: 14px;
+    }
+    .greet{
+      font-size: 18px;
+      font-weight: 500;
+      color: rgba(255,255,255,.78);
+      letter-spacing: .01em;
+    }
+    .clock{
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 18px;
+      font-weight: 600;
+      color: rgba(255,255,255,.88);
+      letter-spacing: .02em;
+    }
 
-.search{
-position:relative;
-display:flex;
-align-items:center;
-padding:14px 18px;
-border-radius:999px;
-border:1px solid var(--hair);
-background:rgba(255,255,255,.05);
-backdrop-filter:blur(12px);
-margin-bottom:26px;
-transition:.25s var(--ease2);
-}
+    /* 搜索 */
+    .search{
+      position:relative;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 14px 16px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      border: 1px solid var(--hair2);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 18px 60px rgba(0,0,0,.30);
+      transition: border-color .25s var(--ease2), box-shadow .25s var(--ease2), transform .25s var(--ease2);
+      margin-bottom: 16px;
+    }
+    .search:focus-within{
+      border-color: rgba(124,92,255,.45);
+      box-shadow: 0 22px 80px rgba(0,0,0,.35), 0 0 0 6px rgba(124,92,255,.12);
+      transform: translateY(-1px);
+    }
+    .search svg{ width:18px; height:18px; opacity:.75; flex:0 0 auto; }
+    .search input{
+      width:100%;
+      border:0;
+      outline:none;
+      background:transparent;
+      color:var(--text);
+      font-size: 18px;
+      padding: 2px 2px;
+    }
+    .search input::placeholder{ color: rgba(255,255,255,.45); }
 
-.search:focus-within{
-box-shadow:0 0 0 6px rgba(124,92,255,.12);
-border-color:rgba(124,92,255,.4);
-}
+    .hint{
+      flex:0 0 auto;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      color: rgba(255,255,255,.38);
+      font-size: 12px;
+      letter-spacing:.02em;
+      user-select:none;
+    }
+    .hint .keycap{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      padding: 4px 8px;
+      border-radius: 10px;
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+    }
 
-.search input{
-flex:1;
-background:transparent;
-border:0;
-outline:0;
-color:var(--text);
-font-size:18px;
-}
+    /* 搜索聚焦时：内容降噪 */
+    .dim-on-focus .grid,
+    .dim-on-focus .sectionbar{
+      opacity:.58;
+      filter: blur(1.5px);
+      transform: translateY(1px);
+      transition: opacity .25s var(--ease2), filter .25s var(--ease2), transform .25s var(--ease2);
+    }
 
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
-gap:30px 26px;
-}
+    .sectionbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin: 10px 2px 10px;
+      transition: opacity .25s var(--ease2), filter .25s var(--ease2), transform .25s var(--ease2);
+    }
+    .sectionbar .left{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      color: rgba(255,255,255,.55);
+      font-size: 12px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      user-select:none;
+    }
+    .dotline{
+      height:1px;
+      width: 54px;
+      background: linear-gradient(90deg, rgba(255,255,255,.22), transparent);
+      border-radius: 1px;
+    }
+    .morebtn{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.72);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      cursor:pointer;
+      transition: transform .2s var(--ease), background .2s var(--ease2), border-color .2s var(--ease2);
+      user-select:none;
+    }
+    .morebtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18); }
+    .morebtn:active{ transform: translateY(0px) scale(.98); }
 
-.item{
-text-align:center;
-text-decoration:none;
-color:var(--muted);
-position:relative;
-padding:8px;
-border-radius:14px;
-transition:.25s var(--ease);
-}
+    /* 网格 */
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 26px 34px;
+      padding: 10px 6px 8px;
+      transition: opacity .25s var(--ease2), filter .25s var(--ease2), transform .25s var(--ease2);
+    }
+    @media (max-width: 860px){
+      .grid{ grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px 26px; }
+    }
+    @media (max-width: 520px){
+      .grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px 22px; }
+      .hint{ display:none; }
+      .greet,.clock{ font-size: 16px; }
+      .search input{ font-size: 17px; }
+    }
 
-.icon{
-width:54px;
-height:54px;
-margin:0 auto 10px;
-transition:.3s var(--ease);
-filter:grayscale(100%) opacity(.65);
-}
+    /* 去底座：点击区靠 padding 保证 */
+    .item{
+      position:relative;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:10px;
+      text-decoration:none;
+      color: var(--muted);
+      border-radius: 16px;
+      padding: 10px 8px;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+      transform: translateZ(0);
+    }
 
-.icon img{
-width:100%;
-height:100%;
-object-fit:contain;
-border-radius:12px;
-}
+    /* ✅ 关键修复：让 ::after 微光有定位参考 */
+    .icon{
+      position:relative;
+      width: 52px;
+      height: 52px;
+      display:grid;
+      place-items:center;
+      transition: transform .28s var(--ease), filter .28s var(--ease2), opacity .28s var(--ease2);
+      filter: grayscale(100%) opacity(.62);
+      opacity: .92;
+      will-change: transform, filter, opacity;
+    }
+    .icon img{
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      image-rendering: -webkit-optimize-contrast;
+      border-radius: 12px;
+    }
 
-.item:hover .icon,
-.item:focus-visible .icon{
-filter:none;
-transform:translateY(-4px);
-}
+    .item:hover .icon,
+    .item:focus-visible .icon{
+      filter: none;
+      transform: translateY(-4px);
+    }
+    .item:hover .label,
+    .item:focus-visible .label{
+      color: rgba(255,255,255,.82);
+    }
 
-.item:hover .label,
-.item:focus-visible .label{
-color:#fff;
-}
+    /* ✅ 更稳的微光：不用 color-mix（部分 Safari 版本兼容不佳） */
+    .item:hover .icon::after,
+    .item:focus-visible .icon::after{
+      content:"";
+      position:absolute;
+      inset:-8px;
+      border-radius: 18px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.12), transparent 60%);
+      box-shadow: 0 0 22px rgba(0,0,0,.15), 0 0 26px var(--glow);
+      opacity: .18;
+      filter: blur(10px);
+      z-index:-1;
+      pointer-events:none;
+    }
 
-.item:focus-visible{
-box-shadow:0 0 0 1px rgba(255,255,255,.2),0 0 0 6px rgba(124,92,255,.12);
-outline:none;
-}
+    /* Tab 聚焦 outline */
+    .item:focus-visible{
+      box-shadow: 0 0 0 1px rgba(255,255,255,.18), 0 0 0 6px rgba(124,92,255,.14);
+    }
 
-.label{
-font-size:13px;
-transition:.2s var(--ease2);
-}
+    .label{
+      font-size: 13px;
+      letter-spacing: .01em;
+      color: rgba(255,255,255,.58);
+      transition: color .22s var(--ease2), transform .22s var(--ease2);
+      user-select:none;
+    }
 
-.kbd{
-position:absolute;
-top:-6px;
-right:2px;
-font-family:"JetBrains Mono",monospace;
-font-size:11px;
-padding:4px 7px;
-border-radius:10px;
-background:rgba(0,0,0,.3);
-border:1px solid rgba(255,255,255,.15);
-opacity:0;
-transform:translateY(-6px);
-transition:.18s var(--ease);
-pointer-events:none;
-}
+    /* Alt 才显示快捷键 */
+    .kbd{
+      position:absolute;
+      top: -6px;
+      right: 2px;
+      transform: translateY(-6px) scale(.96);
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .18s var(--ease2), transform .18s var(--ease);
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 11px;
+      color: rgba(255,255,255,.80);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.25);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 4px 7px;
+      border-radius: 10px;
+    }
+    .show-hotkeys .kbd{
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
 
-.show-hotkeys .kbd{
-opacity:1;
-transform:translateY(0);
-}
+    /* ✅ More 区域：不要用 display:none（会破坏 FLIP）
+       改用 max-height/opacity 折叠，动画更像产品 */
+    .more-area{
+      overflow:hidden;
+      max-height: 0px;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: max-height .55s var(--ease2), opacity .35s var(--ease2), transform .35s var(--ease2);
+    }
+    .more-area.is-open{
+      max-height: 1200px; /* 足够大即可 */
+      opacity: 1;
+      transform: translateY(0);
+    }
 
-.footer{
-text-align:center;
-margin-top:30px;
-opacity:.25;
-font-size:12px;
-letter-spacing:.05em;
-}
-</style>
+    /* 入场交错动画 */
+    .reveal{ animation: rise .7s var(--ease) both; }
+    @keyframes rise{
+      from{ opacity:0; transform: translateY(10px); filter: blur(2px); }
+      to{ opacity:1; transform: translateY(0); filter: blur(0); }
+    }
+
+    .footer{
+      margin-top: 14px;
+      display:flex;
+      justify-content:center;
+      color: rgba(255,255,255,.26);
+      font-size: 12px;
+      letter-spacing: .06em;
+      user-select:none;
+    }
+  </style>
 </head>
 
 <body>
-<div class="container">
+  <div class="wrap">
+    <div class="shell" id="app">
+      <div class="topbar">
+        <div class="greet" id="greet">Hello.</div>
+        <div class="clock" id="clock">00:00</div>
+      </div>
 
-<div class="top">
-<div class="greet" id="greet"></div>
-<div class="clock" id="clock"></div>
-</div>
+      <form class="search" id="searchForm" autocomplete="off">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="rgba(255,255,255,.8)" stroke-width="1.6"/>
+          <path d="M16.5 16.5 21 21" stroke="rgba(255,255,255,.8)" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <input id="q" type="text" placeholder="Search..." />
+        <div class="hint" aria-hidden="true">
+          <span class="keycap">/g</span><span>Google</span>
+          <span class="keycap">/y</span><span>YouTube</span>
+          <span class="keycap">/gh</span><span>GitHub</span>
+          <span class="keycap">/c</span><span>ChatGPT</span>
+        </div>
+      </form>
 
-<form class="search" id="searchForm">
-<input id="q" placeholder="Search...">
-</form>
+      <div class="sectionbar">
+        <div class="left">
+          <span class="dotline"></span>
+          <span>Essentials</span>
+        </div>
+        <button class="morebtn" id="toggleMore" type="button">More</button>
+      </div>
 
-<div class="grid" id="grid"></div>
+      <div class="grid" id="gridEssentials"></div>
 
-<div class="footer">harveyi.com</div>
+      <div class="more-area" id="moreArea" aria-hidden="true">
+        <div class="sectionbar" style="margin-top:6px">
+          <div class="left">
+            <span class="dotline"></span>
+            <span>More</span>
+          </div>
+          <button class="morebtn" id="toggleLess" type="button">Less</button>
+        </div>
+        <div class="grid" id="gridMore"></div>
+      </div>
 
-</div>
+      <div class="footer">harveyi.com</div>
+    </div>
+  </div>
 
-<script>
-const sites=[
-{name:"Gmail",url:"https://mail.google.com/",key:"M"},
-{name:"ChatGPT",url:"https://chatgpt.com/",key:"C"},
-{name:"GitHub",url:"https://github.com/",key:"H"},
-{name:"Cloudflare",url:"https://dash.cloudflare.com/",key:"F"},
-{name:"Google",url:"https://google.com/",key:"G"},
-{name:"YouTube",url:"https://youtube.com/",key:"Y"},
-{name:"Drive",url:"https://drive.google.com/",key:"D"},
-{name:"Calendar",url:"https://calendar.google.com/",key:"K"},
-{name:"Microsoft",url:"https://microsoft.com/",key:"S"},
-{name:"Vultr",url:"https://my.vultr.com/",key:"V"},
-{name:"Oracle",url:"https://cloud.oracle.com/",key:"O"},
-{name:"RackNerd",url:"https://my.racknerd.com/",key:"R"}
-];
+  <script>
+    // ========= 1) 配置：站点 =========
+    // 你要“常用排前面”：改 essentials 的顺序即可
+    const essentials = [
+      { name:"Gmail",      url:"https://mail.google.com/",        key:"M", glow:"rgba(234,67,53,.55)",  icon:"https://www.google.com/s2/favicons?domain=gmail.com&sz=256" },
+      { name:"ChatGPT",    url:"https://chatgpt.com/",            key:"C", glow:"rgba(16,163,127,.55)", icon:"https://www.google.com/s2/favicons?domain=chatgpt.com&sz=256" },
+      { name:"GitHub",     url:"https://github.com/",             key:"H", glow:"rgba(255,255,255,.38)",icon:"https://www.google.com/s2/favicons?domain=github.com&sz=256" },
+      { name:"Cloudflare", url:"https://dash.cloudflare.com/",    key:"F", glow:"rgba(244,129,32,.55)", icon:"https://www.google.com/s2/favicons?domain=cloudflare.com&sz=256" },
+      { name:"Google",     url:"https://www.google.com/",         key:"G", glow:"rgba(66,133,244,.50)", icon:"https://www.google.com/s2/favicons?domain=google.com&sz=256" },
+      { name:"YouTube",    url:"https://www.youtube.com/",        key:"Y", glow:"rgba(255,0,51,.55)",   icon:"https://www.google.com/s2/favicons?domain=youtube.com&sz=256" },
+      { name:"Drive",      url:"https://drive.google.com/",       key:"D", glow:"rgba(52,168,83,.50)",  icon:"https://www.google.com/s2/favicons?domain=drive.google.com&sz=256" },
+      { name:"Calendar",   url:"https://calendar.google.com/",    key:"K", glow:"rgba(66,133,244,.45)", icon:"https://www.google.com/s2/favicons?domain=calendar.google.com&sz=256" },
+      { name:"Microsoft",  url:"https://www.microsoft.com/",      key:"S", glow:"rgba(0,164,239,.50)",  icon:"https://www.google.com/s2/favicons?domain=microsoft.com&sz=256" },
+      { name:"Vultr",      url:"https://my.vultr.com/",           key:"V", glow:"rgba(0,123,252,.55)",  icon:"https://www.google.com/s2/favicons?domain=vultr.com&sz=256" },
+      { name:"Oracle",     url:"https://cloud.oracle.com/",       key:"O", glow:"rgba(255,59,48,.55)",  icon:"https://www.google.com/s2/favicons?domain=oracle.com&sz=256" },
+      { name:"RackNerd",   url:"https://my.racknerd.com/",        key:"R", glow:"rgba(124,92,255,.55)", icon:"https://www.google.com/s2/favicons?domain=racknerd.com&sz=256" }
+    ];
 
-const grid=document.getElementById("grid");
+    const more = [
+      { name:"Reddit",     url:"https://www.reddit.com/",         key:"U", glow:"rgba(255,69,0,.55)",   icon:"https://www.google.com/s2/favicons?domain=reddit.com&sz=256" },
+      { name:"Telegram",   url:"https://web.telegram.org/",       key:"T", glow:"rgba(42,171,238,.55)", icon:"https://www.google.com/s2/favicons?domain=telegram.org&sz=256" },
+      { name:"Discord",    url:"https://discord.com/app",         key:"I", glow:"rgba(88,101,242,.55)", icon:"https://www.google.com/s2/favicons?domain=discord.com&sz=256" },
+      { name:"Wikipedia",  url:"https://www.wikipedia.org/",      key:"W", glow:"rgba(255,255,255,.35)",icon:"https://www.google.com/s2/favicons?domain=wikipedia.org&sz=256" },
+      { name:"Netflix",    url:"https://www.netflix.com/",        key:"N", glow:"rgba(229,9,20,.55)",   icon:"https://www.google.com/s2/favicons?domain=netflix.com&sz=256" },
+      { name:"Apple",      url:"https://www.apple.com/",          key:"A", glow:"rgba(255,255,255,.35)",icon:"https://www.google.com/s2/favicons?domain=apple.com&sz=256" }
+    ];
 
-sites.forEach((s,i)=>{
-const a=document.createElement("a");
-a.className="item";
-a.href=s.url;
-a.target="_blank";
-a.innerHTML=`
-<span class="kbd">${s.key}</span>
-<div class="icon">
-<img src="https://www.google.com/s2/favicons?domain=${new URL(s.url).hostname}&sz=128">
-</div>
-<div class="label">${s.name}</div>
-`;
-grid.appendChild(a);
-});
+    // ========= 2) 渲染 =========
+    const gridEss = document.getElementById("gridEssentials");
+    const gridMore = document.getElementById("gridMore");
+    const app = document.getElementById("app");
 
-function updateTime(){
-const d=new Date();
-const h=d.getHours();
-const m=d.getMinutes();
-clock.textContent=String(h).padStart(2,"0")+":"+String(m).padStart(2,"0");
+    function makeItem(site, idx){
+      const a = document.createElement("a");
+      a.className = "item";
+      a.href = site.url;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.style.setProperty("--glow", site.glow || "rgba(124,92,255,.55)");
 
-let g="Hello.";
-if(h<12) g="Good morning.";
-else if(h<18) g="Good afternoon.";
-else if(h<22) g="Good evening.";
-else g="Good night.";
-greet.textContent=g;
-}
-setInterval(updateTime,10000);
-updateTime();
+      a.classList.add("reveal");
+      a.style.animationDelay = (idx * 28) + "ms";
 
-q.focus();
+      // ✅ srcset 让 Retina 更锐
+      a.innerHTML = `
+        <span class="kbd">${site.key || ""}</span>
+        <span class="icon">
+          <img
+            src="${site.icon}"
+            srcset="${site.icon} 1x, ${site.icon.replace("sz=256","sz=512")} 2x"
+            alt="${site.name}"
+            loading="lazy"
+            decoding="async"
+          />
+        </span>
+        <span class="label">${site.name}</span>
+      `;
+      if(!site.key) a.querySelector(".kbd").style.display = "none";
+      return a;
+    }
 
-searchForm.addEventListener("submit",e=>{
-e.preventDefault();
-const val=q.value.trim();
-if(!val)return;
-if(val.startsWith("/y "))
-window.open("https://youtube.com/results?search_query="+encodeURIComponent(val.slice(3)));
-else if(val.startsWith("/gh "))
-window.open("https://github.com/search?q="+encodeURIComponent(val.slice(4)));
-else
-window.open("https://google.com/search?q="+encodeURIComponent(val));
-});
+    function render(){
+      gridEss.innerHTML = "";
+      gridMore.innerHTML = "";
+      essentials.forEach((s,i)=> gridEss.appendChild(makeItem(s,i)));
+      more.forEach((s,i)=> gridMore.appendChild(makeItem(s, essentials.length + i)));
+    }
+    render();
 
-window.addEventListener("keydown",e=>{
-if(e.altKey)document.body.classList.add("show-hotkeys");
-});
-window.addEventListener("keyup",e=>{
-if(!e.altKey)document.body.classList.remove("show-hotkeys");
-});
-</script>
+    // ========= 3) 时间 + 问候 =========
+    const greetEl = document.getElementById("greet");
+    const clockEl = document.getElementById("clock");
 
+    const pad = (n)=> String(n).padStart(2,"0");
+
+    function updateTime(){
+      const d = new Date();
+      const h = d.getHours();
+      const m = d.getMinutes();
+      clockEl.textContent = `${pad(h)}:${pad(m)}`;
+
+      let g = "Hello.";
+      if(h >= 5 && h < 12) g = "Good morning.";
+      else if(h >= 12 && h < 18) g = "Good afternoon.";
+      else if(h >= 18 && h < 22) g = "Good evening.";
+      else g = "Good night.";
+      greetEl.textContent = g;
+
+      // 自适应：深夜更沉，清晨稍亮（克制）
+      const root = document.documentElement;
+      if(h >= 2 && h <= 5){
+        root.style.setProperty("--bg0", "#05070E");
+        root.style.setProperty("--bg1", "#070B18");
+      }else if(h >= 6 && h <= 10){
+        root.style.setProperty("--bg0", "#070A12");
+        root.style.setProperty("--bg1", "#091632");
+      }else{
+        root.style.setProperty("--bg0", "#070A12");
+        root.style.setProperty("--bg1", "#09112A");
+      }
+    }
+    updateTime();
+    setInterval(updateTime, 1000 * 15);
+
+    // ========= 4) 搜索：Bang 语法 =========
+    const q = document.getElementById("q");
+    const searchForm = document.getElementById("searchForm");
+
+    const engines = {
+      "/g":  (t)=> `https://www.google.com/search?q=${encodeURIComponent(t)}`,
+      "/y":  (t)=> `https://www.youtube.com/results?search_query=${encodeURIComponent(t)}`,
+      "/gh": (t)=> `https://github.com/search?q=${encodeURIComponent(t)}`,
+      "/r":  (t)=> `https://www.reddit.com/search/?q=${encodeURIComponent(t)}`
+    };
+
+    searchForm.addEventListener("submit", (e)=>{
+      e.preventDefault();
+      const raw = (q.value || "").trim();
+      if(!raw) return;
+
+      if(raw === "/c"){
+        window.open("https://chatgpt.com/", "_blank", "noopener");
+        return;
+      }
+
+      const parts = raw.split(/\s+/);
+      const prefix = parts[0];
+      const rest = raw.slice(prefix.length).trim();
+
+      const url = engines[prefix] ? engines[prefix](rest || "") : engines["/g"](raw);
+      window.open(url, "_blank", "noopener");
+    });
+
+    // 打开就能打字
+    window.addEventListener("load", ()=> q.focus({preventScroll:true}));
+
+    // 搜索聚焦：降噪
+    q.addEventListener("focus", ()=> app.classList.add("dim-on-focus"));
+    q.addEventListener("blur",  ()=> app.classList.remove("dim-on-focus"));
+
+    // ========= 5) Alt 才显示快捷键 =========
+    const setHotkeys = (on)=> document.body.classList.toggle("show-hotkeys", on);
+    window.addEventListener("keydown", (e)=>{ if(e.altKey) setHotkeys(true); });
+    window.addEventListener("keyup",   (e)=>{ if(!e.altKey) setHotkeys(false); });
+
+    // ========= 6) 单键快捷跳转（不干扰输入） =========
+    const shortcutMap = new Map();
+    [...essentials, ...more].forEach(s=>{ if(s.key) shortcutMap.set(s.key.toUpperCase(), s.url); });
+
+    window.addEventListener("keydown", (e)=>{
+      const active = document.activeElement;
+      const typing = active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA" || active.isContentEditable);
+      if(typing) return;
+      if(e.altKey) return;
+
+      if(e.key === "/"){
+        e.preventDefault();
+        q.focus({preventScroll:true});
+        return;
+      }
+
+      const k = (e.key || "").toUpperCase();
+      if(shortcutMap.has(k)){
+        e.preventDefault();
+        window.open(shortcutMap.get(k), "_blank", "noopener");
+      }
+    });
+
+    // ========= 7) More 展开：FLIP 动画（网格不跳动） =========
+    const moreArea = document.getElementById("moreArea");
+    const btnMore = document.getElementById("toggleMore");
+    const btnLess = document.getElementById("toggleLess");
+
+    function flipToggle(show){
+      const items = document.querySelectorAll(".item");
+      const first = new Map();
+      items.forEach(el=> first.set(el, el.getBoundingClientRect()));
+
+      // toggle（注意：不再 display:none）
+      moreArea.classList.toggle("is-open", show);
+      moreArea.setAttribute("aria-hidden", show ? "false" : "true");
+
+      // 强制布局更新
+      void document.body.offsetHeight;
+
+      const items2 = document.querySelectorAll(".item");
+      items2.forEach(el=>{
+        const last = el.getBoundingClientRect();
+        const f = first.get(el);
+        if(!f) return;
+
+        const dx = f.left - last.left;
+        const dy = f.top - last.top;
+        const dw = f.width / last.width;
+        const dh = f.height / last.height;
+
+        el.animate(
+          [
+            { transform: `translate(${dx}px, ${dy}px) scale(${dw}, ${dh})` },
+            { transform: "translate(0,0) scale(1,1)" }
+          ],
+          { duration: 520, easing: "cubic-bezier(.22,.61,.36,1)", fill: "both" }
+        );
+      });
+
+      btnMore.style.visibility = show ? "hidden" : "visible";
+    }
+
+    btnMore.addEventListener("click", ()=> flipToggle(true));
+    btnLess.addEventListener("click", ()=> flipToggle(false));
+  </script>
 </body>
 </html>
