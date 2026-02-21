@@ -10,18 +10,23 @@
   --bg:#0b1020;
   --text:rgba(255,255,255,.92);
   --muted:rgba(255,255,255,.56);
+  --muted2:rgba(255,255,255,.40);
   --line:rgba(255,255,255,.10);
+  --line2:rgba(255,255,255,.16);
   --glass:rgba(255,255,255,.06);
   --glass2:rgba(255,255,255,.085);
   --shadow:0 18px 45px rgba(0,0,0,.35);
-  --ring:rgba(255,255,255,.10);
+  --shadow2:0 10px 26px rgba(0,0,0,.22);
+
+  --focus: rgba(255,255,255,.18);
+  --focusGlow: rgba(99,102,241,.22);
 }
 
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
   margin:0;
-  font-family: ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",
+  font-family: Inter, ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",
   Roboto,Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei";
   color:var(--text);
   background:
@@ -35,6 +40,7 @@ body{
 .wrap{
   width:min(980px,92vw);
   margin:56px auto 70px;
+  padding:0 8px; /* invisible grid baseline */
 }
 @media (max-width:600px){
   .wrap{ margin-top:62px; }
@@ -42,97 +48,109 @@ body{
 
 /* top */
 .topbar{
+  width:min(860px,92vw);
+  margin:0 auto 18px;
   display:flex;
   justify-content:space-between;
   align-items:flex-end;
   gap:16px;
-  margin-bottom:18px;
 }
 .greet{
   font-size:14px;
   font-weight:400;
-  opacity:.78;
+  opacity:.72;
   letter-spacing:.01em;
 }
 .clock{
   font-family: ui-monospace,"JetBrains Mono","SF Mono",Menlo,monospace;
   font-size:18px;
-  font-weight:650;
-  letter-spacing:.10em;
-  opacity:.90;
+  font-weight:700;
+  letter-spacing:.12em;
+  opacity:.88;
 }
 
-/* search */
+/* search – pure */
 .search{
+  width:min(860px,92vw);
+  margin:0 auto 18px;
   display:flex;
   align-items:center;
   gap:12px;
-  padding:14px 16px;
+  padding:16px 18px;
   border-radius:999px;
   background:var(--glass);
-  border:1px solid rgba(255,255,255,.10);
+  border:1px solid var(--line);
   backdrop-filter:blur(18px);
   box-shadow: var(--shadow);
   transition: background .2s ease,border-color .2s ease,transform .2s ease;
 }
 .search:focus-within{
   background:var(--glass2);
-  border-color:rgba(255,255,255,.18);
+  border-color:var(--line2);
   transform: translateY(-1px);
 }
-.search .icon{
-  width:18px;height:18px;opacity:.7;flex:0 0 auto;
+.search .sicon{
+  width:18px;height:18px;opacity:.70;flex:0 0 auto;
 }
 .search input{
   flex:1;border:0;outline:0;background:transparent;
   color:var(--text);font-size:16px;
 }
-.search input::placeholder{ color: rgba(255,255,255,.38); }
-.search button{
-  border:0;background:rgba(255,255,255,.06);
-  color:rgba(255,255,255,.70);
-  padding:10px 14px;border-radius:999px;
-  font-weight:600;cursor:pointer;
-  transition:.18s ease;
+.search input::placeholder{ color: rgba(255,255,255,.34); }
+.search .hint{
+  font-family: ui-monospace,"JetBrains Mono","SF Mono",Menlo,monospace;
+  font-size:12px;
+  color:rgba(255,255,255,.32);
+  border:1px solid rgba(255,255,255,.10);
+  padding:6px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.03);
+  user-select:none;
 }
-.search button:hover{ background:rgba(255,255,255,.10); }
-.search button:active{ transform:scale(.98); }
 
 /* section */
 .row{
+  width:min(860px,92vw);
+  margin:24px auto 12px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  margin:26px 0 14px;
+  padding:0 6px; /* align with grid */
 }
 .label{
-  font-size:12px;
-  letter-spacing:.22em;
+  font-size:11px;
+  letter-spacing:.26em;
   text-transform:uppercase;
-  color:var(--muted);
+  color:rgba(255,255,255,.52);
 }
 .moreBtn{
   border:1px solid rgba(255,255,255,.10);
   background:rgba(255,255,255,.04);
-  color:rgba(255,255,255,.68);
+  color:rgba(255,255,255,.66);
   border-radius:999px;
   padding:8px 12px;
   cursor:pointer;
   transition:.2s ease;
 }
 .moreBtn:hover{ background:rgba(255,255,255,.08); }
+.moreBtn:active{ transform: translateY(1px); }
 
 /* grid */
 .grid{
+  width:min(860px,92vw);
+  margin:0 auto;
+  padding:0 6px; /* align with row */
   display:grid;
   grid-template-columns:repeat(6,1fr);
-  gap:26px 18px;
+  gap:32px 40px; /* 8pt system: row 32, col 40 */
 }
 @media(max-width:980px){ .grid{ grid-template-columns:repeat(5,1fr);} }
 @media(max-width:860px){ .grid{ grid-template-columns:repeat(4,1fr);} }
-@media(max-width:600px){ .grid{ grid-template-columns:repeat(3,1fr);} }
+@media(max-width:600px){
+  .grid{ grid-template-columns:repeat(3,1fr); gap:28px 26px; }
+}
 
-/* item — 去底座但保持大热区 */
+/* item — no base, big hit area */
 .item{
   text-decoration:none;
   color:inherit;
@@ -140,16 +158,16 @@ body{
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:10px;
+  gap:12px;                 /* more breathing */
   padding:10px 8px;
   border-radius:16px;
-  /* 大热区：不靠底座，靠 padding + border-radius */
-  min-height:92px;
+  min-height:96px;
   transition: transform .18s ease, background .18s ease;
   -webkit-tap-highlight-color: transparent;
+  outline: none;
 }
 
-/* hover/press 反馈：轻微抬升 + 柔光，不出现“框” */
+/* subtle halo feedback, not a box */
 .item::before{
   content:"";
   position:absolute;
@@ -163,16 +181,28 @@ body{
 }
 .item:hover{ transform: translateY(-2px); }
 .item:hover::before{ opacity:1; transform: scale(1); }
-.item:active{ transform: translateY(0px) scale(.99); }
+.item:active{ transform: translateY(0) scale(.99); }
 .item:active::before{ opacity:.9; }
 
+/* ----- Focus visible: ultra-thin outline (accessibility + premium) ----- */
+.item:focus-visible{
+  outline: 1px solid var(--focus);
+  box-shadow: 0 0 0 4px rgba(255,255,255,.05), 0 0 0 10px var(--focusGlow);
+}
+@media (prefers-reduced-motion: reduce){
+  .item:focus-visible{ box-shadow: 0 0 0 3px rgba(255,255,255,.06); }
+}
+
+/* icon: hover-to-color state management */
 .icon{
   width:30px;
   height:30px;
   display:block;
-  /* 让图标“漂浮”：给一点阴影，提升高级感 */
-  filter: drop-shadow(0 10px 18px rgba(0,0,0,.28));
+  filter: grayscale(100%) saturate(0) opacity(.78);
+  transition: filter .22s ease, transform .18s ease;
   transform: translateZ(0);
+  /* floating depth */
+  filter: grayscale(100%) saturate(0) opacity(.78) drop-shadow(0 10px 18px rgba(0,0,0,.28));
 }
 .icon img{
   width:100%;
@@ -181,12 +211,30 @@ body{
   display:block;
   image-rendering:auto;
 }
+
+/* wake up on hover/active/focus */
+.item:hover .icon,
+.item:active .icon,
+.item:focus-visible .icon{
+  filter: none drop-shadow(0 10px 18px rgba(0,0,0,.28));
+}
+.item:hover .icon{ transform: translateY(-1px) scale(1.04); }
+.item:active .icon{ transform: translateY(0) scale(1.01); }
+
 .name{
   font-size:12.5px;
-  color:rgba(255,255,255,.62);
+  color:rgba(255,255,255,.56);
+  transition: color .18s ease, transform .18s ease;
+  user-select:none;
+}
+.item:hover .name,
+.item:active .name,
+.item:focus-visible .name{
+  color:rgba(255,255,255,.76);
+  transform: translateY(-.5px);
 }
 
-/* 快捷键徽标：默认隐藏，Alt 才出现 */
+/* contextual shortcut badge */
 .kbd{
   position:absolute;
   top:10px;
@@ -201,11 +249,11 @@ body{
   color:rgba(255,255,255,.70);
   opacity:0;
   transform: translateY(-4px) scale(.98);
-  transition:.16s ease;
+  transition: opacity .16s ease, transform .18s cubic-bezier(.2,.9,.2,1);
   pointer-events:none;
 }
 
-/* 只在桌面端允许显示快捷键 */
+/* show keys only on desktop pointer devices */
 @media (hover:hover) and (pointer:fine){
   body.alt .kbd{
     opacity:1;
@@ -213,8 +261,10 @@ body{
   }
 }
 
-/* More panel animation */
+/* More panel (still needs max-height for layout, FLIP will smooth items) */
 .morePanel{
+  width:min(860px,92vw);
+  margin:0 auto;
   overflow:hidden;
   max-height:0;
   opacity:0;
@@ -222,7 +272,7 @@ body{
   transition: max-height .35s ease, opacity .25s ease, transform .25s ease;
 }
 .morePanel.open{
-  max-height:520px;
+  max-height:540px;
   opacity:1;
   transform: translateY(0);
 }
@@ -242,13 +292,13 @@ body{
     <div class="clock" id="clock"></div>
   </div>
 
-  <form class="search" id="searchForm">
-    <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+  <form class="search" id="searchForm" autocomplete="off">
+    <svg class="sicon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/>
       <path d="M16.3 16.3 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
     </svg>
-    <input id="q" placeholder="Search…" autocomplete="off" />
-    <button type="submit">Search</button>
+    <input id="q" placeholder="Search…" />
+    <span class="hint">↵</span>
   </form>
 
   <div class="row">
@@ -277,21 +327,20 @@ function tick(){
   document.getElementById("greet").textContent = greet + ".";
   document.getElementById("clock").textContent = `${pad(h)}:${pad(d.getMinutes())}`;
 }
-tick();
-setInterval(tick,1000);
+tick(); setInterval(tick,1000);
 
 /* ---------- focus search ---------- */
 window.addEventListener("load", ()=> {
   document.getElementById("q").focus({preventScroll:true});
 });
 
-/* ---------- favicon (高清兜底) ---------- */
+/* ---------- favicon (HD fallback) ---------- */
 const favicon = (url) => {
   const domain = new URL(url).hostname;
   return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=256`;
 };
 
-/* ---------- links：常用排前 ---------- */
+/* ---------- links: frequent first ---------- */
 const essentials = [
   {name:"Google",     url:"https://google.com",             key:"G"},
   {name:"Gmail",      url:"https://mail.google.com",        key:"M"},
@@ -308,23 +357,23 @@ const essentials = [
 ];
 
 const more = [
-  {name:"Wikipedia", url:"https://wikipedia.org",           key:"W"},
-  {name:"Reddit",    url:"https://reddit.com",              key:"E"},
-  {name:"Discord",   url:"https://discord.com/channels/@me",key:"B"},
-  {name:"X",         url:"https://x.com",                   key:"X"},
-  {name:"Netflix",   url:"https://netflix.com",             key:"N"},
-  {name:"Apple",     url:"https://apple.com",               key:"A"},
+  {name:"Wikipedia", url:"https://wikipedia.org",            key:"W"},
+  {name:"Reddit",    url:"https://reddit.com",               key:"E"},
+  {name:"Discord",   url:"https://discord.com/channels/@me", key:"B"},
+  {name:"X",         url:"https://x.com",                    key:"X"},
+  {name:"Netflix",   url:"https://netflix.com",              key:"N"},
+  {name:"Apple",     url:"https://apple.com",                key:"A"},
 ];
 
-/* ---------- render ---------- */
 function card(item){
   const a=document.createElement("a");
   a.className="item";
   a.href=item.url;
   a.dataset.key=item.key || "";
+  a.tabIndex = 0;
   a.innerHTML = `
-    <span class="kbd">${item.key || ""}</span>
-    <span class="icon"><img alt="" src="${favicon(item.url)}"></span>
+    ${item.key ? `<span class="kbd">${item.key}</span>` : ``}
+    <span class="icon" aria-hidden="true"><img alt="" src="${favicon(item.url)}"></span>
     <span class="name">${item.name}</span>
   `;
   return a;
@@ -336,25 +385,79 @@ essentials.forEach(x=>essentialsEl.appendChild(card(x)));
 const moreEl=document.getElementById("moreGrid");
 more.forEach(x=>moreEl.appendChild(card(x)));
 
-/* ---------- search ---------- */
-document.getElementById("searchForm").addEventListener("submit",e=>{
+/* ---------- search submit (Enter) ---------- */
+document.getElementById("searchForm").addEventListener("submit",(e)=>{
   e.preventDefault();
-  const q=document.getElementById("q").value.trim();
-  if(!q) return;
-  location.href="https://www.google.com/search?q="+encodeURIComponent(q);
+});
+document.getElementById("q").addEventListener("keydown",(e)=>{
+  if(e.key === "Enter"){
+    e.preventDefault();
+    const q=e.target.value.trim();
+    if(!q) return;
+    // URL direct
+    const isUrl=/^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/.*)?$/i.test(q);
+    if(isUrl){ location.href = q.startsWith("http") ? q : ("https://" + q); return; }
+    location.href="https://www.google.com/search?q="+encodeURIComponent(q);
+  }
 });
 
-/* ---------- more toggle ---------- */
+/* ---------- More toggle + FLIP animation ---------- */
 const moreBtn=document.getElementById("moreBtn");
 const morePanel=document.getElementById("morePanel");
 let open=false;
-moreBtn.addEventListener("click",()=>{
-  open=!open;
-  morePanel.classList.toggle("open",open);
-  moreBtn.textContent = open ? "Less" : "More";
-});
 
-/* ---------- Alt 显示快捷键（桌面端） ---------- */
+const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function getRects(){
+  const els = [...document.querySelectorAll("#essentials .item, #moreGrid .item")];
+  const map = new Map();
+  els.forEach(el => map.set(el, el.getBoundingClientRect()));
+  return { els, map };
+}
+
+function playFLIP(before, after){
+  after.els.forEach(el=>{
+    const r0 = before.map.get(el);
+    const r1 = after.map.get(el);
+    if(!r0 || !r1) return;
+    const dx = r0.left - r1.left;
+    const dy = r0.top  - r1.top;
+    if(Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
+
+    el.animate([
+      { transform: `translate(${dx}px, ${dy}px)` },
+      { transform: "translate(0px, 0px)" }
+    ],{
+      duration: 320,
+      easing: "cubic-bezier(.2,.9,.2,1)",
+      fill: "both"
+    });
+  });
+}
+
+function toggleMore(){
+  if(prefersReduced){
+    open = !open;
+    morePanel.classList.toggle("open", open);
+    moreBtn.textContent = open ? "Less" : "More";
+    return;
+  }
+
+  const before = getRects();
+  open = !open;
+  morePanel.classList.toggle("open", open);
+  moreBtn.textContent = open ? "Less" : "More";
+
+  // wait for layout to settle (next frame)
+  requestAnimationFrame(()=>{
+    const after = getRects();
+    playFLIP(before, after);
+  });
+}
+
+moreBtn.addEventListener("click", toggleMore);
+
+/* ---------- Alt to show keys (desktop) ---------- */
 let altDown=false;
 window.addEventListener("keydown",(e)=>{
   if(e.key === "Alt" && !altDown){
@@ -369,23 +472,31 @@ window.addEventListener("keyup",(e)=>{
   }
 });
 
-/* ---------- 快捷键跳转：按住 Alt + 字母 ---------- */
+/* ---------- Alt + letter to jump ---------- */
 window.addEventListener("keydown",(e)=>{
-  // 避免在输入框里触发
   const active = document.activeElement;
   const typing = active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA");
-
   if(!e.altKey || typing) return;
 
   const k = (e.key || "").toUpperCase();
   if(!k || k.length !== 1) return;
 
-  const all = [...document.querySelectorAll(".item")];
-  const hit = all.find(x => (x.dataset.key || "").toUpperCase() === k);
+  const items = [...document.querySelectorAll(".item")];
+  const hit = items.find(x => (x.dataset.key || "").toUpperCase() === k);
   if(hit){
     e.preventDefault();
     location.href = hit.href;
   }
+});
+
+/* ---------- Quality: ensure anchors are focusable ---------- */
+document.querySelectorAll(".item").forEach(a=>{
+  a.addEventListener("keydown",(e)=>{
+    if(e.key === "Enter" || e.key === " "){
+      e.preventDefault();
+      a.click();
+    }
+  });
 });
 </script>
 </body>
