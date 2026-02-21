@@ -1,186 +1,288 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Harvey</title>
 
 <style>
-:root {
-  --bg: #ffffff;
-  --card: #f8f9fa;
-  --text: #202124;
-  --border: #e0e0e0;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0f1115;
-    --card: #1b1f27;
-    --text: #e8eaed;
-    --border: #2b2f36;
+  :root{
+    --bg:#ffffff;
+    --text:#111827;
+    --muted:#6b7280;
+    --card:#f3f4f6;
+    --card2:#eef2f7;
+    --ring:#e5e7eb;
+    --shadow: 0 6px 22px rgba(0,0,0,.08);
+    --maxw: 980px;
   }
-}
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0b0f17;
+      --text:#e5e7eb;
+      --muted:#9ca3af;
+      --card:#111827;
+      --card2:#0f172a;
+      --ring:#1f2937;
+      --shadow: 0 10px 28px rgba(0,0,0,.35);
+    }
+  }
 
-body {
-  margin: 0;
-  background: var(--bg);
-  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
-  color: var(--text);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei";
+  }
 
-.logo {
-  margin-top: 10vh;
-  font-size: 42px;
-  font-weight: 600;
-  letter-spacing: 1px;
-}
+  .wrap{
+    width:min(var(--maxw), 92vw);
+    margin: 22px auto 40px;
+    text-align:center;
+  }
 
-.search-box {
-  margin-top: 25px;
-  width: min(720px, 90%);
-  display: flex;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 12px 18px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-}
+  /* 顶部时间/日期 */
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    margin-top: 6px;
+    margin-bottom: 10px;
+    color:var(--muted);
+    font-size:14px;
+  }
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 12px;
+    border:1px solid var(--ring);
+    border-radius:999px;
+    background: color-mix(in srgb, var(--card2) 70%, transparent);
+    box-shadow:none;
+  }
+  .time{
+    font-weight:700;
+    color:var(--text);
+    letter-spacing:.2px;
+  }
 
-.search-box input {
-  flex: 1;
-  border: none;
-  outline: none;
-  font-size: 16px;
-  background: transparent;
-  color: var(--text);
-}
+  /* Google 风格搜索 */
+  .logo{
+    font-size: 46px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    margin: 18px 0 18px;
+  }
+  .search{
+    width:min(860px, 92vw);
+    margin: 0 auto 26px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding: 14px 18px;
+    border-radius:999px;
+    border:1px solid var(--ring);
+    background: color-mix(in srgb, var(--card2) 85%, transparent);
+    box-shadow: var(--shadow);
+  }
+  .search input{
+    flex:1;
+    border:0;
+    outline:0;
+    background:transparent;
+    color:var(--text);
+    font-size:16px;
+  }
+  .search button{
+    border:0;
+    cursor:pointer;
+    padding:10px 14px;
+    border-radius:999px;
+    background: color-mix(in srgb, var(--card) 75%, transparent);
+    color:var(--text);
+    font-weight:600;
+  }
 
-.grid {
-  margin-top: 35px;
-  width: min(900px, 92%);
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 18px;
-}
+  /* 图标网格：圆形 + 文字 */
+  .grid{
+    width:min(860px, 92vw);
+    margin: 6px auto 0;
+    display:grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 22px 18px;
+  }
+  @media (max-width: 980px){
+    .grid{ grid-template-columns: repeat(4, 1fr); }
+  }
+  @media (max-width: 560px){
+    .grid{ grid-template-columns: repeat(3, 1fr); gap:18px 14px; }
+    .logo{ font-size: 38px; }
+  }
 
-@media (max-width: 900px) {
-  .grid { grid-template-columns: repeat(3, 1fr); }
-}
+  .item{
+    text-decoration:none;
+    color:inherit;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    user-select:none;
+  }
+  .bubble{
+    width:64px;
+    height:64px;
+    border-radius:999px;
+    border:1px solid var(--ring);
+    background: color-mix(in srgb, var(--card2) 88%, transparent);
+    display:grid;
+    place-items:center;
+    box-shadow: none;
+    transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+  }
+  .item:hover .bubble{
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+    background: color-mix(in srgb, var(--card) 72%, transparent);
+  }
+  .bubble img{
+    width:34px;
+    height:34px;
+    object-fit:contain;
+    display:block;
+  }
+  .name{
+    font-size:13px;
+    color: color-mix(in srgb, var(--text) 86%, var(--muted));
+  }
 
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 18px 10px;
-  text-align: center;
-  text-decoration: none;
-  color: var(--text);
-  transition: 0.15s ease;
-}
+  /* 兜底：图标加载失败显示字母 */
+  .fallback{
+    width:34px;height:34px;
+    display:grid;place-items:center;
+    border-radius:10px;
+    border:1px solid var(--ring);
+    font-weight:800;
+    color:var(--text);
+    background: color-mix(in srgb, var(--card) 70%, transparent);
+  }
 
-.card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-}
-
-.icon {
-  height: 32px;
-  margin-bottom: 10px;
-}
-
-.footer {
-  margin: 40px 0 20px;
-  font-size: 12px;
-  opacity: 0.5;
-}
+  .footer{
+    margin-top: 26px;
+    font-size: 12px;
+    color: var(--muted);
+    opacity:.75;
+  }
 </style>
 </head>
 
 <body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="pill">
+        <span class="time" id="time">--:--</span>
+        <span id="date">----</span>
+      </div>
+      <div class="pill" id="weatherPill" style="display:none;">
+        <span id="weatherText"></span>
+      </div>
+    </div>
 
-<div class="logo">Harvey</div>
+    <div class="logo">Google</div>
 
-<form class="search-box" onsubmit="goSearch(event)">
-  <input id="q" placeholder="Search Google..." autocomplete="off">
-</form>
+    <form class="search" id="searchForm">
+      <input id="q" placeholder="Search Google or type a URL" autocomplete="off" />
+      <button type="submit">Search</button>
+    </form>
 
-<div class="grid">
+    <div class="grid" id="grid"></div>
 
-<a class="card" href="https://chatgpt.com" target="_blank">
-  <img class="icon" src="https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg">
-  ChatGPT
-</a>
-
-<a class="card" href="https://gemini.google.com" target="_blank">
-  <img class="icon" src="https://upload.wikimedia.org/wikipedia/commons/8/8e/Google_Gemini_logo.svg">
-  Gemini
-</a>
-
-<a class="card" href="https://mail.google.com" target="_blank">
-  <img class="icon" src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg">
-  Gmail
-</a>
-
-<a class="card" href="https://github.com" target="_blank">
-  <img class="icon" src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg">
-  GitHub
-</a>
-
-<a class="card" href="https://drive.google.com" target="_blank">
-  <img class="icon" src="https://upload.wikimedia.org/wikipedia/commons/d/da/Google_Drive_logo.png">
-  Drive
-</a>
-
-<a class="card" href="https://calendar.google.com" target="_blank">
-  <img class="icon" src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Google_Calendar_icon_%282020%29.svg">
-  Calendar
-</a>
-
-<a class="card" href="https://dash.cloudflare.com" target="_blank">
-  <img class="icon" src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Cloudflare_Logo.svg">
-  Cloudflare
-</a>
-
-<a class="card" href="https://my.vultr.com" target="_blank">
-  <img class="icon" src="https://www.vultr.com/media/logo.svg">
-  Vultr
-</a>
-
-<a class="card" href="https://cloud.oracle.com" target="_blank">
-  <img class="icon" src="https://upload.wikimedia.org/wikipedia/commons/5/50/Oracle_logo.svg">
-  Oracle
-</a>
-
-<a class="card" href="https://my.racknerd.com" target="_blank">
-  <img class="icon" src="https://www.racknerd.com/wp-content/uploads/2020/03/logo.png">
-  RackNerd
-</a>
-
-<a class="card" href="https://youtube.com" target="_blank">
-  <img class="icon" src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg">
-  YouTube
-</a>
-
-<a class="card" href="https://www.speedtest.net" target="_blank">
-  <img class="icon" src="https://upload.wikimedia.org/wikipedia/commons/3/3b/Ookla_Speedtest_logo.svg">
-  Speedtest
-</a>
-
-</div>
-
-<div class="footer">nav.harveyi.com</div>
+    <div class="footer">nav.harveyi.com</div>
+  </div>
 
 <script>
-function goSearch(e) {
-  e.preventDefault();
-  const q = document.getElementById("q").value.trim();
-  if (!q) return;
-  window.location.href = "https://www.google.com/search?q=" + encodeURIComponent(q);
-}
-</script>
+  // 1) 搜索
+  document.getElementById("searchForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const q = document.getElementById("q").value.trim();
+    if (!q) return;
+    // 简单判断：像 URL 就直接跳转，否则 Google 搜索
+    const isUrl = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/.*)?$/i.test(q);
+    if (isUrl) {
+      const url = q.startsWith("http") ? q : "https://" + q;
+      location.href = url;
+    } else {
+      location.href = "https://www.google.com/search?q=" + encodeURIComponent(q);
+    }
+  });
 
+  // 2) 时间/日期
+  const pad = (n) => String(n).padStart(2, "0");
+  function tick(){
+    const d = new Date();
+    const hh = pad(d.getHours());
+    const mm = pad(d.getMinutes());
+    document.getElementById("time").textContent = `${hh}:${mm}`;
+    const opt = { weekday:"short", year:"numeric", month:"short", day:"numeric" };
+    document.getElementById("date").textContent = d.toLocaleDateString(undefined, opt);
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  // 3) 站点（你可以随时增删）
+  const links = [
+    { name:"Google", url:"https://google.com", icon:"https://www.google.com/favicon.ico" },
+    { name:"Gmail", url:"https://mail.google.com", icon:"https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico" },
+    { name:"YouTube", url:"https://youtube.com", icon:"https://www.youtube.com/s/desktop/7f9d63d7/img/favicon_144x144.png" },
+
+    { name:"GitHub", url:"https://github.com", icon:"https://github.githubassets.com/favicons/favicon.svg" },
+    { name:"Microsoft", url:"https://www.microsoft.com", icon:"https://www.microsoft.com/favicon.ico" },
+    { name:"ChatGPT", url:"https://chatgpt.com", icon:"https://chatgpt.com/favicon.ico" },
+
+    { name:"Oracle", url:"https://cloud.oracle.com", icon:"https://www.oracle.com/favicon.ico" },
+    { name:"AWS", url:"https://aws.amazon.com", icon:"https://aws.amazon.com/favicon.ico" },
+    { name:"Cloudflare", url:"https://dash.cloudflare.com", icon:"https://www.cloudflare.com/favicon.ico" },
+
+    { name:"Vultr", url:"https://my.vultr.com", icon:"https://www.vultr.com/favicon.ico" },
+    { name:"RackNerd", url:"https://my.racknerd.com", icon:"https://www.racknerd.com/favicon.ico" },
+    { name:"Wikipedia", url:"https://wikipedia.org", icon:"https://www.wikipedia.org/static/favicon/wikipedia.ico" },
+
+    { name:"X", url:"https://x.com", icon:"https://abs.twimg.com/favicons/twitter.2.ico" },
+    { name:"Reddit", url:"https://reddit.com", icon:"https://www.redditstatic.com/desktop2x/img/favicon/favicon-32x32.png" },
+    { name:"Telegram", url:"https://web.telegram.org", icon:"https://telegram.org/favicon.ico" },
+
+    { name:"Discord", url:"https://discord.com", icon:"https://discord.com/assets/847541504914fd33810e70a0ea73177e.ico" },
+    { name:"Netflix", url:"https://netflix.com", icon:"https://assets.nflxext.com/us/ffe/siteui/common/icons/nficon2016.ico" },
+    { name:"Apple", url:"https://apple.com", icon:"https://www.apple.com/favicon.ico" },
+  ];
+
+  // 渲染网格
+  const grid = document.getElementById("grid");
+  grid.innerHTML = links.map(l => `
+    <a class="item" href="${l.url}" target="_blank" rel="noreferrer">
+      <div class="bubble">
+        <img class="icon" src="${l.icon}" alt="${l.name}">
+      </div>
+      <div class="name">${l.name}</div>
+    </a>
+  `).join("");
+
+  // 图标失败：替换为首字母
+  document.querySelectorAll("img.icon").forEach(img => {
+    img.addEventListener("error", () => {
+      const name = img.getAttribute("alt") || "";
+      const letter = (name.trim()[0] || "•").toUpperCase();
+      const fb = document.createElement("div");
+      fb.className = "fallback";
+      fb.textContent = letter;
+      img.replaceWith(fb);
+    });
+  });
+
+  // （可选）天气：先留接口位，默认隐藏
+  // 想加天气我下一条给你“零密钥”版本（Open-Meteo），只要开启浏览器定位即可。
+</script>
 </body>
 </html>
