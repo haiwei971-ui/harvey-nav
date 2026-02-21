@@ -4,25 +4,34 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 
-  <!-- ✅ 关键：明确 title + favicon，避免 Safari 出现 New Tab -->
   <title>Harvey — Home</title>
   <link rel="icon" href="data:,">
   <meta name="theme-color" content="#070A12" />
 
-  <!-- 字体：更“产品级”的质感（可选，失败也不影响显示） -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@200;400;500;600&display=swap" rel="stylesheet">
 
   <style>
     :root{
       --bg0:#070A12;
       --bg1:#09112A;
+
       --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.62);
+      --muted: rgba(255,255,255,.55);
+      --muted2: rgba(255,255,255,.40);
+
       --hair2: rgba(255,255,255,.08);
+
       --ease: cubic-bezier(.34,1.56,.64,1);
       --ease2: cubic-bezier(.22,.61,.36,1);
+
+      /* ✅ 黄金比例“吸附感”：控制图标区域下移 */
+      --icons-offset: 18px;
+
+      /* ✅ Essentials 比 More 大 5% */
+      --icon-size-essential: 55px; /* 52px * 1.05 ≈ 55 */
+      --icon-size-more: 52px;
     }
 
     *{ box-sizing:border-box; }
@@ -41,7 +50,7 @@
       overflow-x:hidden;
     }
 
-    /* 轻微磨砂颗粒（高级感） */
+    /* 轻微磨砂颗粒 */
     body::before{
       content:"";
       position:fixed; inset:0;
@@ -64,26 +73,28 @@
       padding: 18px 18px 22px;
     }
 
+    /* 顶部：问候 + 时间（时间极细 + Tabular Figures） */
     .topbar{
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:16px;
-      margin-top: 10px;
+      margin-top: 12px;
       margin-bottom: 14px;
     }
     .greet{
       font-size: 18px;
       font-weight: 500;
-      color: rgba(255,255,255,.78);
+      color: rgba(255,255,255,.76);
       letter-spacing: .01em;
     }
     .clock{
       font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-size: 18px;
-      font-weight: 600;
-      color: rgba(255,255,255,.88);
-      letter-spacing: .02em;
+      font-weight: 200;                /* ✅ 更“幽灵” */
+      font-variant-numeric: tabular-nums; /* ✅ 数字不抖 */
+      color: rgba(255,255,255,.86);
+      letter-spacing: .04em;
     }
 
     /* 搜索 */
@@ -100,7 +111,7 @@
       -webkit-backdrop-filter: blur(12px);
       box-shadow: 0 18px 60px rgba(0,0,0,.30);
       transition: border-color .25s var(--ease2), box-shadow .25s var(--ease2), transform .25s var(--ease2);
-      margin-bottom: 16px;
+      margin-bottom: 10px;
     }
     .search:focus-within{
       border-color: rgba(124,92,255,.45);
@@ -117,17 +128,25 @@
       font-size: 18px;
       padding: 2px 2px;
     }
-    .search input::placeholder{ color: rgba(255,255,255,.45); }
+    .search input::placeholder{ color: rgba(255,255,255,.42); }
 
+    /* ✅ 动态流提示（右侧轮播渐隐） */
     .hint{
       flex:0 0 auto;
       display:flex;
       align-items:center;
       gap:8px;
-      color: rgba(255,255,255,.38);
+      color: rgba(255,255,255,.35);
       font-size: 12px;
       letter-spacing:.02em;
       user-select:none;
+      min-width: 190px;
+      justify-content:flex-end;
+      transition: opacity .3s var(--ease2), transform .3s var(--ease2);
+    }
+    .hint.fade{
+      opacity: 0;
+      transform: translateY(2px);
     }
     .hint .keycap{
       border:1px solid rgba(255,255,255,.14);
@@ -137,15 +156,7 @@
       font-family: "JetBrains Mono", ui-monospace, monospace;
     }
 
-    /* 搜索聚焦时：内容降噪 */
-    .dim-on-focus .grid,
-    .dim-on-focus .sectionbar{
-      opacity:.58;
-      filter: blur(1.5px);
-      transform: translateY(1px);
-      transition: opacity .25s var(--ease2), filter .25s var(--ease2), transform .25s var(--ease2);
-    }
-
+    /* ✅ Ghost Mode：隐藏标题文字，只留分割线（默认） */
     .sectionbar{
       display:flex;
       align-items:center;
@@ -157,22 +168,22 @@
       display:flex;
       align-items:center;
       gap:12px;
-      color: rgba(255,255,255,.55);
-      font-size: 12px;
-      letter-spacing: .18em;
-      text-transform: uppercase;
       user-select:none;
     }
     .dotline{
       height:1px;
-      width: 54px;
+      width: 92px;
       background: linear-gradient(90deg, rgba(255,255,255,.22), transparent);
       border-radius: 1px;
     }
+    .section-title{
+      display:none; /* ✅ 幽灵模式：默认隐藏 */
+    }
+
     .morebtn{
       border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.06);
-      color: rgba(255,255,255,.72);
+      color: rgba(255,255,255,.70);
       padding: 8px 12px;
       border-radius: 999px;
       font-size: 13px;
@@ -183,7 +194,13 @@
     .morebtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18); }
     .morebtn:active{ transform: translateY(0px) scale(.98); }
 
-    /* 网格 */
+    /* 网格（整体下移：黄金比例留白） */
+    .icons-zone{
+      margin-top: var(--icons-offset);
+      transition: opacity .25s var(--ease2), filter .25s var(--ease2), transform .25s var(--ease2);
+      will-change: transform, filter, opacity;
+    }
+
     .grid{
       display:grid;
       grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -199,9 +216,10 @@
       .hint{ display:none; }
       .greet,.clock{ font-size: 16px; }
       .search input{ font-size: 17px; }
+      :root{ --icons-offset: 10px; }
     }
 
-    /* 去底座：点击区靠 padding 保证 */
+    /* 去底座：点击区靠 padding */
     .item{
       position:relative;
       display:flex;
@@ -209,19 +227,19 @@
       align-items:center;
       gap:10px;
       text-decoration:none;
-      color: var(--muted);
       border-radius: 16px;
       padding: 10px 8px;
       outline: none;
       -webkit-tap-highlight-color: transparent;
       transform: translateZ(0);
+      color: var(--muted2);
     }
 
-    /* ✅ 关键修复：让 ::after 微光有定位参考 */
+    /* 默认降噪：灰度/透明（通过 filter），文字更隐退 */
     .icon{
       position:relative;
-      width: 52px;
-      height: 52px;
+      width: var(--icon-size-more);
+      height: var(--icon-size-more);
       display:grid;
       place-items:center;
       transition: transform .28s var(--ease), filter .28s var(--ease2), opacity .28s var(--ease2);
@@ -230,32 +248,62 @@
       will-change: transform, filter, opacity;
     }
     .icon img{
-      width: 52px;
-      height: 52px;
+      width: 100%;
+      height: 100%;
       object-fit: contain;
       image-rendering: -webkit-optimize-contrast;
       border-radius: 12px;
     }
 
+    /* ✅ Essentials 图标略大（层级梯度） */
+    .grid.essentials .icon{
+      width: var(--icon-size-essential);
+      height: var(--icon-size-essential);
+    }
+
+    /* Hover/Focus：唤醒 */
     .item:hover .icon,
     .item:focus-visible .icon{
       filter: none;
       transform: translateY(-4px);
     }
+
+    /* ✅ 文字降噪：默认更淡，hover 才亮 */
+    .label{
+      font-size: 13px;
+      letter-spacing: .01em;
+      color: rgba(255,255,255,.40);
+      transition: color .22s var(--ease2), transform .22s var(--ease2), background-position .6s var(--ease2);
+      user-select:none;
+    }
     .item:hover .label,
     .item:focus-visible .label{
-      color: rgba(255,255,255,.82);
+      color: rgba(255,255,255,.92);
     }
 
-    /* ✅ 更稳的微光：不用 color-mix（部分 Safari 版本兼容不佳） */
+    /* ✅ “扫光”文字质感 */
+    .item:hover .label{
+      background: linear-gradient(90deg, rgba(255,255,255,.65), rgba(255,255,255,1), rgba(255,255,255,.65));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      background-size: 220% 100%;
+      background-position: 0% 0%;
+      animation: sweep 650ms var(--ease2) both;
+    }
+    @keyframes sweep{
+      from{ background-position: 0% 0%; }
+      to{ background-position: 100% 0%; }
+    }
+
+    /* 微光（品牌色） */
     .item:hover .icon::after,
     .item:focus-visible .icon::after{
       content:"";
       position:absolute;
       inset:-8px;
       border-radius: 18px;
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.12), transparent 60%);
-      box-shadow: 0 0 22px rgba(0,0,0,.15), 0 0 26px var(--glow);
+      box-shadow: 0 0 26px var(--glow);
       opacity: .18;
       filter: blur(10px);
       z-index:-1;
@@ -265,14 +313,6 @@
     /* Tab 聚焦 outline */
     .item:focus-visible{
       box-shadow: 0 0 0 1px rgba(255,255,255,.18), 0 0 0 6px rgba(124,92,255,.14);
-    }
-
-    .label{
-      font-size: 13px;
-      letter-spacing: .01em;
-      color: rgba(255,255,255,.58);
-      transition: color .22s var(--ease2), transform .22s var(--ease2);
-      user-select:none;
     }
 
     /* Alt 才显示快捷键 */
@@ -299,8 +339,7 @@
       transform: translateY(0) scale(1);
     }
 
-    /* ✅ More 区域：不要用 display:none（会破坏 FLIP）
-       改用 max-height/opacity 折叠，动画更像产品 */
+    /* More 折叠（不要 display:none，保 FLIP） */
     .more-area{
       overflow:hidden;
       max-height: 0px;
@@ -309,7 +348,7 @@
       transition: max-height .55s var(--ease2), opacity .35s var(--ease2), transform .35s var(--ease2);
     }
     .more-area.is-open{
-      max-height: 1200px; /* 足够大即可 */
+      max-height: 1200px;
       opacity: 1;
       transform: translateY(0);
     }
@@ -321,11 +360,18 @@
       to{ opacity:1; transform: translateY(0); filter: blur(0); }
     }
 
+    /* ✅ 搜索聚焦“舞台感”：其余世界退后 */
+    .dim-on-focus .icons-zone{
+      opacity:.45;
+      filter: blur(8px);
+      transform: translateY(6px) scale(.98);
+    }
+
     .footer{
       margin-top: 14px;
       display:flex;
       justify-content:center;
-      color: rgba(255,255,255,.26);
+      color: rgba(255,255,255,.22);
       font-size: 12px;
       letter-spacing: .06em;
       user-select:none;
@@ -347,33 +393,32 @@
           <path d="M16.5 16.5 21 21" stroke="rgba(255,255,255,.8)" stroke-width="1.6" stroke-linecap="round"/>
         </svg>
         <input id="q" type="text" placeholder="Search..." />
-        <div class="hint" aria-hidden="true">
+        <div class="hint" id="hint" aria-hidden="true">
           <span class="keycap">/g</span><span>Google</span>
-          <span class="keycap">/y</span><span>YouTube</span>
-          <span class="keycap">/gh</span><span>GitHub</span>
-          <span class="keycap">/c</span><span>ChatGPT</span>
         </div>
       </form>
 
-      <div class="sectionbar">
-        <div class="left">
-          <span class="dotline"></span>
-          <span>Essentials</span>
-        </div>
-        <button class="morebtn" id="toggleMore" type="button">More</button>
-      </div>
-
-      <div class="grid" id="gridEssentials"></div>
-
-      <div class="more-area" id="moreArea" aria-hidden="true">
-        <div class="sectionbar" style="margin-top:6px">
+      <div class="icons-zone" id="iconsZone">
+        <div class="sectionbar">
           <div class="left">
             <span class="dotline"></span>
-            <span>More</span>
+            <span class="section-title">Essentials</span>
           </div>
-          <button class="morebtn" id="toggleLess" type="button">Less</button>
+          <button class="morebtn" id="toggleMore" type="button">More</button>
         </div>
-        <div class="grid" id="gridMore"></div>
+
+        <div class="grid essentials" id="gridEssentials"></div>
+
+        <div class="more-area" id="moreArea" aria-hidden="true">
+          <div class="sectionbar" style="margin-top:6px">
+            <div class="left">
+              <span class="dotline"></span>
+              <span class="section-title">More</span>
+            </div>
+            <button class="morebtn" id="toggleLess" type="button">Less</button>
+          </div>
+          <div class="grid" id="gridMore"></div>
+        </div>
       </div>
 
       <div class="footer">harveyi.com</div>
@@ -382,20 +427,23 @@
 
   <script>
     // ========= 1) 配置：站点 =========
-    // 你要“常用排前面”：改 essentials 的顺序即可
+    // ✅ AI 图标前移：ChatGPT / Claude / Gemini / Copilot
+    // ✅ 移除：Apple / Microsoft / Drive
     const essentials = [
-      { name:"Gmail",      url:"https://mail.google.com/",        key:"M", glow:"rgba(234,67,53,.55)",  icon:"https://www.google.com/s2/favicons?domain=gmail.com&sz=256" },
-      { name:"ChatGPT",    url:"https://chatgpt.com/",            key:"C", glow:"rgba(16,163,127,.55)", icon:"https://www.google.com/s2/favicons?domain=chatgpt.com&sz=256" },
-      { name:"GitHub",     url:"https://github.com/",             key:"H", glow:"rgba(255,255,255,.38)",icon:"https://www.google.com/s2/favicons?domain=github.com&sz=256" },
-      { name:"Cloudflare", url:"https://dash.cloudflare.com/",    key:"F", glow:"rgba(244,129,32,.55)", icon:"https://www.google.com/s2/favicons?domain=cloudflare.com&sz=256" },
-      { name:"Google",     url:"https://www.google.com/",         key:"G", glow:"rgba(66,133,244,.50)", icon:"https://www.google.com/s2/favicons?domain=google.com&sz=256" },
-      { name:"YouTube",    url:"https://www.youtube.com/",        key:"Y", glow:"rgba(255,0,51,.55)",   icon:"https://www.google.com/s2/favicons?domain=youtube.com&sz=256" },
-      { name:"Drive",      url:"https://drive.google.com/",       key:"D", glow:"rgba(52,168,83,.50)",  icon:"https://www.google.com/s2/favicons?domain=drive.google.com&sz=256" },
-      { name:"Calendar",   url:"https://calendar.google.com/",    key:"K", glow:"rgba(66,133,244,.45)", icon:"https://www.google.com/s2/favicons?domain=calendar.google.com&sz=256" },
-      { name:"Microsoft",  url:"https://www.microsoft.com/",      key:"S", glow:"rgba(0,164,239,.50)",  icon:"https://www.google.com/s2/favicons?domain=microsoft.com&sz=256" },
-      { name:"Vultr",      url:"https://my.vultr.com/",           key:"V", glow:"rgba(0,123,252,.55)",  icon:"https://www.google.com/s2/favicons?domain=vultr.com&sz=256" },
-      { name:"Oracle",     url:"https://cloud.oracle.com/",       key:"O", glow:"rgba(255,59,48,.55)",  icon:"https://www.google.com/s2/favicons?domain=oracle.com&sz=256" },
-      { name:"RackNerd",   url:"https://my.racknerd.com/",        key:"R", glow:"rgba(124,92,255,.55)", icon:"https://www.google.com/s2/favicons?domain=racknerd.com&sz=256" }
+      { name:"ChatGPT", url:"https://chatgpt.com/",               key:"C",  glow:"rgba(16,163,127,.55)", icon:"https://www.google.com/s2/favicons?domain=chatgpt.com&sz=256" },
+      { name:"Claude",  url:"https://claude.ai/",                 key:"L",  glow:"rgba(255,210,120,.45)", icon:"https://www.google.com/s2/favicons?domain=claude.ai&sz=256" },
+      { name:"Gemini",  url:"https://gemini.google.com/",         key:"E",  glow:"rgba(66,133,244,.50)", icon:"https://www.google.com/s2/favicons?domain=gemini.google.com&sz=256" },
+      { name:"Copilot", url:"https://copilot.microsoft.com/",     key:"P",  glow:"rgba(0,164,239,.50)", icon:"https://www.google.com/s2/favicons?domain=copilot.microsoft.com&sz=256" },
+
+      { name:"Gmail",      url:"https://mail.google.com/",        key:"M",  glow:"rgba(234,67,53,.55)",  icon:"https://www.google.com/s2/favicons?domain=gmail.com&sz=256" },
+      { name:"Google",     url:"https://www.google.com/",         key:"G",  glow:"rgba(66,133,244,.50)", icon:"https://www.google.com/s2/favicons?domain=google.com&sz=256" },
+      { name:"YouTube",    url:"https://www.youtube.com/",        key:"Y",  glow:"rgba(255,0,51,.55)",   icon:"https://www.google.com/s2/favicons?domain=youtube.com&sz=256" },
+      { name:"GitHub",     url:"https://github.com/",             key:"H",  glow:"rgba(255,255,255,.38)",icon:"https://www.google.com/s2/favicons?domain=github.com&sz=256" },
+      { name:"Cloudflare", url:"https://dash.cloudflare.com/",    key:"F",  glow:"rgba(244,129,32,.55)", icon:"https://www.google.com/s2/favicons?domain=cloudflare.com&sz=256" },
+
+      { name:"Vultr",      url:"https://my.vultr.com/",           key:"V",  glow:"rgba(0,123,252,.55)",  icon:"https://www.google.com/s2/favicons?domain=vultr.com&sz=256" },
+      { name:"Oracle",     url:"https://cloud.oracle.com/",       key:"O",  glow:"rgba(255,59,48,.55)",  icon:"https://www.google.com/s2/favicons?domain=oracle.com&sz=256" },
+      { name:"RackNerd",   url:"https://my.racknerd.com/",        key:"R",  glow:"rgba(124,92,255,.55)", icon:"https://www.google.com/s2/favicons?domain=racknerd.com&sz=256" }
     ];
 
     const more = [
@@ -403,8 +451,7 @@
       { name:"Telegram",   url:"https://web.telegram.org/",       key:"T", glow:"rgba(42,171,238,.55)", icon:"https://www.google.com/s2/favicons?domain=telegram.org&sz=256" },
       { name:"Discord",    url:"https://discord.com/app",         key:"I", glow:"rgba(88,101,242,.55)", icon:"https://www.google.com/s2/favicons?domain=discord.com&sz=256" },
       { name:"Wikipedia",  url:"https://www.wikipedia.org/",      key:"W", glow:"rgba(255,255,255,.35)",icon:"https://www.google.com/s2/favicons?domain=wikipedia.org&sz=256" },
-      { name:"Netflix",    url:"https://www.netflix.com/",        key:"N", glow:"rgba(229,9,20,.55)",   icon:"https://www.google.com/s2/favicons?domain=netflix.com&sz=256" },
-      { name:"Apple",      url:"https://www.apple.com/",          key:"A", glow:"rgba(255,255,255,.35)",icon:"https://www.google.com/s2/favicons?domain=apple.com&sz=256" }
+      { name:"Netflix",    url:"https://www.netflix.com/",        key:"N", glow:"rgba(229,9,20,.55)",   icon:"https://www.google.com/s2/favicons?domain=netflix.com&sz=256" }
     ];
 
     // ========= 2) 渲染 =========
@@ -421,15 +468,16 @@
       a.style.setProperty("--glow", site.glow || "rgba(124,92,255,.55)");
 
       a.classList.add("reveal");
-      a.style.animationDelay = (idx * 28) + "ms";
+      a.style.animationDelay = (idx * 26) + "ms";
 
-      // ✅ srcset 让 Retina 更锐
+      const icon2x = site.icon.replace("sz=256","sz=512");
+
       a.innerHTML = `
         <span class="kbd">${site.key || ""}</span>
         <span class="icon">
           <img
             src="${site.icon}"
-            srcset="${site.icon} 1x, ${site.icon.replace("sz=256","sz=512")} 2x"
+            srcset="${site.icon} 1x, ${icon2x} 2x"
             alt="${site.name}"
             loading="lazy"
             decoding="async"
@@ -454,7 +502,6 @@
     const clockEl = document.getElementById("clock");
 
     const pad = (n)=> String(n).padStart(2,"0");
-
     function updateTime(){
       const d = new Date();
       const h = d.getHours();
@@ -468,7 +515,7 @@
       else g = "Good night.";
       greetEl.textContent = g;
 
-      // 自适应：深夜更沉，清晨稍亮（克制）
+      // 深夜更沉，清晨稍亮（克制）
       const root = document.documentElement;
       if(h >= 2 && h <= 5){
         root.style.setProperty("--bg0", "#05070E");
@@ -492,7 +539,10 @@
       "/g":  (t)=> `https://www.google.com/search?q=${encodeURIComponent(t)}`,
       "/y":  (t)=> `https://www.youtube.com/results?search_query=${encodeURIComponent(t)}`,
       "/gh": (t)=> `https://github.com/search?q=${encodeURIComponent(t)}`,
-      "/r":  (t)=> `https://www.reddit.com/search/?q=${encodeURIComponent(t)}`
+      "/r":  (t)=> `https://www.reddit.com/search/?q=${encodeURIComponent(t)}`,
+      "/cl": (t)=> `https://claude.ai/`,
+      "/gm": (t)=> `https://gemini.google.com/`,
+      "/cp": (t)=> `https://copilot.microsoft.com/`
     };
 
     searchForm.addEventListener("submit", (e)=>{
@@ -500,10 +550,10 @@
       const raw = (q.value || "").trim();
       if(!raw) return;
 
-      if(raw === "/c"){
-        window.open("https://chatgpt.com/", "_blank", "noopener");
-        return;
-      }
+      if(raw === "/c"){ window.open("https://chatgpt.com/", "_blank", "noopener"); return; }
+      if(raw === "/cl"){ window.open("https://claude.ai/", "_blank", "noopener"); return; }
+      if(raw === "/gm"){ window.open("https://gemini.google.com/", "_blank", "noopener"); return; }
+      if(raw === "/cp"){ window.open("https://copilot.microsoft.com/", "_blank", "noopener"); return; }
 
       const parts = raw.split(/\s+/);
       const prefix = parts[0];
@@ -513,19 +563,40 @@
       window.open(url, "_blank", "noopener");
     });
 
-    // 打开就能打字
     window.addEventListener("load", ()=> q.focus({preventScroll:true}));
-
-    // 搜索聚焦：降噪
     q.addEventListener("focus", ()=> app.classList.add("dim-on-focus"));
     q.addEventListener("blur",  ()=> app.classList.remove("dim-on-focus"));
 
-    // ========= 5) Alt 才显示快捷键 =========
+    // ========= 5) 动态流提示轮播 =========
+    const hintEl = document.getElementById("hint");
+    const hintItems = [
+      { k:"/g",  t:"Google" },
+      { k:"/gh", t:"GitHub" },
+      { k:"/y",  t:"YouTube" },
+      { k:"/r",  t:"Reddit" },
+      { k:"/cl", t:"Claude" },
+      { k:"/gm", t:"Gemini" },
+      { k:"/cp", t:"Copilot" },
+      { k:"/c",  t:"ChatGPT" }
+    ];
+    let hintIdx = 0;
+    function rotateHint(){
+      hintEl.classList.add("fade");
+      setTimeout(()=>{
+        hintIdx = (hintIdx + 1) % hintItems.length;
+        const it = hintItems[hintIdx];
+        hintEl.innerHTML = `<span class="keycap">${it.k}</span><span>${it.t}</span>`;
+        hintEl.classList.remove("fade");
+      }, 220);
+    }
+    setInterval(rotateHint, 3200);
+
+    // ========= 6) Alt 才显示快捷键 =========
     const setHotkeys = (on)=> document.body.classList.toggle("show-hotkeys", on);
     window.addEventListener("keydown", (e)=>{ if(e.altKey) setHotkeys(true); });
     window.addEventListener("keyup",   (e)=>{ if(!e.altKey) setHotkeys(false); });
 
-    // ========= 6) 单键快捷跳转（不干扰输入） =========
+    // ========= 7) 单键快捷跳转 =========
     const shortcutMap = new Map();
     [...essentials, ...more].forEach(s=>{ if(s.key) shortcutMap.set(s.key.toUpperCase(), s.url); });
 
@@ -548,7 +619,7 @@
       }
     });
 
-    // ========= 7) More 展开：FLIP 动画（网格不跳动） =========
+    // ========= 8) More 展开：FLIP =========
     const moreArea = document.getElementById("moreArea");
     const btnMore = document.getElementById("toggleMore");
     const btnLess = document.getElementById("toggleLess");
@@ -558,11 +629,9 @@
       const first = new Map();
       items.forEach(el=> first.set(el, el.getBoundingClientRect()));
 
-      // toggle（注意：不再 display:none）
       moreArea.classList.toggle("is-open", show);
       moreArea.setAttribute("aria-hidden", show ? "false" : "true");
 
-      // 强制布局更新
       void document.body.offsetHeight;
 
       const items2 = document.querySelectorAll(".item");
@@ -587,9 +656,30 @@
 
       btnMore.style.visibility = show ? "hidden" : "visible";
     }
-
     btnMore.addEventListener("click", ()=> flipToggle(true));
     btnLess.addEventListener("click", ()=> flipToggle(false));
+
+    // ========= 9) Magnetic Effect（桌面端）：微量吸附 =========
+    // 移动端/触屏直接跳过
+    const isCoarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+
+    if(!isCoarse){
+      const items = document.querySelectorAll(".item");
+      const strength = 10; // 像素级，非常克制
+      items.forEach(el=>{
+        el.addEventListener("mousemove", (e)=>{
+          const r = el.getBoundingClientRect();
+          const cx = r.left + r.width/2;
+          const cy = r.top + r.height/2;
+          const dx = (e.clientX - cx) / (r.width/2);
+          const dy = (e.clientY - cy) / (r.height/2);
+          el.style.transform = `translate(${dx*strength}px, ${dy*strength}px) translateZ(0)`;
+        });
+        el.addEventListener("mouseleave", ()=>{
+          el.style.transform = "translateZ(0)";
+        });
+      });
+    }
   </script>
 </body>
 </html>
