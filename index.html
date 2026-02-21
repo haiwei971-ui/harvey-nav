@@ -32,7 +32,6 @@
       --icon-size-essential: 55px;
       --icon-size-more: 52px;
 
-      --searchGlow: rgba(124,92,255,.45);
       --spot: rgba(124,92,255,.18);
     }
 
@@ -44,13 +43,13 @@
       font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      letter-spacing: .015em; /* ✅ 更“丝” */
+      letter-spacing: .015em;
       background: linear-gradient(180deg, var(--bg1), var(--bg0));
       overflow-x:hidden;
       position:relative;
     }
 
-    /* ✅ 呼吸背景：极慢漂移的超大模糊光斑（不干扰） */
+    /* 呼吸背景 */
     .aura{
       position:fixed; inset:-30%;
       pointer-events:none;
@@ -92,18 +91,9 @@
       background: radial-gradient(circle at 30% 30%, rgba(0,255,170,.14), transparent 65%);
       animation: drift3 56s ease-in-out infinite;
     }
-    @keyframes drift1{
-      0%,100%{ transform: translate(0,0) scale(1); }
-      50%{ transform: translate(6%, 4%) scale(1.04); }
-    }
-    @keyframes drift2{
-      0%,100%{ transform: translate(0,0) scale(1); }
-      50%{ transform: translate(-5%, 3%) scale(1.03); }
-    }
-    @keyframes drift3{
-      0%,100%{ transform: translate(0,0) scale(1); }
-      50%{ transform: translate(4%, -4%) scale(1.05); }
-    }
+    @keyframes drift1{ 0%,100%{ transform: translate(0,0) scale(1); } 50%{ transform: translate(6%, 4%) scale(1.04); } }
+    @keyframes drift2{ 0%,100%{ transform: translate(0,0) scale(1); } 50%{ transform: translate(-5%, 3%) scale(1.03); } }
+    @keyframes drift3{ 0%,100%{ transform: translate(0,0) scale(1); } 50%{ transform: translate(4%, -4%) scale(1.05); } }
 
     /* 轻微磨砂颗粒 */
     body::before{
@@ -187,7 +177,6 @@
     }
     .search input::placeholder{ color: rgba(255,255,255,.40); }
 
-    /* ✅ 右侧信息区：轮播提示 + 计算结果 */
     .rightInfo{
       flex:0 0 auto;
       display:flex;
@@ -216,7 +205,7 @@
       white-space: nowrap;
     }
 
-    /* ✅ 即时预览下拉（Raycast感） */
+    /* 预览 panel */
     .panel{
       position:absolute;
       left: 0;
@@ -261,7 +250,6 @@
       justify-content:space-between;
       margin: 10px 2px 10px;
     }
-    .sectionbar .left{ display:flex; align-items:center; gap:12px; }
     .dotline{
       height:1px;
       width: 92px;
@@ -320,6 +308,7 @@
       color: var(--muted2);
     }
 
+    /* 其它站点：img */
     .icon{
       position:relative;
       width: var(--icon-size-more);
@@ -338,27 +327,69 @@
       image-rendering: -webkit-optimize-contrast;
       border-radius: 12px;
     }
-
     .grid.essentials .icon{ width: var(--icon-size-essential); height: var(--icon-size-essential); }
 
-    .label{
-      font-size: 13px;
-      font-weight: 300;
-      letter-spacing: .02em;
-      color: rgba(255,255,255,.36);
-      transition: color .22s var(--ease2), background-position .6s var(--ease2);
-      user-select:none;
+    /* SVG 核心图标：icon-wrapper */
+    .icon-wrapper{
+      width: var(--icon-size-more);
+      height: var(--icon-size-more);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color: rgba(255,255,255,0.40); /* 默认休眠灰 */
+      transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+      position: relative;
+      will-change: transform, filter, color;
+    }
+    .grid.essentials .icon-wrapper{
+      width: var(--icon-size-essential);
+      height: var(--icon-size-essential);
+    }
+    .icon-wrapper svg{
+      width: 36px;
+      height: 36px;
+      display:block;
     }
 
+    /* Hover/Focus：唤醒 */
     .item:hover .icon,
     .item:focus-visible .icon{
       filter:none;
       transform: translateY(-4px);
     }
+    .item:hover .icon-wrapper,
+    .item:focus-visible .icon-wrapper{
+      transform: translateY(-5px) scale(1.06);
+      filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.3));
+    }
 
-    /* ✅ spotlight：点亮时局部透光（非常轻） */
+    /* 品牌色（仅这三个 SVG） */
+    .icon-gemini{ color: rgba(255,255,255,0.40); }
+    .icon-claude{ color: rgba(255,255,255,0.40); }
+    .icon-chatgpt{ color: rgba(255,255,255,0.40); }
+
+    .item:hover .icon-gemini,
+    .item:focus-visible .icon-gemini{
+      color:#4e85ff;
+      filter: drop-shadow(0 0 12px rgba(78,133,255,0.50));
+    }
+    .item:hover .icon-claude,
+    .item:focus-visible .icon-claude{
+      color:#d97757;
+      filter: drop-shadow(0 0 12px rgba(217,119,87,0.40));
+    }
+    .item:hover .icon-chatgpt,
+    .item:focus-visible .icon-chatgpt{
+      color:#10a37f;
+      filter: drop-shadow(0 0 12px rgba(16,163,127,0.28));
+    }
+
+    /* Spotlight */
     .item:hover .icon::before,
-    .item:focus-visible .icon::before{
+    .item:focus-visible .icon::before,
+    .item:hover .icon-wrapper::before,
+    .item:focus-visible .icon-wrapper::before{
       content:"";
       position:absolute;
       inset:-26px;
@@ -370,20 +401,15 @@
       pointer-events:none;
     }
 
-    .item:hover .icon::after,
-    .item:focus-visible .icon::after{
-      content:"";
-      position:absolute;
-      inset:-8px;
-      border-radius: 18px;
-      box-shadow: 0 0 26px var(--glow);
-      opacity: .16;
-      filter: blur(10px);
-      z-index:-1;
-      pointer-events:none;
+    .label{
+      font-size: 13px;
+      font-weight: 300;
+      letter-spacing: .02em;
+      color: rgba(255,255,255,.36);
+      transition: color .22s var(--ease2), background-position .6s var(--ease2);
+      user-select:none;
     }
 
-    /* ✅ 扫光文字 */
     .item:hover .label,
     .item:focus-visible .label{
       background: linear-gradient(90deg, rgba(255,255,255,.60), rgba(255,255,255,1), rgba(255,255,255,.60));
@@ -396,7 +422,6 @@
     }
     @keyframes sweep{ from{ background-position: 0% 0%; } to{ background-position: 100% 0%; } }
 
-    /* Tab 聚焦 outline */
     .item:focus-visible{
       box-shadow: 0 0 0 1px rgba(255,255,255,.18), 0 0 0 6px rgba(124,92,255,.14);
     }
@@ -437,21 +462,11 @@
       to{ opacity:1; transform: translateY(0); filter: blur(0); }
     }
 
-    /* ✅ 搜索聚焦“舞台感” */
+    /* 搜索聚焦舞台感 */
     .dim-on-focus .icons-zone{
       opacity:.42;
       filter: blur(8px);
       transform: translateY(6px) scale(.98);
-    }
-
-    .footer{
-      margin-top: 14px;
-      display:flex;
-      justify-content:center;
-      color: rgba(255,255,255,.20);
-      font-size: 12px;
-      letter-spacing: .08em;
-      user-select:none;
     }
   </style>
 </head>
@@ -479,13 +494,12 @@
             <span class="calc" id="calcOut"></span>
           </div>
         </form>
-
         <div class="panel" id="panel" role="listbox" aria-label="Suggestions"></div>
       </div>
 
-      <div class="icons-zone" id="iconsZone">
+      <div class="icons-zone">
         <div class="sectionbar">
-          <div class="left"><span class="dotline"></span></div>
+          <div><span class="dotline"></span></div>
           <button class="morebtn" id="toggleMore" type="button">More</button>
         </div>
 
@@ -493,62 +507,64 @@
 
         <div class="more-area" id="moreArea" aria-hidden="true">
           <div class="sectionbar" style="margin-top:6px">
-            <div class="left"><span class="dotline"></span></div>
+            <div><span class="dotline"></span></div>
             <button class="morebtn" id="toggleLess" type="button">Less</button>
           </div>
           <div class="grid" id="gridMore"></div>
         </div>
       </div>
-
-      <div class="footer">harveyi.com</div>
+      <!-- ✅ footer 已去掉 -->
     </div>
   </div>
 
   <script>
-    // ========= 可选：智能排序开关（默认 false 不打乱） =========
-    const SMART_SORT = false; // 想要“越用越聪明”就改成 true
+    // ========== 站点配置：仅 3 个核心用 SVG ==========
+    const essentials = [
+      { name:"ChatGPT", url:"https://chatgpt.com/",           key:"C", kind:"svg", svg:"chatgpt", cls:"icon-chatgpt" },
+      { name:"Claude",  url:"https://claude.ai/",             key:"L", kind:"svg", svg:"claude",  cls:"icon-claude"  },
+      { name:"Gemini",  url:"https://gemini.google.com/",     key:"E", kind:"svg", svg:"gemini",  cls:"icon-gemini"  },
 
-    // ========= 1) 站点配置（AI 前移；去 Apple/Microsoft/Drive） =========
-    const essentialsBase = [
-      { name:"ChatGPT", url:"https://chatgpt.com/",               key:"C", glow:"rgba(16,163,127,.55)", spot:"rgba(16,163,127,.18)", icon:"https://www.google.com/s2/favicons?domain=chatgpt.com&sz=256" },
-      { name:"Claude",  url:"https://claude.ai/",                 key:"L", glow:"rgba(255,210,120,.40)",spot:"rgba(255,210,120,.14)", icon:"https://www.google.com/s2/favicons?domain=claude.ai&sz=256" },
-      { name:"Gemini",  url:"https://gemini.google.com/",         key:"E", glow:"rgba(66,133,244,.50)", spot:"rgba(66,133,244,.16)", icon:"https://www.google.com/s2/favicons?domain=gemini.google.com&sz=256" },
-      { name:"Copilot", url:"https://copilot.microsoft.com/",     key:"P", glow:"rgba(0,164,239,.50)", spot:"rgba(0,164,239,.16)", icon:"https://www.google.com/s2/favicons?domain=copilot.microsoft.com&sz=256" },
+      { name:"Copilot", url:"https://copilot.microsoft.com/", key:"P", kind:"img", icon:"https://www.google.com/s2/favicons?domain=copilot.microsoft.com&sz=256" },
+      { name:"Gmail",   url:"https://mail.google.com/",       key:"M", kind:"img", icon:"https://www.google.com/s2/favicons?domain=gmail.com&sz=256" },
+      { name:"Google",  url:"https://www.google.com/",        key:"G", kind:"img", icon:"https://www.google.com/s2/favicons?domain=google.com&sz=256" },
+      { name:"YouTube", url:"https://www.youtube.com/",       key:"Y", kind:"img", icon:"https://www.google.com/s2/favicons?domain=youtube.com&sz=256" },
+      { name:"GitHub",  url:"https://github.com/",            key:"H", kind:"img", icon:"https://www.google.com/s2/favicons?domain=github.com&sz=256" },
+      { name:"Cloudflare", url:"https://dash.cloudflare.com/",key:"F", kind:"img", icon:"https://www.google.com/s2/favicons?domain=cloudflare.com&sz=256" },
 
-      { name:"Gmail",      url:"https://mail.google.com/",        key:"M", glow:"rgba(234,67,53,.55)",  spot:"rgba(234,67,53,.16)",  icon:"https://www.google.com/s2/favicons?domain=gmail.com&sz=256" },
-      { name:"Google",     url:"https://www.google.com/",         key:"G", glow:"rgba(66,133,244,.50)", spot:"rgba(66,133,244,.16)", icon:"https://www.google.com/s2/favicons?domain=google.com&sz=256" },
-      { name:"YouTube",    url:"https://www.youtube.com/",        key:"Y", glow:"rgba(255,0,51,.55)",   spot:"rgba(255,0,51,.16)",   icon:"https://www.google.com/s2/favicons?domain=youtube.com&sz=256" },
-      { name:"GitHub",     url:"https://github.com/",             key:"H", glow:"rgba(255,255,255,.32)",spot:"rgba(255,255,255,.10)",icon:"https://www.google.com/s2/favicons?domain=github.com&sz=256" },
-      { name:"Cloudflare", url:"https://dash.cloudflare.com/",    key:"F", glow:"rgba(244,129,32,.55)", spot:"rgba(244,129,32,.16)", icon:"https://www.google.com/s2/favicons?domain=cloudflare.com&sz=256" },
-
-      { name:"Vultr",      url:"https://my.vultr.com/",           key:"V", glow:"rgba(0,123,252,.55)",  spot:"rgba(0,123,252,.16)",  icon:"https://www.google.com/s2/favicons?domain=vultr.com&sz=256" },
-      { name:"Oracle",     url:"https://cloud.oracle.com/",       key:"O", glow:"rgba(255,59,48,.55)",  spot:"rgba(255,59,48,.16)",  icon:"https://www.google.com/s2/favicons?domain=oracle.com&sz=256" },
-      { name:"RackNerd",   url:"https://my.racknerd.com/",        key:"R", glow:"rgba(124,92,255,.55)", spot:"rgba(124,92,255,.16)", icon:"https://www.google.com/s2/favicons?domain=racknerd.com&sz=256" }
+      { name:"Vultr",   url:"https://my.vultr.com/",          key:"V", kind:"img", icon:"https://www.google.com/s2/favicons?domain=vultr.com&sz=256" },
+      { name:"Oracle",  url:"https://cloud.oracle.com/",      key:"O", kind:"img", icon:"https://www.google.com/s2/favicons?domain=oracle.com&sz=256" },
+      { name:"RackNerd",url:"https://my.racknerd.com/",       key:"R", kind:"img", icon:"https://www.google.com/s2/favicons?domain=racknerd.com&sz=256" }
     ];
 
     const more = [
-      { name:"Reddit",     url:"https://www.reddit.com/",         key:"U", glow:"rgba(255,69,0,.55)",   spot:"rgba(255,69,0,.16)",   icon:"https://www.google.com/s2/favicons?domain=reddit.com&sz=256" },
-      { name:"Telegram",   url:"https://web.telegram.org/",       key:"T", glow:"rgba(42,171,238,.55)", spot:"rgba(42,171,238,.16)", icon:"https://www.google.com/s2/favicons?domain=telegram.org&sz=256" },
-      { name:"Discord",    url:"https://discord.com/app",         key:"I", glow:"rgba(88,101,242,.55)", spot:"rgba(88,101,242,.16)", icon:"https://www.google.com/s2/favicons?domain=discord.com&sz=256" },
-      { name:"Wikipedia",  url:"https://www.wikipedia.org/",      key:"W", glow:"rgba(255,255,255,.30)",spot:"rgba(255,255,255,.10)",icon:"https://www.google.com/s2/favicons?domain=wikipedia.org&sz=256" },
-      { name:"Netflix",    url:"https://www.netflix.com/",        key:"N", glow:"rgba(229,9,20,.55)",   spot:"rgba(229,9,20,.16)",   icon:"https://www.google.com/s2/favicons?domain=netflix.com&sz=256" }
+      { name:"Reddit",   url:"https://www.reddit.com/",       key:"U", kind:"img", icon:"https://www.google.com/s2/favicons?domain=reddit.com&sz=256" },
+      { name:"Telegram", url:"https://web.telegram.org/",     key:"T", kind:"img", icon:"https://www.google.com/s2/favicons?domain=telegram.org&sz=256" },
+      { name:"Discord",  url:"https://discord.com/app",       key:"I", kind:"img", icon:"https://www.google.com/s2/favicons?domain=discord.com&sz=256" },
+      { name:"Wikipedia",url:"https://www.wikipedia.org/",    key:"W", kind:"img", icon:"https://www.google.com/s2/favicons?domain=wikipedia.org&sz=256" },
+      { name:"Netflix",  url:"https://www.netflix.com/",      key:"N", kind:"img", icon:"https://www.google.com/s2/favicons?domain=netflix.com&sz=256" }
     ];
 
-    // ========= 2) 点击频率（Smart Sorting） =========
-    const HIT_KEY = "nav_hits_v1";
-    const hits = JSON.parse(localStorage.getItem(HIT_KEY) || "{}");
-    const bumpHit = (name)=>{
-      hits[name] = (hits[name] || 0) + 1;
-      localStorage.setItem(HIT_KEY, JSON.stringify(hits));
+    // ========== SVG 资产（按你最新提供的 3 个） ==========
+    const SVG = {
+      gemini: `
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="currentColor"/>
+        </svg>
+      `,
+      claude: `
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12 2L4.5 20.5H19.5L12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          <circle cx="12" cy="13" r="3" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+      `,
+      chatgpt: `
+        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M22.28 9.82a5.98 5.98 0 0 0-.51-4.91 6.05 6.05 0 0 0-3.95-3.13 6.03 6.03 0 0 0-5.17 1.04 6.03 6.03 0 0 0-4.38-1.93 6.05 6.05 0 0 0-5.04 2.75 6 6 0 0 0-1.47 5.03c.12 1.83.68 3.51 1.55 4.91a6.05 6.05 0 0 0 3.95 3.13 6.03 6.03 0 0 0 5.17-1.04 6.03 6.03 0 0 0 4.38 1.93 6.05 6.05 0 0 0 5.04-2.75 6 6 0 0 0 1.47-5.03c-.12-1.83-.68-3.51-1.55-4.91zm-7.1 9.45a3.73 3.73 0 0 1-2.68-.31l.1-.06 5.28-3.05a.43.43 0 0 0 .21-.37v-7.37l2.12 1.22a3.74 3.74 0 0 1 1.63 3.56 3.75 3.75 0 0 1-2.48 3.49l-4.18 2.41z"/>
+        </svg>
+      `
     };
 
-    function sortedEssentials(){
-      const list = [...essentialsBase];
-      if(!SMART_SORT) return list;
-      return list.sort((a,b)=> (hits[b.name]||0) - (hits[a.name]||0));
-    }
-
-    // ========= 3) 渲染 =========
+    // ========== 渲染 ==========
     const gridEss = document.getElementById("gridEssentials");
     const gridMore = document.getElementById("gridMore");
 
@@ -558,30 +574,26 @@
       a.href = site.url;
       a.target = "_blank";
       a.rel = "noopener noreferrer";
-      a.style.setProperty("--glow", site.glow || "rgba(124,92,255,.55)");
-      a.style.setProperty("--spot", site.spot || "rgba(124,92,255,.18)");
-
       a.classList.add("reveal");
       a.style.animationDelay = (idx * 26) + "ms";
 
-      const icon2x = site.icon.replace("sz=256","sz=512");
+      const iconHTML = site.kind === "svg"
+        ? `<span class="icon-wrapper ${site.cls || ""}">${SVG[site.svg] || ""}</span>`
+        : (() => {
+            const icon2x = site.icon.replace("sz=256","sz=512");
+            return `<span class="icon"><img src="${site.icon}" srcset="${site.icon} 1x, ${icon2x} 2x" alt="${site.name}" loading="lazy" decoding="async"></span>`;
+          })();
+
       a.innerHTML = `
         <span class="kbd">${site.key || ""}</span>
-        <span class="icon">
-          <img src="${site.icon}" srcset="${site.icon} 1x, ${icon2x} 2x" alt="${site.name}" loading="lazy" decoding="async" />
-        </span>
+        ${iconHTML}
         <span class="label">${site.name}</span>
       `;
-
       if(!site.key) a.querySelector(".kbd").style.display = "none";
-
-      a.addEventListener("click", ()=> bumpHit(site.name));
       return a;
     }
 
     function render(){
-      const essentials = sortedEssentials();
-
       gridEss.innerHTML = "";
       gridMore.innerHTML = "";
       essentials.forEach((s,i)=> gridEss.appendChild(makeItem(s,i)));
@@ -589,7 +601,7 @@
     }
     render();
 
-    // ========= 4) 时间 + 问候 =========
+    // ========== 时间 + 问候 ==========
     const greetEl = document.getElementById("greet");
     const clockEl = document.getElementById("clock");
 
@@ -622,10 +634,12 @@
     updateTime();
     setInterval(updateTime, 1000 * 15);
 
-    // ========= 5) 搜索：Bangs + 全局快捷呼出 =========
+    // ========== 搜索 + Deep Search ==========
     const app = document.getElementById("app");
     const q = document.getElementById("q");
     const searchForm = document.getElementById("searchForm");
+    const panel = document.getElementById("panel");
+    const calcOut = document.getElementById("calcOut");
 
     const engines = {
       "/g":  (t)=> `https://www.google.com/search?q=${encodeURIComponent(t)}`,
@@ -637,7 +651,6 @@
       "/cp": ()=> `https://copilot.microsoft.com/`,
       "/c":  ()=> `https://chatgpt.com/`
     };
-
     function openURL(url){ window.open(url, "_blank", "noopener"); }
 
     searchForm.addEventListener("submit", (e)=>{
@@ -655,12 +668,11 @@
         openURL(engines[prefix]());
         return;
       }
-
       const url = engines[prefix] ? engines[prefix](rest || "") : engines["/g"](raw);
       openURL(url);
     });
 
-    // ✅ ⌘K / Ctrl+K：全局呼出
+    // ⌘K / Ctrl+K 呼出
     window.addEventListener("keydown", (e)=>{
       const isK = (e.key || "").toLowerCase() === "k";
       if((e.metaKey || e.ctrlKey) && isK){
@@ -671,17 +683,6 @@
       }
     });
 
-    // / 聚焦搜索（不打字时）
-    window.addEventListener("keydown", (e)=>{
-      const active = document.activeElement;
-      const typing = active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA" || active.isContentEditable);
-      if(typing) return;
-      if(e.key === "/"){
-        e.preventDefault();
-        q.focus({preventScroll:true});
-      }
-    });
-
     window.addEventListener("load", ()=> q.focus({preventScroll:true}));
     q.addEventListener("focus", ()=> app.classList.add("dim-on-focus"));
     q.addEventListener("blur",  ()=> {
@@ -689,21 +690,25 @@
       setTimeout(()=> hidePanel(), 120);
     });
 
-    // ========= 6) Alt 显示快捷键提示 =========
+    // Alt 才显示快捷键
     const setHotkeys = (on)=> document.body.classList.toggle("show-hotkeys", on);
     window.addEventListener("keydown", (e)=>{ if(e.altKey) setHotkeys(true); });
     window.addEventListener("keyup",   (e)=>{ if(!e.altKey) setHotkeys(false); });
 
     // 单键跳转（不在输入框）
     const shortcutMap = new Map();
-    [...essentialsBase, ...more].forEach(s=>{ if(s.key) shortcutMap.set(s.key.toUpperCase(), s.url); });
-
+    [...essentials, ...more].forEach(s=>{ if(s.key) shortcutMap.set(s.key.toUpperCase(), s.url); });
     window.addEventListener("keydown", (e)=>{
       const active = document.activeElement;
       const typing = active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA" || active.isContentEditable);
       if(typing) return;
       if(e.altKey) return;
 
+      if(e.key === "/"){
+        e.preventDefault();
+        q.focus({preventScroll:true});
+        return;
+      }
       const k = (e.key || "").toUpperCase();
       if(shortcutMap.has(k)){
         e.preventDefault();
@@ -711,7 +716,7 @@
       }
     });
 
-    // ========= 7) More：FLIP =========
+    // More：FLIP
     const moreArea = document.getElementById("moreArea");
     const btnMore = document.getElementById("toggleMore");
     const btnLess = document.getElementById("toggleLess");
@@ -751,29 +756,7 @@
     btnMore.addEventListener("click", ()=> flipToggle(true));
     btnLess.addEventListener("click", ()=> flipToggle(false));
 
-    // ========= 8) Magnetic Effect（桌面端，极克制） =========
-    const isCoarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
-    if(!isCoarse){
-      const strength = 10;
-      document.addEventListener("mousemove", ()=>{}); // 预热
-      const items = document.querySelectorAll(".item");
-      items.forEach(el=>{
-        el.addEventListener("mousemove", (e)=>{
-          const r = el.getBoundingClientRect();
-          const cx = r.left + r.width/2;
-          const cy = r.top + r.height/2;
-          const dx = (e.clientX - cx) / (r.width/2);
-          const dy = (e.clientY - cy) / (r.height/2);
-          el.style.transform = `translate(${dx*strength}px, ${dy*strength}px) translateZ(0)`;
-        });
-        el.addEventListener("mouseleave", ()=>{ el.style.transform = "translateZ(0)"; });
-      });
-    }
-
-    // ========= 9) Deep Search：即时预览 + 历史 + Google Suggest(JSONP) =========
-    const panel = document.getElementById("panel");
-    const calcOut = document.getElementById("calcOut");
-
+    // ===== Deep Search：历史 + Google Suggest(JSONP) + 计算器/单位/汇率 =====
     const HIST_KEY = "nav_history_v1";
     const MAX_HIST = 8;
     function getHistory(){
@@ -785,6 +768,9 @@
       localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0, MAX_HIST)));
     }
 
+    function escapeHTML(s){
+      return String(s).replace(/[&<>"']/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+    }
     function hidePanel(){
       panel.classList.remove("show");
       panel.innerHTML = "";
@@ -795,7 +781,7 @@
         const div = document.createElement("div");
         div.className = "row";
         div.innerHTML = `<span class="dot"></span><span>${escapeHTML(r.text)}</span><span class="sub">${escapeHTML(r.sub || "")}</span>`;
-        div.addEventListener("mousedown", (e)=>{ e.preventDefault(); }); // 防止 blur
+        div.addEventListener("mousedown", (e)=>{ e.preventDefault(); });
         div.addEventListener("click", ()=>{
           q.value = r.fill || r.text;
           q.focus({preventScroll:true});
@@ -809,11 +795,6 @@
       panel.classList.add("show");
     }
 
-    function escapeHTML(s){
-      return String(s).replace(/[&<>"']/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
-    }
-
-    // —— 计算器 / 单位换算（即时结果显示在右侧）——
     const unitMap = {
       "in": { "cm": v=> v*2.54, "m": v=> v*0.0254 },
       "cm": { "in": v=> v/2.54, "m": v=> v/100 },
@@ -823,7 +804,6 @@
     };
 
     async function fxConvert(amount, from, to){
-      // 免费汇率接口（不保证一直稳定），失败就返回 null 不影响主功能
       try{
         const url = `https://api.exchangerate.host/convert?amount=${encodeURIComponent(amount)}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
         const res = await fetch(url, { cache:"no-store" });
@@ -833,15 +813,19 @@
       return null;
     }
 
+    function formatNum(n){
+      const abs = Math.abs(n);
+      if(abs >= 1000) return n.toLocaleString(undefined, { maximumFractionDigits: 4 });
+      return n.toLocaleString(undefined, { maximumFractionDigits: 6 });
+    }
+
     let fxTimer = null;
     let lastFxKey = "";
 
     function tryCompute(raw){
       calcOut.textContent = "";
-
       const s = raw.trim();
 
-      // 1) 纯算式：允许数字/运算符/括号/小数点/空格
       if(/^[\d\s\.\+\-\*\/\%\(\)]+$/.test(s) && /[\+\-\*\/\%]/.test(s)){
         try{
           const v = Function(`"use strict";return (${s})`)();
@@ -852,7 +836,6 @@
         }catch(_){}
       }
 
-      // 2) 单位换算： "12 in to cm"
       const um = s.match(/^(\d+(?:\.\d+)?)\s*([a-zA-Z]+)\s*(?:to|in)\s*([a-zA-Z]+)$/i);
       if(um){
         const val = parseFloat(um[1]);
@@ -865,14 +848,11 @@
         }
       }
 
-      // 3) 汇率： "100 usd to cny"
       const fm = s.match(/^(\d+(?:\.\d+)?)\s*([A-Za-z]{3})\s*(?:to|in)\s*([A-Za-z]{3})$/);
       if(fm){
         const amt = parseFloat(fm[1]);
         const from = fm[2].toUpperCase();
         const to = fm[3].toUpperCase();
-
-        // 去抖
         const k = `${amt}-${from}-${to}`;
         if(k === lastFxKey) return;
         lastFxKey = k;
@@ -887,13 +867,6 @@
       }
     }
 
-    function formatNum(n){
-      const abs = Math.abs(n);
-      if(abs >= 1000) return n.toLocaleString(undefined, { maximumFractionDigits: 4 });
-      return n.toLocaleString(undefined, { maximumFractionDigits: 6 });
-    }
-
-    // —— Google Suggest：JSONP（跨域可用）——
     let jsonpId = 0;
     function googleSuggest(query){
       return new Promise((resolve)=>{
@@ -906,15 +879,12 @@
           cleanup();
         };
         const script = document.createElement("script");
-        const url = `https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(query)}&callback=${cb}`;
-        script.src = url;
+        script.src = `https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(query)}&callback=${cb}`;
         script.async = true;
-
         const cleanup = ()=>{
           if(script && script.parentNode) script.parentNode.removeChild(script);
           try{ delete window[cb]; }catch(_){ window[cb] = undefined; }
         };
-
         script.onerror = ()=>{ resolve([]); cleanup(); };
         document.body.appendChild(script);
       });
@@ -923,46 +893,34 @@
     let suggestTimer = null;
     async function showPanelFromInput(){
       const raw = (q.value || "").trim();
-
-      // 计算即时显示
       tryCompute(raw);
 
       if(!raw){
-        // 空输入：显示历史
         const hist = getHistory();
         if(hist.length){
           showPanel(hist.map(t=>({ text:t, sub:"history", fill:t, action:"search" })));
-        }else{
-          hidePanel();
-        }
+        }else hidePanel();
         return;
       }
 
-      // 有输入：先展示“历史匹配”，同时异步拉 suggest
       const hist = getHistory().filter(x=> x.toLowerCase().includes(raw.toLowerCase())).slice(0,4);
       const rows = hist.map(t=>({ text:t, sub:"history", fill:t, action:"search" }));
-
       showPanel(rows.length ? rows : [{ text: raw, sub:"search", fill: raw, action:"search" }]);
 
       clearTimeout(suggestTimer);
       suggestTimer = setTimeout(async ()=>{
-        // 如果是 Bang 前缀，就别拉建议（保持克制）
         if(raw.startsWith("/")) return;
-
         const sug = await googleSuggest(raw);
         const sugRows = sug.map(t=>({ text:t, sub:"suggest", fill:t, action:"search" }));
         if(sugRows.length){
-          // 合并历史 + 建议，历史优先
           const merged = [...rows, ...sugRows].slice(0,7);
           showPanel(merged);
         }
       }, 180);
     }
-
     q.addEventListener("input", showPanelFromInput);
     q.addEventListener("focus", showPanelFromInput);
 
-    // ESC 关闭
     window.addEventListener("keydown", (e)=>{
       if(e.key === "Escape"){
         hidePanel();
@@ -970,7 +928,7 @@
       }
     });
 
-    // ========= 10) 右侧提示轮播 =========
+    // 右侧提示轮播
     const hintKey = document.getElementById("hintKey");
     const hintText = document.getElementById("hintText");
     const rightInfo = document.getElementById("rightInfo");
@@ -987,7 +945,6 @@
       { k:"⌘K",  t:"Focus Search" }
     ];
     let hintIdx = 0;
-
     function rotateHint(){
       rightInfo.classList.add("fade");
       setTimeout(()=>{
