@@ -24,7 +24,18 @@
   --focus: rgba(255,255,255,.18);
   --focusGlow: rgba(99,102,241,.22);
 
+  /* Master easing: gentle spring */
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease: cubic-bezier(.4,0,.2,1);
+
+  /* Search focus brand tint */
+  --brand: rgba(124,58,237,.38);
+  --brand2: rgba(99,102,241,.24);
+
+  /* Dynamic background intensity (updated by JS) */
+  --bgDim: 1;
+  --bgSat: 1;
+  --bgLift: 1;
 }
 
 *{box-sizing:border-box}
@@ -34,21 +45,36 @@ body{
   font-family: Inter, ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",
     Roboto,Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei";
   color:var(--text);
+  overflow-x:hidden;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Dynamic background via CSS variables (multiplied by overlays) */
   background:
     radial-gradient(1100px 650px at 18% 8%,rgba(99,102,241,.16),transparent 60%),
     radial-gradient(900px 520px at 82% 18%,rgba(16,185,129,.12),transparent 62%),
     radial-gradient(900px 700px at 55% 92%,rgba(56,189,248,.10),transparent 55%),
     var(--bg);
-  overflow-x:hidden;
+}
+body::after{
+  /* Adaptive overlay: dim/sat/lift adjusted by time */
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background: rgba(0,0,0, calc(0.22 * (1 / var(--bgLift)) ));
+  opacity: calc(0.32 * var(--bgDim));
+  mix-blend-mode: multiply;
 }
 
-/* ===== Grain / texture (very subtle) ===== */
+/* Grain texture (very subtle) */
 body::before{
   content:"";
   position:fixed;
   inset:-40px;
   pointer-events:none;
-  opacity:.07;                 /* 颗粒很轻 */
+  opacity:.07;
   mix-blend-mode: overlay;
   background:
     repeating-linear-gradient(0deg,
@@ -68,13 +94,15 @@ body::before{
 .wrap{
   width:min(980px,92vw);
   margin:62px auto 74px;
-  padding:0 8px; /* invisible grid baseline */
+  padding:0 8px;
+  position:relative;
+  z-index:1;
 }
 @media (max-width:600px){
   .wrap{ margin-top:68px; }
 }
 
-/* ===== Header: stronger hierarchy ===== */
+/* Header hierarchy */
 .topbar{
   width:min(860px,92vw);
   margin:0 auto 16px;
@@ -82,22 +110,23 @@ body::before{
   justify-content:space-between;
   align-items:flex-end;
   gap:16px;
+  transition: filter .22s var(--ease), opacity .22s var(--ease);
 }
 .greet{
   font-size:14px;
-  font-weight:300;          /* 更纤细 */
-  opacity:.70;              /* 更弱 */
+  font-weight:300;
+  opacity:.70;
   letter-spacing:.01em;
 }
 .clock{
   font-family: ui-monospace,"JetBrains Mono","SF Mono",Menlo,monospace;
-  font-size:20px;           /* 略放大 */
-  font-weight:750;          /* 更强 */
+  font-size:20px;
+  font-weight:760;
   letter-spacing:.12em;
   opacity:.90;
 }
 
-/* ===== Spotlight Search ===== */
+/* Search: breathing focus */
 .search{
   width:min(860px,92vw);
   margin:0 auto 18px;
@@ -110,13 +139,21 @@ body::before{
   border:1px solid var(--line);
   backdrop-filter:blur(18px);
   box-shadow: var(--shadow);
-  transition: background .2s var(--ease), border-color .2s var(--ease), transform .2s var(--ease);
+  transition:
+    background .20s var(--ease),
+    border-color .20s var(--ease),
+    transform .20s var(--ease),
+    box-shadow .25s var(--ease);
   position:relative;
   z-index: 5;
 }
 .search:focus-within{
   background:var(--glass2);
-  border-color:var(--line2);
+  border-color: color-mix(in srgb, var(--brand) 70%, rgba(255,255,255,.18));
+  box-shadow:
+    0 18px 45px rgba(0,0,0,.35),
+    0 0 0 1px rgba(124,58,237,.18),
+    0 0 0 10px rgba(124,58,237,.08);
   transform: translateY(-1px);
 }
 .search .sicon{
@@ -128,11 +165,11 @@ body::before{
 }
 .search input::placeholder{ color: rgba(255,255,255,.28); }
 
-/* tiny enter hint (icon-like) */
+/* tiny enter hint */
 .search .hint{
   font-family: ui-monospace,"JetBrains Mono","SF Mono",Menlo,monospace;
   font-size:12px;
-  color:rgba(255,255,255,.26);
+  color:rgba(255,255,255,.24);
   border:1px solid rgba(255,255,255,.10);
   padding:6px 10px;
   border-radius:999px;
@@ -140,7 +177,7 @@ body::before{
   user-select:none;
 }
 
-/* Spotlight effect: dim + blur everything except search */
+/* Spotlight: dim/blur content when focusing search */
 .content{
   width:min(860px,92vw);
   margin:0 auto;
@@ -153,10 +190,14 @@ body.searching .content{
 body.searching .topbar{
   filter: blur(1px) saturate(.85);
   opacity: .72;
-  transition: filter .22s var(--ease), opacity .22s var(--ease);
+}
+/* When typing: further reduce noise */
+body.typing .content{
+  filter: blur(4px) saturate(.78);
+  opacity: .46; /* ~20% extra drop */
 }
 
-/* ===== Minimal section separators (no ESSENTIALS/MORE text) ===== */
+/* Minimal separator (no labels) */
 .sepRow{
   width:min(860px,92vw);
   margin:22px auto 12px;
@@ -183,19 +224,19 @@ body.searching .topbar{
   border-radius:999px;
   padding:8px 12px;
   cursor:pointer;
-  transition:.18s var(--ease);
+  transition: transform .18s var(--spring), background .18s var(--ease);
   font-weight:650;
   letter-spacing:.02em;
 }
-.moreBtn:hover{ background:rgba(255,255,255,.08); }
-.moreBtn:active{ transform: translateY(1px); }
+.moreBtn:hover{ background:rgba(255,255,255,.08); transform: translateY(-1px); }
+.moreBtn:active{ transform: translateY(1px) scale(.99); }
 
-/* ===== Grid: strict 8pt rhythm ===== */
+/* Grid: 8pt rhythm */
 .grid{
-  padding:0 6px; /* align with separators */
+  padding:0 6px;
   display:grid;
   grid-template-columns:repeat(6,1fr);
-  gap:32px 40px; /* 8pt system */
+  gap:32px 40px;
 }
 @media(max-width:980px){ .grid{ grid-template-columns:repeat(5,1fr);} }
 @media(max-width:860px){ .grid{ grid-template-columns:repeat(4,1fr);} }
@@ -203,7 +244,7 @@ body.searching .topbar{
   .grid{ grid-template-columns:repeat(3,1fr); gap:28px 26px; }
 }
 
-/* ===== Nav item: no base, big hit area, physical feedback ===== */
+/* Item */
 .item{
   text-decoration:none;
   color:inherit;
@@ -215,12 +256,14 @@ body.searching .topbar{
   padding:10px 8px;
   border-radius:16px;
   min-height:96px;
-  transition: transform .22s var(--ease), background .22s var(--ease);
   -webkit-tap-highlight-color: transparent;
   outline:none;
+
+  transition: transform .36s var(--spring), background .22s var(--ease);
+  will-change: transform;
 }
 
-/* faint hover halo (not a box) */
+/* subtle hover halo */
 .item::before{
   content:"";
   position:absolute;
@@ -229,11 +272,11 @@ body.searching .topbar{
   background: radial-gradient(closest-side, rgba(255,255,255,.10), transparent 65%);
   opacity:0;
   transform: scale(.98);
-  transition: opacity .22s var(--ease), transform .22s var(--ease);
+  transition: opacity .30s var(--ease), transform .30s var(--ease);
   pointer-events:none;
 }
 
-/* brand glow layer (uses --glow set per item) */
+/* brand glow layer */
 .item::after{
   content:"";
   position:absolute;
@@ -245,12 +288,12 @@ body.searching .topbar{
   background: radial-gradient(circle at 50% 50%, var(--glow, rgba(255,255,255,.16)), transparent 62%);
   filter: blur(10px);
   opacity:0;
-  transition: opacity .30s var(--ease), transform .30s var(--ease);
+  transition: opacity .36s var(--ease), transform .36s var(--spring);
   pointer-events:none;
 }
 
 .item:hover{
-  transform: translateY(-4px); /* 更“物理”一点 */
+  transform: translateY(-4px);
 }
 .item:hover::before{ opacity:1; transform: scale(1); }
 .item:hover::after{ opacity:.55; transform: translateX(-50%) scale(1); }
@@ -260,23 +303,21 @@ body.searching .topbar{
 }
 .item:active::after{ opacity:.60; }
 
-/* focus-visible: ultra-thin outline (premium + a11y) */
+/* focus visible */
 .item:focus-visible{
   outline: 1px solid var(--focus);
   box-shadow: 0 0 0 4px rgba(255,255,255,.05), 0 0 0 10px var(--focusGlow);
 }
-@media (prefers-reduced-motion: reduce){
-  .item:focus-visible{ box-shadow: 0 0 0 3px rgba(255,255,255,.06); }
-}
 
-/* icon: default sleeping, wake on hover/active/focus */
+/* icon sleeping/wake with spring */
 .icon{
   width:30px;
   height:30px;
   display:block;
   transform: translateZ(0);
   filter: grayscale(100%) saturate(0) opacity(.72) drop-shadow(0 10px 18px rgba(0,0,0,.28));
-  transition: filter .30s var(--ease), transform .30s var(--ease);
+  transition: filter .40s var(--ease), transform .40s var(--spring);
+  will-change: transform, filter;
 }
 .icon img{
   width:100%;
@@ -290,13 +331,13 @@ body.searching .topbar{
 .item:focus-visible .icon{
   filter: none drop-shadow(0 10px 18px rgba(0,0,0,.28));
 }
-.item:hover .icon{ transform: translateY(-1px) scale(1.05); }
+.item:hover .icon{ transform: translateY(-1px) scale(1.06); }
 .item:active .icon{ transform: translateY(0) scale(1.02); }
 
 .name{
   font-size:12.5px;
   color:rgba(255,255,255,.56);
-  transition: color .22s var(--ease), transform .22s var(--ease);
+  transition: color .22s var(--ease), transform .36s var(--spring);
   user-select:none;
 }
 .item:hover .name,
@@ -306,7 +347,22 @@ body.searching .topbar{
   transform: translateY(-.5px);
 }
 
-/* contextual shortcut badge (Alt shows) */
+/* Stagger entrance */
+.item{
+  opacity:0;
+  transform: translateY(10px);
+}
+body.ready .item{
+  opacity:1;
+  transform: translateY(0);
+}
+body.ready .item{
+  transition:
+    opacity .45s var(--ease),
+    transform .55s var(--spring);
+}
+
+/* contextual shortcut badge: shown by Alt or Ghost mode */
 .kbd{
   position:absolute;
   top:10px;
@@ -325,10 +381,14 @@ body.searching .topbar{
   pointer-events:none;
 }
 @media (hover:hover) and (pointer:fine){
-  body.alt .kbd{ opacity:1; transform: translateY(0) scale(1); }
+  body.alt .kbd,
+  body.ghost .kbd{
+    opacity:1;
+    transform: translateY(0) scale(1);
+  }
 }
 
-/* More panel + FLIP used in JS */
+/* More panel */
 .morePanel{
   overflow:hidden;
   max-height:0;
@@ -342,7 +402,7 @@ body.searching .topbar{
   transform: translateY(0);
 }
 
-/* ===== Subtle status widgets ===== */
+/* Status widgets */
 .status{
   width:min(860px,92vw);
   margin:18px auto 0;
@@ -353,7 +413,7 @@ body.searching .topbar{
   gap:14px;
   color: rgba(255,255,255,.30);
   font-size:11.5px;
-  letter-spacing:.02em;
+  letter-spacing: 0.02em; /* per your suggestion */
   user-select:none;
 }
 .pill{
@@ -367,7 +427,7 @@ body.searching .topbar{
 }
 .dot{
   width:6px;height:6px;border-radius:999px;
-  background: rgba(34,197,94,.85); /* online default green */
+  background: rgba(34,197,94,.85);
   box-shadow: 0 0 0 4px rgba(34,197,94,.10);
 }
 .dot.off{
@@ -375,12 +435,9 @@ body.searching .topbar{
   box-shadow: 0 0 0 4px rgba(239,68,68,.10);
 }
 .todoBtn{
-  border:0;
-  background:transparent;
+  border:0;background:transparent;
   color: rgba(255,255,255,.30);
-  cursor:pointer;
-  padding:0;
-  font: inherit;
+  cursor:pointer;padding:0;font:inherit;
 }
 .todoBtn:hover{ color: rgba(255,255,255,.44); }
 
@@ -399,11 +456,7 @@ body.searching .topbar{
   backdrop-filter: blur(14px);
   padding:12px;
 }
-.todoRow{
-  display:flex;
-  gap:10px;
-  align-items:center;
-}
+.todoRow{ display:flex; gap:10px; align-items:center; }
 .todoRow input{
   flex:1;
   border:1px solid rgba(255,255,255,.10);
@@ -422,11 +475,7 @@ body.searching .topbar{
   border-radius:12px;
   cursor:pointer;
 }
-.todoList{
-  margin:10px 0 0;
-  padding:0;
-  list-style:none;
-}
+.todoList{ margin:10px 0 0; padding:0; list-style:none; }
 .todoList li{
   display:flex;
   justify-content:space-between;
@@ -440,8 +489,7 @@ body.searching .topbar{
   margin-top:8px;
 }
 .todoList li button{
-  border:0;
-  background:transparent;
+  border:0;background:transparent;
   color: rgba(255,255,255,.36);
   cursor:pointer;
 }
@@ -449,7 +497,8 @@ body.searching .topbar{
 
 /* reduce motion */
 @media (prefers-reduced-motion: reduce){
-  *{transition:none!important}
+  *{transition:none!important; animation:none!important}
+  body.ready .item{ opacity:1; transform:none; }
 }
 </style>
 </head>
@@ -471,7 +520,6 @@ body.searching .topbar{
     <span class="hint">↵</span>
   </form>
 
-  <!-- everything below gets blurred/dimmed when searching -->
   <div class="content">
     <div class="sepRow">
       <span class="sepLine"></span>
@@ -512,6 +560,29 @@ body.searching .topbar{
 </div>
 
 <script>
+/* ---------- Adaptive UI: time-based background tuning ---------- */
+function setAmbient(){
+  const h = new Date().getHours();
+  // Deep night: darker, calmer
+  if(h >= 0 && h < 5){
+    document.documentElement.style.setProperty("--bgDim", "1.18");
+    document.documentElement.style.setProperty("--bgLift", "0.92");
+    document.documentElement.style.setProperty("--bgSat", "0.92");
+  }else if(h >= 5 && h < 10){
+    // Morning: slightly brighter
+    document.documentElement.style.setProperty("--bgDim", "0.92");
+    document.documentElement.style.setProperty("--bgLift", "1.08");
+    document.documentElement.style.setProperty("--bgSat", "1.02");
+  }else{
+    // Default
+    document.documentElement.style.setProperty("--bgDim", "1");
+    document.documentElement.style.setProperty("--bgLift", "1");
+    document.documentElement.style.setProperty("--bgSat", "1");
+  }
+}
+setAmbient();
+setInterval(setAmbient, 60_000);
+
 /* ---------- time ---------- */
 const pad=n=>String(n).padStart(2,"0");
 function tick(){
@@ -525,11 +596,26 @@ tick(); setInterval(tick,1000);
 
 /* ---------- spotlight focus behavior ---------- */
 const q = document.getElementById("q");
+let typingTimer = null;
+
 q.addEventListener("focus", ()=> document.body.classList.add("searching"));
-q.addEventListener("blur",  ()=> document.body.classList.remove("searching"));
+q.addEventListener("blur",  ()=>{
+  document.body.classList.remove("searching","typing");
+});
+q.addEventListener("input", ()=>{
+  document.body.classList.add("typing");
+  clearTimeout(typingTimer);
+  typingTimer = setTimeout(()=> document.body.classList.remove("typing"), 450);
+});
 
 window.addEventListener("load", ()=> {
   q.focus({preventScroll:true});
+  // Entrance stagger trigger
+  if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+    requestAnimationFrame(()=> document.body.classList.add("ready"));
+  }else{
+    document.body.classList.add("ready");
+  }
 });
 
 /* ---------- favicon (HD fallback) ---------- */
@@ -538,29 +624,28 @@ const favicon = (url) => {
   return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=256`;
 };
 
-/* ---------- brand glow palette (very subtle) ---------- */
+/* ---------- brand glow palette ---------- */
 const glow = {
-  "google.com":      "rgba(66,133,244,.28)",
-  "mail.google.com": "rgba(234,67,53,.28)",
-  "chatgpt.com":     "rgba(34,197,94,.24)",
-  "github.com":      "rgba(255,255,255,.18)",
-  "youtube.com":     "rgba(255,0,0,.26)",
-  "dash.cloudflare.com":"rgba(249,115,22,.26)",
-  "drive.google.com":"rgba(34,197,94,.24)",
-  "calendar.google.com":"rgba(59,130,246,.26)",
-  "www.microsoft.com":"rgba(59,130,246,.22)",
-  "my.vultr.com":    "rgba(0,114,206,.24)",
-  "cloud.oracle.com":"rgba(239,68,68,.20)",
-  "my.racknerd.com": "rgba(168,85,247,.22)",
+  "google.com":          "rgba(66,133,244,.28)",
+  "mail.google.com":     "rgba(234,67,53,.28)",
+  "chatgpt.com":         "rgba(34,197,94,.24)",
+  "github.com":          "rgba(255,255,255,.18)",
+  "youtube.com":         "rgba(255,0,0,.26)",
+  "dash.cloudflare.com": "rgba(249,115,22,.26)",
+  "drive.google.com":    "rgba(34,197,94,.24)",
+  "calendar.google.com": "rgba(59,130,246,.26)",
+  "www.microsoft.com":   "rgba(59,130,246,.22)",
+  "my.vultr.com":        "rgba(0,114,206,.24)",
+  "cloud.oracle.com":    "rgba(239,68,68,.20)",
+  "my.racknerd.com":     "rgba(168,85,247,.22)",
 
-  "wikipedia.org":   "rgba(255,255,255,.12)",
-  "reddit.com":      "rgba(255,69,0,.20)",
-  "discord.com":     "rgba(88,101,242,.24)",
-  "x.com":           "rgba(255,255,255,.14)",
-  "netflix.com":     "rgba(229,9,20,.22)",
-  "apple.com":       "rgba(255,255,255,.12)"
+  "wikipedia.org":       "rgba(255,255,255,.12)",
+  "reddit.com":          "rgba(255,69,0,.20)",
+  "discord.com":         "rgba(88,101,242,.24)",
+  "x.com":               "rgba(255,255,255,.14)",
+  "netflix.com":         "rgba(229,9,20,.22)",
+  "apple.com":           "rgba(255,255,255,.12)"
 };
-
 function hostOf(url){ return new URL(url).hostname; }
 
 /* ---------- links ---------- */
@@ -588,13 +673,18 @@ const more = [
   {name:"Apple",     url:"https://apple.com",                key:"A"},
 ];
 
-function card(item){
+/* ---------- render with stagger delay ---------- */
+function card(item, idx){
   const a=document.createElement("a");
   a.className="item";
   a.href=item.url;
   a.dataset.key=item.key || "";
   const host = hostOf(item.url);
   a.style.setProperty("--glow", glow[host] || "rgba(255,255,255,.14)");
+
+  // stagger: left->right, top->bottom approximated by DOM order
+  a.style.transitionDelay = `${Math.min(idx * 18, 240)}ms`;
+
   a.innerHTML = `
     ${item.key ? `<span class="kbd">${item.key}</span>` : ``}
     <span class="icon" aria-hidden="true"><img alt="" src="${favicon(item.url)}"></span>
@@ -604,12 +694,12 @@ function card(item){
 }
 
 const essentialsEl=document.getElementById("essentials");
-essentials.forEach(x=>essentialsEl.appendChild(card(x)));
+essentials.forEach((x,i)=>essentialsEl.appendChild(card(x,i)));
 
 const moreEl=document.getElementById("moreGrid");
-more.forEach(x=>moreEl.appendChild(card(x)));
+more.forEach((x,i)=>moreEl.appendChild(card(x, essentials.length + i)));
 
-/* ---------- search: Enter submit ---------- */
+/* ---------- search: Enter ---------- */
 document.getElementById("searchForm").addEventListener("submit",(e)=> e.preventDefault());
 q.addEventListener("keydown",(e)=>{
   if(e.key === "Enter"){
@@ -622,7 +712,7 @@ q.addEventListener("keydown",(e)=>{
   }
 });
 
-/* ---------- More toggle + FLIP animation ---------- */
+/* ---------- More toggle + FLIP + stagger refresh ---------- */
 const moreBtn=document.getElementById("moreBtn");
 const morePanel=document.getElementById("morePanel");
 let open=false;
@@ -645,10 +735,20 @@ function playFLIP(before, after){
 
     el.animate(
       [{ transform:`translate(${dx}px, ${dy}px)` }, { transform:"translate(0,0)" }],
-      { duration: 360, easing: "cubic-bezier(.2,.9,.2,1)", fill:"both" }
+      { duration: 380, easing: "cubic-bezier(.2,.9,.2,1)", fill:"both" }
     );
   });
 }
+
+function applyMoreStagger(){
+  // When opening: wave in the "more" items
+  if(prefersReduced) return;
+  const items = [...document.querySelectorAll("#moreGrid .item")];
+  items.forEach((el, i)=>{
+    el.style.transitionDelay = `${Math.min(i * 20, 260)}ms`;
+  });
+}
+
 function toggleMore(){
   if(prefersReduced){
     open=!open;
@@ -656,10 +756,14 @@ function toggleMore(){
     moreBtn.textContent=open?"Less":"More";
     return;
   }
+
   const before=getRects();
   open=!open;
   morePanel.classList.toggle("open",open);
   moreBtn.textContent=open?"Less":"More";
+
+  if(open) applyMoreStagger();
+
   requestAnimationFrame(()=>{
     const after=getRects();
     playFLIP(before, after);
@@ -667,7 +771,7 @@ function toggleMore(){
 }
 moreBtn.addEventListener("click", toggleMore);
 
-/* ---------- Alt to show keys (desktop) + Alt+letter jump ---------- */
+/* ---------- Alt to show keys + Alt+letter jump ---------- */
 let altDown=false;
 window.addEventListener("keydown",(e)=>{
   if(e.key==="Alt" && !altDown){
@@ -697,6 +801,28 @@ window.addEventListener("keydown",(e)=>{
   }
 });
 
+/* ---------- Ghost layer: double Shift toggles key badges ---------- */
+let lastShift = 0;
+let ghostTimer = null;
+
+window.addEventListener("keydown",(e)=>{
+  if(e.key !== "Shift") return;
+  const now = performance.now();
+  if(now - lastShift < 320){
+    // toggle ghost layer
+    const on = !document.body.classList.contains("ghost");
+    document.body.classList.toggle("ghost", on);
+
+    clearTimeout(ghostTimer);
+    if(on){
+      ghostTimer = setTimeout(()=> document.body.classList.remove("ghost"), 2600);
+    }
+    lastShift = 0;
+  }else{
+    lastShift = now;
+  }
+});
+
 /* ---------- keyboard activation for items ---------- */
 document.querySelectorAll(".item").forEach(a=>{
   a.addEventListener("keydown",(e)=>{
@@ -719,7 +845,7 @@ setNet();
 window.addEventListener("online", setNet);
 window.addEventListener("offline", setNet);
 
-/* ---------- To-Do (localStorage, subtle) ---------- */
+/* ---------- To-Do (localStorage) ---------- */
 const LS_KEY="nav_todos_v1";
 const todoCountEl=document.getElementById("todoCount");
 const todoPanel=document.getElementById("todoPanel");
@@ -732,9 +858,7 @@ function loadTodos(){
   try{ return JSON.parse(localStorage.getItem(LS_KEY) || "[]"); }
   catch{ return []; }
 }
-function saveTodos(arr){
-  localStorage.setItem(LS_KEY, JSON.stringify(arr));
-}
+function saveTodos(arr){ localStorage.setItem(LS_KEY, JSON.stringify(arr)); }
 function renderTodos(){
   const todos = loadTodos();
   todoCountEl.textContent = String(todos.length);
@@ -763,7 +887,7 @@ todoAdd.addEventListener("click", ()=>{
   if(!v) return;
   const todos = loadTodos();
   todos.unshift(v);
-  saveTodos(todos.slice(0, 20)); // keep it tiny
+  saveTodos(todos.slice(0, 20));
   todoInput.value="";
   renderTodos();
 });
