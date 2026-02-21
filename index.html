@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 
   <title>Harvey — Home</title>
-  <link rel="icon" href="data:,">
   <meta name="theme-color" content="#070A12" />
+  <link rel="icon" href="data:,">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@200;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=JetBrains+Mono:wght@200;300;400;600&display=swap" rel="stylesheet">
 
   <style>
     :root{
@@ -18,20 +18,22 @@
       --bg1:#09112A;
 
       --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.55);
-      --muted2: rgba(255,255,255,.40);
+      --muted: rgba(255,255,255,.52);
+      --muted2: rgba(255,255,255,.38);
 
+      --hair: rgba(255,255,255,.10);
       --hair2: rgba(255,255,255,.08);
 
       --ease: cubic-bezier(.34,1.56,.64,1);
       --ease2: cubic-bezier(.22,.61,.36,1);
 
-      /* ✅ 黄金比例“吸附感”：控制图标区域下移 */
       --icons-offset: 18px;
 
-      /* ✅ Essentials 比 More 大 5% */
-      --icon-size-essential: 55px; /* 52px * 1.05 ≈ 55 */
+      --icon-size-essential: 55px;
       --icon-size-more: 52px;
+
+      --searchGlow: rgba(124,92,255,.45);
+      --spot: rgba(124,92,255,.18);
     }
 
     *{ box-sizing:border-box; }
@@ -42,12 +44,65 @@
       font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      background:
-        radial-gradient(1000px 700px at 16% 20%, rgba(90,80,255,.20), transparent 55%),
-        radial-gradient(900px 700px at 78% 24%, rgba(0,210,255,.12), transparent 55%),
-        radial-gradient(900px 700px at 60% 90%, rgba(0,255,170,.07), transparent 55%),
-        linear-gradient(180deg, var(--bg1), var(--bg0));
+      letter-spacing: .015em; /* ✅ 更“丝” */
+      background: linear-gradient(180deg, var(--bg1), var(--bg0));
       overflow-x:hidden;
+      position:relative;
+    }
+
+    /* ✅ 呼吸背景：极慢漂移的超大模糊光斑（不干扰） */
+    .aura{
+      position:fixed; inset:-30%;
+      pointer-events:none;
+      z-index:-2;
+      filter: blur(150px);
+      opacity:.40;
+    }
+    .aura::before, .aura::after{
+      content:"";
+      position:absolute;
+      width: 55vw; height: 55vw;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, rgba(90,80,255,.28), transparent 60%);
+      animation: drift1 42s ease-in-out infinite;
+      left: 10%;
+      top: 10%;
+    }
+    .aura::after{
+      width: 62vw; height: 62vw;
+      left: 55%;
+      top: 25%;
+      background: radial-gradient(circle at 40% 30%, rgba(0,210,255,.18), transparent 62%);
+      animation: drift2 48s ease-in-out infinite;
+    }
+    .aura2{
+      position:fixed; inset:-30%;
+      pointer-events:none;
+      z-index:-2;
+      filter: blur(160px);
+      opacity:.22;
+    }
+    .aura2::before{
+      content:"";
+      position:absolute;
+      width: 70vw; height: 70vw;
+      left: 18%;
+      top: 65%;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, rgba(0,255,170,.14), transparent 65%);
+      animation: drift3 56s ease-in-out infinite;
+    }
+    @keyframes drift1{
+      0%,100%{ transform: translate(0,0) scale(1); }
+      50%{ transform: translate(6%, 4%) scale(1.04); }
+    }
+    @keyframes drift2{
+      0%,100%{ transform: translate(0,0) scale(1); }
+      50%{ transform: translate(-5%, 3%) scale(1.03); }
+    }
+    @keyframes drift3{
+      0%,100%{ transform: translate(0,0) scale(1); }
+      50%{ transform: translate(4%, -4%) scale(1.05); }
     }
 
     /* 轻微磨砂颗粒 */
@@ -55,9 +110,10 @@
       content:"";
       position:fixed; inset:0;
       pointer-events:none;
-      opacity:.08;
+      opacity:.07;
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
       mix-blend-mode: overlay;
+      z-index:-1;
     }
 
     .wrap{
@@ -67,13 +123,11 @@
       justify-content:center;
       padding: calc(18px + env(safe-area-inset-top)) 18px calc(18px + env(safe-area-inset-bottom));
     }
-
     .shell{
       width:min(980px, 100%);
       padding: 18px 18px 22px;
     }
 
-    /* 顶部：问候 + 时间（时间极细 + Tabular Figures） */
     .topbar{
       display:flex;
       align-items:center;
@@ -84,20 +138,21 @@
     }
     .greet{
       font-size: 18px;
-      font-weight: 500;
-      color: rgba(255,255,255,.76);
-      letter-spacing: .01em;
+      font-weight: 400;
+      color: rgba(255,255,255,.72);
+      letter-spacing: .02em;
     }
     .clock{
       font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-size: 18px;
-      font-weight: 200;                /* ✅ 更“幽灵” */
-      font-variant-numeric: tabular-nums; /* ✅ 数字不抖 */
+      font-weight: 200;
+      font-variant-numeric: tabular-nums;
       color: rgba(255,255,255,.86);
-      letter-spacing: .04em;
+      letter-spacing: .06em;
     }
 
     /* 搜索 */
+    .searchWrap{ position:relative; }
     .search{
       position:relative;
       display:flex;
@@ -126,60 +181,93 @@
       background:transparent;
       color:var(--text);
       font-size: 18px;
+      font-weight: 300;
       padding: 2px 2px;
+      letter-spacing: .02em;
     }
-    .search input::placeholder{ color: rgba(255,255,255,.42); }
+    .search input::placeholder{ color: rgba(255,255,255,.40); }
 
-    /* ✅ 动态流提示（右侧轮播渐隐） */
-    .hint{
+    /* ✅ 右侧信息区：轮播提示 + 计算结果 */
+    .rightInfo{
       flex:0 0 auto;
       display:flex;
       align-items:center;
-      gap:8px;
+      justify-content:flex-end;
+      gap:10px;
+      min-width: 210px;
+      user-select:none;
       color: rgba(255,255,255,.35);
       font-size: 12px;
       letter-spacing:.02em;
-      user-select:none;
-      min-width: 190px;
-      justify-content:flex-end;
       transition: opacity .3s var(--ease2), transform .3s var(--ease2);
     }
-    .hint.fade{
-      opacity: 0;
-      transform: translateY(2px);
-    }
-    .hint .keycap{
+    .rightInfo.fade{ opacity:0; transform: translateY(2px); }
+    .keycap{
       border:1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.06);
       padding: 4px 8px;
       border-radius: 10px;
       font-family: "JetBrains Mono", ui-monospace, monospace;
     }
+    .calc{
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      color: rgba(255,255,255,.70);
+      letter-spacing: .03em;
+      white-space: nowrap;
+    }
 
-    /* ✅ Ghost Mode：隐藏标题文字，只留分割线（默认） */
+    /* ✅ 即时预览下拉（Raycast感） */
+    .panel{
+      position:absolute;
+      left: 0;
+      right: 0;
+      top: calc(100% + 10px);
+      border-radius: 18px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 24px 90px rgba(0,0,0,.45);
+      overflow:hidden;
+      display:none;
+    }
+    .panel.show{ display:block; }
+    .panel .row{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 12px 14px;
+      cursor:pointer;
+      color: rgba(255,255,255,.78);
+      transition: background .18s var(--ease2);
+    }
+    .panel .row:hover{ background: rgba(255,255,255,.06); }
+    .panel .row .sub{
+      margin-left:auto;
+      color: rgba(255,255,255,.35);
+      font-size: 12px;
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+    }
+    .panel .row .dot{
+      width:6px;height:6px;border-radius:50%;
+      background: rgba(124,92,255,.65);
+      box-shadow: 0 0 12px rgba(124,92,255,.35);
+    }
+
+    /* Ghost 分割线 */
     .sectionbar{
       display:flex;
       align-items:center;
       justify-content:space-between;
       margin: 10px 2px 10px;
-      transition: opacity .25s var(--ease2), filter .25s var(--ease2), transform .25s var(--ease2);
     }
-    .sectionbar .left{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      user-select:none;
-    }
+    .sectionbar .left{ display:flex; align-items:center; gap:12px; }
     .dotline{
       height:1px;
       width: 92px;
       background: linear-gradient(90deg, rgba(255,255,255,.22), transparent);
       border-radius: 1px;
     }
-    .section-title{
-      display:none; /* ✅ 幽灵模式：默认隐藏 */
-    }
-
     .morebtn{
       border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.06);
@@ -189,12 +277,10 @@
       font-size: 13px;
       cursor:pointer;
       transition: transform .2s var(--ease), background .2s var(--ease2), border-color .2s var(--ease2);
-      user-select:none;
     }
     .morebtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18); }
     .morebtn:active{ transform: translateY(0px) scale(.98); }
 
-    /* 网格（整体下移：黄金比例留白） */
     .icons-zone{
       margin-top: var(--icons-offset);
       transition: opacity .25s var(--ease2), filter .25s var(--ease2), transform .25s var(--ease2);
@@ -213,13 +299,12 @@
     }
     @media (max-width: 520px){
       .grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px 22px; }
-      .hint{ display:none; }
+      .rightInfo{ display:none; }
       .greet,.clock{ font-size: 16px; }
       .search input{ font-size: 17px; }
       :root{ --icons-offset: 10px; }
     }
 
-    /* 去底座：点击区靠 padding */
     .item{
       position:relative;
       display:flex;
@@ -235,7 +320,6 @@
       color: var(--muted2);
     }
 
-    /* 默认降噪：灰度/透明（通过 filter），文字更隐退 */
     .icon{
       position:relative;
       width: var(--icon-size-more);
@@ -255,48 +339,37 @@
       border-radius: 12px;
     }
 
-    /* ✅ Essentials 图标略大（层级梯度） */
-    .grid.essentials .icon{
-      width: var(--icon-size-essential);
-      height: var(--icon-size-essential);
+    .grid.essentials .icon{ width: var(--icon-size-essential); height: var(--icon-size-essential); }
+
+    .label{
+      font-size: 13px;
+      font-weight: 300;
+      letter-spacing: .02em;
+      color: rgba(255,255,255,.36);
+      transition: color .22s var(--ease2), background-position .6s var(--ease2);
+      user-select:none;
     }
 
-    /* Hover/Focus：唤醒 */
     .item:hover .icon,
     .item:focus-visible .icon{
-      filter: none;
+      filter:none;
       transform: translateY(-4px);
     }
 
-    /* ✅ 文字降噪：默认更淡，hover 才亮 */
-    .label{
-      font-size: 13px;
-      letter-spacing: .01em;
-      color: rgba(255,255,255,.40);
-      transition: color .22s var(--ease2), transform .22s var(--ease2), background-position .6s var(--ease2);
-      user-select:none;
-    }
-    .item:hover .label,
-    .item:focus-visible .label{
-      color: rgba(255,255,255,.92);
-    }
-
-    /* ✅ “扫光”文字质感 */
-    .item:hover .label{
-      background: linear-gradient(90deg, rgba(255,255,255,.65), rgba(255,255,255,1), rgba(255,255,255,.65));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      background-size: 220% 100%;
-      background-position: 0% 0%;
-      animation: sweep 650ms var(--ease2) both;
-    }
-    @keyframes sweep{
-      from{ background-position: 0% 0%; }
-      to{ background-position: 100% 0%; }
+    /* ✅ spotlight：点亮时局部透光（非常轻） */
+    .item:hover .icon::before,
+    .item:focus-visible .icon::before{
+      content:"";
+      position:absolute;
+      inset:-26px;
+      border-radius: 22px;
+      background: radial-gradient(circle at 50% 45%, var(--spot), transparent 62%);
+      opacity: .55;
+      filter: blur(10px);
+      z-index:-2;
+      pointer-events:none;
     }
 
-    /* 微光（品牌色） */
     .item:hover .icon::after,
     .item:focus-visible .icon::after{
       content:"";
@@ -304,11 +377,24 @@
       inset:-8px;
       border-radius: 18px;
       box-shadow: 0 0 26px var(--glow);
-      opacity: .18;
+      opacity: .16;
       filter: blur(10px);
       z-index:-1;
       pointer-events:none;
     }
+
+    /* ✅ 扫光文字 */
+    .item:hover .label,
+    .item:focus-visible .label{
+      background: linear-gradient(90deg, rgba(255,255,255,.60), rgba(255,255,255,1), rgba(255,255,255,.60));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      background-size: 220% 100%;
+      background-position: 0% 0%;
+      animation: sweep 650ms var(--ease2) both;
+    }
+    @keyframes sweep{ from{ background-position: 0% 0%; } to{ background-position: 100% 0%; } }
 
     /* Tab 聚焦 outline */
     .item:focus-visible{
@@ -334,12 +420,8 @@
       padding: 4px 7px;
       border-radius: 10px;
     }
-    .show-hotkeys .kbd{
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
+    .show-hotkeys .kbd{ opacity: 1; transform: translateY(0) scale(1); }
 
-    /* More 折叠（不要 display:none，保 FLIP） */
     .more-area{
       overflow:hidden;
       max-height: 0px;
@@ -347,22 +429,17 @@
       transform: translateY(-4px);
       transition: max-height .55s var(--ease2), opacity .35s var(--ease2), transform .35s var(--ease2);
     }
-    .more-area.is-open{
-      max-height: 1200px;
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .more-area.is-open{ max-height: 1200px; opacity: 1; transform: translateY(0); }
 
-    /* 入场交错动画 */
     .reveal{ animation: rise .7s var(--ease) both; }
     @keyframes rise{
       from{ opacity:0; transform: translateY(10px); filter: blur(2px); }
       to{ opacity:1; transform: translateY(0); filter: blur(0); }
     }
 
-    /* ✅ 搜索聚焦“舞台感”：其余世界退后 */
+    /* ✅ 搜索聚焦“舞台感” */
     .dim-on-focus .icons-zone{
-      opacity:.45;
+      opacity:.42;
       filter: blur(8px);
       transform: translateY(6px) scale(.98);
     }
@@ -371,15 +448,18 @@
       margin-top: 14px;
       display:flex;
       justify-content:center;
-      color: rgba(255,255,255,.22);
+      color: rgba(255,255,255,.20);
       font-size: 12px;
-      letter-spacing: .06em;
+      letter-spacing: .08em;
       user-select:none;
     }
   </style>
 </head>
 
 <body>
+  <div class="aura"></div>
+  <div class="aura2"></div>
+
   <div class="wrap">
     <div class="shell" id="app">
       <div class="topbar">
@@ -387,23 +467,25 @@
         <div class="clock" id="clock">00:00</div>
       </div>
 
-      <form class="search" id="searchForm" autocomplete="off">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="rgba(255,255,255,.8)" stroke-width="1.6"/>
-          <path d="M16.5 16.5 21 21" stroke="rgba(255,255,255,.8)" stroke-width="1.6" stroke-linecap="round"/>
-        </svg>
-        <input id="q" type="text" placeholder="Search..." />
-        <div class="hint" id="hint" aria-hidden="true">
-          <span class="keycap">/g</span><span>Google</span>
-        </div>
-      </form>
+      <div class="searchWrap">
+        <form class="search" id="searchForm" autocomplete="off">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="rgba(255,255,255,.8)" stroke-width="1.6"/>
+            <path d="M16.5 16.5 21 21" stroke="rgba(255,255,255,.8)" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          <input id="q" type="text" placeholder="Search..." />
+          <div class="rightInfo" id="rightInfo" aria-hidden="true">
+            <span class="keycap" id="hintKey">/g</span><span id="hintText">Google</span>
+            <span class="calc" id="calcOut"></span>
+          </div>
+        </form>
+
+        <div class="panel" id="panel" role="listbox" aria-label="Suggestions"></div>
+      </div>
 
       <div class="icons-zone" id="iconsZone">
         <div class="sectionbar">
-          <div class="left">
-            <span class="dotline"></span>
-            <span class="section-title">Essentials</span>
-          </div>
+          <div class="left"><span class="dotline"></span></div>
           <button class="morebtn" id="toggleMore" type="button">More</button>
         </div>
 
@@ -411,10 +493,7 @@
 
         <div class="more-area" id="moreArea" aria-hidden="true">
           <div class="sectionbar" style="margin-top:6px">
-            <div class="left">
-              <span class="dotline"></span>
-              <span class="section-title">More</span>
-            </div>
+            <div class="left"><span class="dotline"></span></div>
             <button class="morebtn" id="toggleLess" type="button">Less</button>
           </div>
           <div class="grid" id="gridMore"></div>
@@ -426,38 +505,52 @@
   </div>
 
   <script>
-    // ========= 1) 配置：站点 =========
-    // ✅ AI 图标前移：ChatGPT / Claude / Gemini / Copilot
-    // ✅ 移除：Apple / Microsoft / Drive
-    const essentials = [
-      { name:"ChatGPT", url:"https://chatgpt.com/",               key:"C",  glow:"rgba(16,163,127,.55)", icon:"https://www.google.com/s2/favicons?domain=chatgpt.com&sz=256" },
-      { name:"Claude",  url:"https://claude.ai/",                 key:"L",  glow:"rgba(255,210,120,.45)", icon:"https://www.google.com/s2/favicons?domain=claude.ai&sz=256" },
-      { name:"Gemini",  url:"https://gemini.google.com/",         key:"E",  glow:"rgba(66,133,244,.50)", icon:"https://www.google.com/s2/favicons?domain=gemini.google.com&sz=256" },
-      { name:"Copilot", url:"https://copilot.microsoft.com/",     key:"P",  glow:"rgba(0,164,239,.50)", icon:"https://www.google.com/s2/favicons?domain=copilot.microsoft.com&sz=256" },
+    // ========= 可选：智能排序开关（默认 false 不打乱） =========
+    const SMART_SORT = false; // 想要“越用越聪明”就改成 true
 
-      { name:"Gmail",      url:"https://mail.google.com/",        key:"M",  glow:"rgba(234,67,53,.55)",  icon:"https://www.google.com/s2/favicons?domain=gmail.com&sz=256" },
-      { name:"Google",     url:"https://www.google.com/",         key:"G",  glow:"rgba(66,133,244,.50)", icon:"https://www.google.com/s2/favicons?domain=google.com&sz=256" },
-      { name:"YouTube",    url:"https://www.youtube.com/",        key:"Y",  glow:"rgba(255,0,51,.55)",   icon:"https://www.google.com/s2/favicons?domain=youtube.com&sz=256" },
-      { name:"GitHub",     url:"https://github.com/",             key:"H",  glow:"rgba(255,255,255,.38)",icon:"https://www.google.com/s2/favicons?domain=github.com&sz=256" },
-      { name:"Cloudflare", url:"https://dash.cloudflare.com/",    key:"F",  glow:"rgba(244,129,32,.55)", icon:"https://www.google.com/s2/favicons?domain=cloudflare.com&sz=256" },
+    // ========= 1) 站点配置（AI 前移；去 Apple/Microsoft/Drive） =========
+    const essentialsBase = [
+      { name:"ChatGPT", url:"https://chatgpt.com/",               key:"C", glow:"rgba(16,163,127,.55)", spot:"rgba(16,163,127,.18)", icon:"https://www.google.com/s2/favicons?domain=chatgpt.com&sz=256" },
+      { name:"Claude",  url:"https://claude.ai/",                 key:"L", glow:"rgba(255,210,120,.40)",spot:"rgba(255,210,120,.14)", icon:"https://www.google.com/s2/favicons?domain=claude.ai&sz=256" },
+      { name:"Gemini",  url:"https://gemini.google.com/",         key:"E", glow:"rgba(66,133,244,.50)", spot:"rgba(66,133,244,.16)", icon:"https://www.google.com/s2/favicons?domain=gemini.google.com&sz=256" },
+      { name:"Copilot", url:"https://copilot.microsoft.com/",     key:"P", glow:"rgba(0,164,239,.50)", spot:"rgba(0,164,239,.16)", icon:"https://www.google.com/s2/favicons?domain=copilot.microsoft.com&sz=256" },
 
-      { name:"Vultr",      url:"https://my.vultr.com/",           key:"V",  glow:"rgba(0,123,252,.55)",  icon:"https://www.google.com/s2/favicons?domain=vultr.com&sz=256" },
-      { name:"Oracle",     url:"https://cloud.oracle.com/",       key:"O",  glow:"rgba(255,59,48,.55)",  icon:"https://www.google.com/s2/favicons?domain=oracle.com&sz=256" },
-      { name:"RackNerd",   url:"https://my.racknerd.com/",        key:"R",  glow:"rgba(124,92,255,.55)", icon:"https://www.google.com/s2/favicons?domain=racknerd.com&sz=256" }
+      { name:"Gmail",      url:"https://mail.google.com/",        key:"M", glow:"rgba(234,67,53,.55)",  spot:"rgba(234,67,53,.16)",  icon:"https://www.google.com/s2/favicons?domain=gmail.com&sz=256" },
+      { name:"Google",     url:"https://www.google.com/",         key:"G", glow:"rgba(66,133,244,.50)", spot:"rgba(66,133,244,.16)", icon:"https://www.google.com/s2/favicons?domain=google.com&sz=256" },
+      { name:"YouTube",    url:"https://www.youtube.com/",        key:"Y", glow:"rgba(255,0,51,.55)",   spot:"rgba(255,0,51,.16)",   icon:"https://www.google.com/s2/favicons?domain=youtube.com&sz=256" },
+      { name:"GitHub",     url:"https://github.com/",             key:"H", glow:"rgba(255,255,255,.32)",spot:"rgba(255,255,255,.10)",icon:"https://www.google.com/s2/favicons?domain=github.com&sz=256" },
+      { name:"Cloudflare", url:"https://dash.cloudflare.com/",    key:"F", glow:"rgba(244,129,32,.55)", spot:"rgba(244,129,32,.16)", icon:"https://www.google.com/s2/favicons?domain=cloudflare.com&sz=256" },
+
+      { name:"Vultr",      url:"https://my.vultr.com/",           key:"V", glow:"rgba(0,123,252,.55)",  spot:"rgba(0,123,252,.16)",  icon:"https://www.google.com/s2/favicons?domain=vultr.com&sz=256" },
+      { name:"Oracle",     url:"https://cloud.oracle.com/",       key:"O", glow:"rgba(255,59,48,.55)",  spot:"rgba(255,59,48,.16)",  icon:"https://www.google.com/s2/favicons?domain=oracle.com&sz=256" },
+      { name:"RackNerd",   url:"https://my.racknerd.com/",        key:"R", glow:"rgba(124,92,255,.55)", spot:"rgba(124,92,255,.16)", icon:"https://www.google.com/s2/favicons?domain=racknerd.com&sz=256" }
     ];
 
     const more = [
-      { name:"Reddit",     url:"https://www.reddit.com/",         key:"U", glow:"rgba(255,69,0,.55)",   icon:"https://www.google.com/s2/favicons?domain=reddit.com&sz=256" },
-      { name:"Telegram",   url:"https://web.telegram.org/",       key:"T", glow:"rgba(42,171,238,.55)", icon:"https://www.google.com/s2/favicons?domain=telegram.org&sz=256" },
-      { name:"Discord",    url:"https://discord.com/app",         key:"I", glow:"rgba(88,101,242,.55)", icon:"https://www.google.com/s2/favicons?domain=discord.com&sz=256" },
-      { name:"Wikipedia",  url:"https://www.wikipedia.org/",      key:"W", glow:"rgba(255,255,255,.35)",icon:"https://www.google.com/s2/favicons?domain=wikipedia.org&sz=256" },
-      { name:"Netflix",    url:"https://www.netflix.com/",        key:"N", glow:"rgba(229,9,20,.55)",   icon:"https://www.google.com/s2/favicons?domain=netflix.com&sz=256" }
+      { name:"Reddit",     url:"https://www.reddit.com/",         key:"U", glow:"rgba(255,69,0,.55)",   spot:"rgba(255,69,0,.16)",   icon:"https://www.google.com/s2/favicons?domain=reddit.com&sz=256" },
+      { name:"Telegram",   url:"https://web.telegram.org/",       key:"T", glow:"rgba(42,171,238,.55)", spot:"rgba(42,171,238,.16)", icon:"https://www.google.com/s2/favicons?domain=telegram.org&sz=256" },
+      { name:"Discord",    url:"https://discord.com/app",         key:"I", glow:"rgba(88,101,242,.55)", spot:"rgba(88,101,242,.16)", icon:"https://www.google.com/s2/favicons?domain=discord.com&sz=256" },
+      { name:"Wikipedia",  url:"https://www.wikipedia.org/",      key:"W", glow:"rgba(255,255,255,.30)",spot:"rgba(255,255,255,.10)",icon:"https://www.google.com/s2/favicons?domain=wikipedia.org&sz=256" },
+      { name:"Netflix",    url:"https://www.netflix.com/",        key:"N", glow:"rgba(229,9,20,.55)",   spot:"rgba(229,9,20,.16)",   icon:"https://www.google.com/s2/favicons?domain=netflix.com&sz=256" }
     ];
 
-    // ========= 2) 渲染 =========
+    // ========= 2) 点击频率（Smart Sorting） =========
+    const HIT_KEY = "nav_hits_v1";
+    const hits = JSON.parse(localStorage.getItem(HIT_KEY) || "{}");
+    const bumpHit = (name)=>{
+      hits[name] = (hits[name] || 0) + 1;
+      localStorage.setItem(HIT_KEY, JSON.stringify(hits));
+    };
+
+    function sortedEssentials(){
+      const list = [...essentialsBase];
+      if(!SMART_SORT) return list;
+      return list.sort((a,b)=> (hits[b.name]||0) - (hits[a.name]||0));
+    }
+
+    // ========= 3) 渲染 =========
     const gridEss = document.getElementById("gridEssentials");
     const gridMore = document.getElementById("gridMore");
-    const app = document.getElementById("app");
 
     function makeItem(site, idx){
       const a = document.createElement("a");
@@ -466,30 +559,29 @@
       a.target = "_blank";
       a.rel = "noopener noreferrer";
       a.style.setProperty("--glow", site.glow || "rgba(124,92,255,.55)");
+      a.style.setProperty("--spot", site.spot || "rgba(124,92,255,.18)");
 
       a.classList.add("reveal");
       a.style.animationDelay = (idx * 26) + "ms";
 
       const icon2x = site.icon.replace("sz=256","sz=512");
-
       a.innerHTML = `
         <span class="kbd">${site.key || ""}</span>
         <span class="icon">
-          <img
-            src="${site.icon}"
-            srcset="${site.icon} 1x, ${icon2x} 2x"
-            alt="${site.name}"
-            loading="lazy"
-            decoding="async"
-          />
+          <img src="${site.icon}" srcset="${site.icon} 1x, ${icon2x} 2x" alt="${site.name}" loading="lazy" decoding="async" />
         </span>
         <span class="label">${site.name}</span>
       `;
+
       if(!site.key) a.querySelector(".kbd").style.display = "none";
+
+      a.addEventListener("click", ()=> bumpHit(site.name));
       return a;
     }
 
     function render(){
+      const essentials = sortedEssentials();
+
       gridEss.innerHTML = "";
       gridMore.innerHTML = "";
       essentials.forEach((s,i)=> gridEss.appendChild(makeItem(s,i)));
@@ -497,7 +589,7 @@
     }
     render();
 
-    // ========= 3) 时间 + 问候 =========
+    // ========= 4) 时间 + 问候 =========
     const greetEl = document.getElementById("greet");
     const clockEl = document.getElementById("clock");
 
@@ -515,7 +607,6 @@
       else g = "Good night.";
       greetEl.textContent = g;
 
-      // 深夜更沉，清晨稍亮（克制）
       const root = document.documentElement;
       if(h >= 2 && h <= 5){
         root.style.setProperty("--bg0", "#05070E");
@@ -531,7 +622,8 @@
     updateTime();
     setInterval(updateTime, 1000 * 15);
 
-    // ========= 4) 搜索：Bang 语法 =========
+    // ========= 5) 搜索：Bangs + 全局快捷呼出 =========
+    const app = document.getElementById("app");
     const q = document.getElementById("q");
     const searchForm = document.getElementById("searchForm");
 
@@ -540,65 +632,71 @@
       "/y":  (t)=> `https://www.youtube.com/results?search_query=${encodeURIComponent(t)}`,
       "/gh": (t)=> `https://github.com/search?q=${encodeURIComponent(t)}`,
       "/r":  (t)=> `https://www.reddit.com/search/?q=${encodeURIComponent(t)}`,
-      "/cl": (t)=> `https://claude.ai/`,
-      "/gm": (t)=> `https://gemini.google.com/`,
-      "/cp": (t)=> `https://copilot.microsoft.com/`
+      "/cl": ()=> `https://claude.ai/`,
+      "/gm": ()=> `https://gemini.google.com/`,
+      "/cp": ()=> `https://copilot.microsoft.com/`,
+      "/c":  ()=> `https://chatgpt.com/`
     };
+
+    function openURL(url){ window.open(url, "_blank", "noopener"); }
 
     searchForm.addEventListener("submit", (e)=>{
       e.preventDefault();
       const raw = (q.value || "").trim();
       if(!raw) return;
 
-      if(raw === "/c"){ window.open("https://chatgpt.com/", "_blank", "noopener"); return; }
-      if(raw === "/cl"){ window.open("https://claude.ai/", "_blank", "noopener"); return; }
-      if(raw === "/gm"){ window.open("https://gemini.google.com/", "_blank", "noopener"); return; }
-      if(raw === "/cp"){ window.open("https://copilot.microsoft.com/", "_blank", "noopener"); return; }
+      saveHistory(raw);
 
       const parts = raw.split(/\s+/);
       const prefix = parts[0];
       const rest = raw.slice(prefix.length).trim();
 
+      if(engines[prefix] && (prefix==="/c"||prefix==="/cl"||prefix==="/gm"||prefix==="/cp")){
+        openURL(engines[prefix]());
+        return;
+      }
+
       const url = engines[prefix] ? engines[prefix](rest || "") : engines["/g"](raw);
-      window.open(url, "_blank", "noopener");
+      openURL(url);
+    });
+
+    // ✅ ⌘K / Ctrl+K：全局呼出
+    window.addEventListener("keydown", (e)=>{
+      const isK = (e.key || "").toLowerCase() === "k";
+      if((e.metaKey || e.ctrlKey) && isK){
+        e.preventDefault();
+        q.value = "";
+        q.focus({preventScroll:true});
+        showPanelFromInput();
+      }
+    });
+
+    // / 聚焦搜索（不打字时）
+    window.addEventListener("keydown", (e)=>{
+      const active = document.activeElement;
+      const typing = active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA" || active.isContentEditable);
+      if(typing) return;
+      if(e.key === "/"){
+        e.preventDefault();
+        q.focus({preventScroll:true});
+      }
     });
 
     window.addEventListener("load", ()=> q.focus({preventScroll:true}));
     q.addEventListener("focus", ()=> app.classList.add("dim-on-focus"));
-    q.addEventListener("blur",  ()=> app.classList.remove("dim-on-focus"));
+    q.addEventListener("blur",  ()=> {
+      app.classList.remove("dim-on-focus");
+      setTimeout(()=> hidePanel(), 120);
+    });
 
-    // ========= 5) 动态流提示轮播 =========
-    const hintEl = document.getElementById("hint");
-    const hintItems = [
-      { k:"/g",  t:"Google" },
-      { k:"/gh", t:"GitHub" },
-      { k:"/y",  t:"YouTube" },
-      { k:"/r",  t:"Reddit" },
-      { k:"/cl", t:"Claude" },
-      { k:"/gm", t:"Gemini" },
-      { k:"/cp", t:"Copilot" },
-      { k:"/c",  t:"ChatGPT" }
-    ];
-    let hintIdx = 0;
-    function rotateHint(){
-      hintEl.classList.add("fade");
-      setTimeout(()=>{
-        hintIdx = (hintIdx + 1) % hintItems.length;
-        const it = hintItems[hintIdx];
-        hintEl.innerHTML = `<span class="keycap">${it.k}</span><span>${it.t}</span>`;
-        hintEl.classList.remove("fade");
-      }, 220);
-    }
-    setInterval(rotateHint, 3200);
-
-    // ========= 6) Alt 才显示快捷键 =========
+    // ========= 6) Alt 显示快捷键提示 =========
     const setHotkeys = (on)=> document.body.classList.toggle("show-hotkeys", on);
     window.addEventListener("keydown", (e)=>{ if(e.altKey) setHotkeys(true); });
     window.addEventListener("keyup",   (e)=>{ if(!e.altKey) setHotkeys(false); });
 
-    // ========= 7) 单键快捷跳转 =========
+    // 单键跳转（不在输入框）
     const shortcutMap = new Map();
-    [...essentials, ...more].forEach(s=>{ if(s.key) shortcutMap.set(s.key.toUpperCase(), s.url); });
+    [...essentialsBase, ...more].forEach(s=>{ if(s.key) shortcutMap.set(s.key.toUpperCase(), s.url); });
 
     window.addEventListener("keydown", (e)=>{
       const active = document.activeElement;
@@ -606,20 +704,14 @@
       if(typing) return;
       if(e.altKey) return;
 
-      if(e.key === "/"){
-        e.preventDefault();
-        q.focus({preventScroll:true});
-        return;
-      }
-
       const k = (e.key || "").toUpperCase();
       if(shortcutMap.has(k)){
         e.preventDefault();
-        window.open(shortcutMap.get(k), "_blank", "noopener");
+        openURL(shortcutMap.get(k));
       }
     });
 
-    // ========= 8) More 展开：FLIP =========
+    // ========= 7) More：FLIP =========
     const moreArea = document.getElementById("moreArea");
     const btnMore = document.getElementById("toggleMore");
     const btnLess = document.getElementById("toggleLess");
@@ -659,13 +751,12 @@
     btnMore.addEventListener("click", ()=> flipToggle(true));
     btnLess.addEventListener("click", ()=> flipToggle(false));
 
-    // ========= 9) Magnetic Effect（桌面端）：微量吸附 =========
-    // 移动端/触屏直接跳过
+    // ========= 8) Magnetic Effect（桌面端，极克制） =========
     const isCoarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
-
     if(!isCoarse){
+      const strength = 10;
+      document.addEventListener("mousemove", ()=>{}); // 预热
       const items = document.querySelectorAll(".item");
-      const strength = 10; // 像素级，非常克制
       items.forEach(el=>{
         el.addEventListener("mousemove", (e)=>{
           const r = el.getBoundingClientRect();
@@ -675,11 +766,238 @@
           const dy = (e.clientY - cy) / (r.height/2);
           el.style.transform = `translate(${dx*strength}px, ${dy*strength}px) translateZ(0)`;
         });
-        el.addEventListener("mouseleave", ()=>{
-          el.style.transform = "translateZ(0)";
-        });
+        el.addEventListener("mouseleave", ()=>{ el.style.transform = "translateZ(0)"; });
       });
     }
+
+    // ========= 9) Deep Search：即时预览 + 历史 + Google Suggest(JSONP) =========
+    const panel = document.getElementById("panel");
+    const calcOut = document.getElementById("calcOut");
+
+    const HIST_KEY = "nav_history_v1";
+    const MAX_HIST = 8;
+    function getHistory(){
+      try{ return JSON.parse(localStorage.getItem(HIST_KEY) || "[]"); }catch{ return []; }
+    }
+    function saveHistory(qs){
+      const h = getHistory().filter(x=> x !== qs);
+      h.unshift(qs);
+      localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0, MAX_HIST)));
+    }
+
+    function hidePanel(){
+      panel.classList.remove("show");
+      panel.innerHTML = "";
+    }
+    function showPanel(rows){
+      panel.innerHTML = "";
+      rows.forEach(r=>{
+        const div = document.createElement("div");
+        div.className = "row";
+        div.innerHTML = `<span class="dot"></span><span>${escapeHTML(r.text)}</span><span class="sub">${escapeHTML(r.sub || "")}</span>`;
+        div.addEventListener("mousedown", (e)=>{ e.preventDefault(); }); // 防止 blur
+        div.addEventListener("click", ()=>{
+          q.value = r.fill || r.text;
+          q.focus({preventScroll:true});
+          if(r.action === "search"){
+            saveHistory(q.value.trim());
+            openURL(engines["/g"](q.value.trim()));
+          }
+        });
+        panel.appendChild(div);
+      });
+      panel.classList.add("show");
+    }
+
+    function escapeHTML(s){
+      return String(s).replace(/[&<>"']/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+    }
+
+    // —— 计算器 / 单位换算（即时结果显示在右侧）——
+    const unitMap = {
+      "in": { "cm": v=> v*2.54, "m": v=> v*0.0254 },
+      "cm": { "in": v=> v/2.54, "m": v=> v/100 },
+      "m":  { "ft": v=> v*3.28084, "cm": v=> v*100 },
+      "km": { "mi": v=> v*0.621371 },
+      "mi": { "km": v=> v/0.621371 }
+    };
+
+    async function fxConvert(amount, from, to){
+      // 免费汇率接口（不保证一直稳定），失败就返回 null 不影响主功能
+      try{
+        const url = `https://api.exchangerate.host/convert?amount=${encodeURIComponent(amount)}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+        const res = await fetch(url, { cache:"no-store" });
+        const data = await res.json();
+        if(typeof data.result === "number") return data.result;
+      }catch(_){}
+      return null;
+    }
+
+    let fxTimer = null;
+    let lastFxKey = "";
+
+    function tryCompute(raw){
+      calcOut.textContent = "";
+
+      const s = raw.trim();
+
+      // 1) 纯算式：允许数字/运算符/括号/小数点/空格
+      if(/^[\d\s\.\+\-\*\/\%\(\)]+$/.test(s) && /[\+\-\*\/\%]/.test(s)){
+        try{
+          const v = Function(`"use strict";return (${s})`)();
+          if(Number.isFinite(v)){
+            calcOut.textContent = `= ${formatNum(v)}`;
+            return;
+          }
+        }catch(_){}
+      }
+
+      // 2) 单位换算： "12 in to cm"
+      const um = s.match(/^(\d+(?:\.\d+)?)\s*([a-zA-Z]+)\s*(?:to|in)\s*([a-zA-Z]+)$/i);
+      if(um){
+        const val = parseFloat(um[1]);
+        const from = um[2].toLowerCase();
+        const to = um[3].toLowerCase();
+        if(unitMap[from] && unitMap[from][to]){
+          const out = unitMap[from][to](val);
+          calcOut.textContent = `= ${formatNum(out)} ${to}`;
+          return;
+        }
+      }
+
+      // 3) 汇率： "100 usd to cny"
+      const fm = s.match(/^(\d+(?:\.\d+)?)\s*([A-Za-z]{3})\s*(?:to|in)\s*([A-Za-z]{3})$/);
+      if(fm){
+        const amt = parseFloat(fm[1]);
+        const from = fm[2].toUpperCase();
+        const to = fm[3].toUpperCase();
+
+        // 去抖
+        const k = `${amt}-${from}-${to}`;
+        if(k === lastFxKey) return;
+        lastFxKey = k;
+
+        clearTimeout(fxTimer);
+        fxTimer = setTimeout(async ()=>{
+          const r = await fxConvert(amt, from, to);
+          if(r !== null){
+            calcOut.textContent = `≈ ${formatNum(r)} ${to}`;
+          }
+        }, 220);
+      }
+    }
+
+    function formatNum(n){
+      const abs = Math.abs(n);
+      if(abs >= 1000) return n.toLocaleString(undefined, { maximumFractionDigits: 4 });
+      return n.toLocaleString(undefined, { maximumFractionDigits: 6 });
+    }
+
+    // —— Google Suggest：JSONP（跨域可用）——
+    let jsonpId = 0;
+    function googleSuggest(query){
+      return new Promise((resolve)=>{
+        const cb = `__gcb_${++jsonpId}`;
+        window[cb] = (data)=>{
+          try{
+            const arr = (data && data[1]) ? data[1].map(x=> (Array.isArray(x)? x[0] : x)) : [];
+            resolve(arr.slice(0,6));
+          }catch(_){ resolve([]); }
+          cleanup();
+        };
+        const script = document.createElement("script");
+        const url = `https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(query)}&callback=${cb}`;
+        script.src = url;
+        script.async = true;
+
+        const cleanup = ()=>{
+          if(script && script.parentNode) script.parentNode.removeChild(script);
+          try{ delete window[cb]; }catch(_){ window[cb] = undefined; }
+        };
+
+        script.onerror = ()=>{ resolve([]); cleanup(); };
+        document.body.appendChild(script);
+      });
+    }
+
+    let suggestTimer = null;
+    async function showPanelFromInput(){
+      const raw = (q.value || "").trim();
+
+      // 计算即时显示
+      tryCompute(raw);
+
+      if(!raw){
+        // 空输入：显示历史
+        const hist = getHistory();
+        if(hist.length){
+          showPanel(hist.map(t=>({ text:t, sub:"history", fill:t, action:"search" })));
+        }else{
+          hidePanel();
+        }
+        return;
+      }
+
+      // 有输入：先展示“历史匹配”，同时异步拉 suggest
+      const hist = getHistory().filter(x=> x.toLowerCase().includes(raw.toLowerCase())).slice(0,4);
+      const rows = hist.map(t=>({ text:t, sub:"history", fill:t, action:"search" }));
+
+      showPanel(rows.length ? rows : [{ text: raw, sub:"search", fill: raw, action:"search" }]);
+
+      clearTimeout(suggestTimer);
+      suggestTimer = setTimeout(async ()=>{
+        // 如果是 Bang 前缀，就别拉建议（保持克制）
+        if(raw.startsWith("/")) return;
+
+        const sug = await googleSuggest(raw);
+        const sugRows = sug.map(t=>({ text:t, sub:"suggest", fill:t, action:"search" }));
+        if(sugRows.length){
+          // 合并历史 + 建议，历史优先
+          const merged = [...rows, ...sugRows].slice(0,7);
+          showPanel(merged);
+        }
+      }, 180);
+    }
+
+    q.addEventListener("input", showPanelFromInput);
+    q.addEventListener("focus", showPanelFromInput);
+
+    // ESC 关闭
+    window.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape"){
+        hidePanel();
+        q.blur();
+      }
+    });
+
+    // ========= 10) 右侧提示轮播 =========
+    const hintKey = document.getElementById("hintKey");
+    const hintText = document.getElementById("hintText");
+    const rightInfo = document.getElementById("rightInfo");
+
+    const hintItems = [
+      { k:"/g",  t:"Google" },
+      { k:"/gh", t:"GitHub" },
+      { k:"/y",  t:"YouTube" },
+      { k:"/r",  t:"Reddit" },
+      { k:"/cl", t:"Claude" },
+      { k:"/gm", t:"Gemini" },
+      { k:"/cp", t:"Copilot" },
+      { k:"/c",  t:"ChatGPT" },
+      { k:"⌘K",  t:"Focus Search" }
+    ];
+    let hintIdx = 0;
+
+    function rotateHint(){
+      rightInfo.classList.add("fade");
+      setTimeout(()=>{
+        hintIdx = (hintIdx + 1) % hintItems.length;
+        hintKey.textContent = hintItems[hintIdx].k;
+        hintText.textContent = hintItems[hintIdx].t;
+        rightInfo.classList.remove("fade");
+      }, 220);
+    }
+    setInterval(rotateHint, 3200);
   </script>
 </body>
 </html>
