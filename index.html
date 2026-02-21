@@ -1,912 +1,264 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>New Tab</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+<title>Harvey — Home</title>
+<link rel="icon" href="data:,">
+<meta name="theme-color" content="#070A12">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 
 <style>
 :root{
-  --bg:#0b1020;
-  --text:rgba(255,255,255,.92);
-  --muted:rgba(255,255,255,.56);
-  --muted2:rgba(255,255,255,.38);
-
-  --line:rgba(255,255,255,.10);
-  --line2:rgba(255,255,255,.16);
-
-  --glass:rgba(255,255,255,.06);
-  --glass2:rgba(255,255,255,.085);
-
-  --shadow:0 18px 45px rgba(0,0,0,.35);
-  --shadow2:0 10px 26px rgba(0,0,0,.22);
-
-  --focus: rgba(255,255,255,.18);
-  --focusGlow: rgba(99,102,241,.22);
-
-  /* Master easing: gentle spring */
-  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --ease: cubic-bezier(.4,0,.2,1);
-
-  /* Search focus brand tint */
-  --brand: rgba(124,58,237,.38);
-  --brand2: rgba(99,102,241,.24);
-
-  /* Dynamic background intensity (updated by JS) */
-  --bgDim: 1;
-  --bgSat: 1;
-  --bgLift: 1;
+--bg0:#070A12;
+--bg1:#09112A;
+--text:rgba(255,255,255,.92);
+--muted:rgba(255,255,255,.6);
+--hair:rgba(255,255,255,.08);
+--ease:cubic-bezier(.34,1.56,.64,1);
+--ease2:cubic-bezier(.22,.61,.36,1);
 }
 
 *{box-sizing:border-box}
-html,body{height:100%}
 body{
-  margin:0;
-  font-family: Inter, ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",
-    Roboto,Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei";
-  color:var(--text);
-  overflow-x:hidden;
-
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  /* Dynamic background via CSS variables (multiplied by overlays) */
-  background:
-    radial-gradient(1100px 650px at 18% 8%,rgba(99,102,241,.16),transparent 60%),
-    radial-gradient(900px 520px at 82% 18%,rgba(16,185,129,.12),transparent 62%),
-    radial-gradient(900px 700px at 55% 92%,rgba(56,189,248,.10),transparent 55%),
-    var(--bg);
-}
-body::after{
-  /* Adaptive overlay: dim/sat/lift adjusted by time */
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  background: rgba(0,0,0, calc(0.22 * (1 / var(--bgLift)) ));
-  opacity: calc(0.32 * var(--bgDim));
-  mix-blend-mode: multiply;
+margin:0;
+font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+-webkit-font-smoothing:antialiased;
+background:
+radial-gradient(1000px 700px at 20% 20%, rgba(100,80,255,.18), transparent 55%),
+radial-gradient(900px 700px at 80% 30%, rgba(0,200,255,.12), transparent 55%),
+linear-gradient(180deg,var(--bg1),var(--bg0));
+color:var(--text);
+min-height:100vh;
+display:flex;
+justify-content:center;
+padding:40px 20px;
 }
 
-/* Grain texture (very subtle) */
-body::before{
-  content:"";
-  position:fixed;
-  inset:-40px;
-  pointer-events:none;
-  opacity:.07;
-  mix-blend-mode: overlay;
-  background:
-    repeating-linear-gradient(0deg,
-      rgba(255,255,255,.08) 0px,
-      rgba(255,255,255,.08) 1px,
-      transparent 2px,
-      transparent 4px),
-    repeating-linear-gradient(90deg,
-      rgba(0,0,0,.12) 0px,
-      rgba(0,0,0,.12) 1px,
-      transparent 2px,
-      transparent 5px);
-  filter: blur(.6px);
+.container{
+width:min(980px,100%);
 }
 
-/* container */
-.wrap{
-  width:min(980px,92vw);
-  margin:62px auto 74px;
-  padding:0 8px;
-  position:relative;
-  z-index:1;
-}
-@media (max-width:600px){
-  .wrap{ margin-top:68px; }
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:18px;
 }
 
-/* Header hierarchy */
-.topbar{
-  width:min(860px,92vw);
-  margin:0 auto 16px;
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-end;
-  gap:16px;
-  transition: filter .22s var(--ease), opacity .22s var(--ease);
-}
 .greet{
-  font-size:14px;
-  font-weight:300;
-  opacity:.70;
-  letter-spacing:.01em;
+font-size:18px;
+opacity:.8;
 }
+
 .clock{
-  font-family: ui-monospace,"JetBrains Mono","SF Mono",Menlo,monospace;
-  font-size:20px;
-  font-weight:760;
-  letter-spacing:.12em;
-  opacity:.90;
+font-family:"JetBrains Mono",monospace;
+font-weight:600;
+letter-spacing:.02em;
 }
 
-/* Search: breathing focus */
 .search{
-  width:min(860px,92vw);
-  margin:0 auto 18px;
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:16px 18px;
-  border-radius:999px;
-  background:var(--glass);
-  border:1px solid var(--line);
-  backdrop-filter:blur(18px);
-  box-shadow: var(--shadow);
-  transition:
-    background .20s var(--ease),
-    border-color .20s var(--ease),
-    transform .20s var(--ease),
-    box-shadow .25s var(--ease);
-  position:relative;
-  z-index: 5;
+position:relative;
+display:flex;
+align-items:center;
+padding:14px 18px;
+border-radius:999px;
+border:1px solid var(--hair);
+background:rgba(255,255,255,.05);
+backdrop-filter:blur(12px);
+margin-bottom:26px;
+transition:.25s var(--ease2);
 }
+
 .search:focus-within{
-  background:var(--glass2);
-  border-color: color-mix(in srgb, var(--brand) 70%, rgba(255,255,255,.18));
-  box-shadow:
-    0 18px 45px rgba(0,0,0,.35),
-    0 0 0 1px rgba(124,58,237,.18),
-    0 0 0 10px rgba(124,58,237,.08);
-  transform: translateY(-1px);
+box-shadow:0 0 0 6px rgba(124,92,255,.12);
+border-color:rgba(124,92,255,.4);
 }
-.search .sicon{
-  width:18px;height:18px;opacity:.70;flex:0 0 auto;
-}
+
 .search input{
-  flex:1;border:0;outline:0;background:transparent;
-  color:var(--text);font-size:16px;
-}
-.search input::placeholder{ color: rgba(255,255,255,.28); }
-
-/* tiny enter hint */
-.search .hint{
-  font-family: ui-monospace,"JetBrains Mono","SF Mono",Menlo,monospace;
-  font-size:12px;
-  color:rgba(255,255,255,.24);
-  border:1px solid rgba(255,255,255,.10);
-  padding:6px 10px;
-  border-radius:999px;
-  background:rgba(255,255,255,.03);
-  user-select:none;
+flex:1;
+background:transparent;
+border:0;
+outline:0;
+color:var(--text);
+font-size:18px;
 }
 
-/* Spotlight: dim/blur content when focusing search */
-.content{
-  width:min(860px,92vw);
-  margin:0 auto;
-  transition: filter .22s var(--ease), opacity .22s var(--ease);
-}
-body.searching .content{
-  filter: blur(2px) saturate(.85);
-  opacity: .58;
-}
-body.searching .topbar{
-  filter: blur(1px) saturate(.85);
-  opacity: .72;
-}
-/* When typing: further reduce noise */
-body.typing .content{
-  filter: blur(4px) saturate(.78);
-  opacity: .46; /* ~20% extra drop */
-}
-
-/* Minimal separator (no labels) */
-.sepRow{
-  width:min(860px,92vw);
-  margin:22px auto 12px;
-  padding:0 6px;
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-.sepLine{
-  height:1px;
-  flex:1;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
-}
-.sepDot{
-  width:6px;height:6px;border-radius:999px;
-  background: rgba(255,255,255,.22);
-  box-shadow: 0 0 0 4px rgba(255,255,255,.03);
-  flex:0 0 auto;
-}
-.moreBtn{
-  border:1px solid rgba(255,255,255,.10);
-  background:rgba(255,255,255,.04);
-  color:rgba(255,255,255,.62);
-  border-radius:999px;
-  padding:8px 12px;
-  cursor:pointer;
-  transition: transform .18s var(--spring), background .18s var(--ease);
-  font-weight:650;
-  letter-spacing:.02em;
-}
-.moreBtn:hover{ background:rgba(255,255,255,.08); transform: translateY(-1px); }
-.moreBtn:active{ transform: translateY(1px) scale(.99); }
-
-/* Grid: 8pt rhythm */
 .grid{
-  padding:0 6px;
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:32px 40px;
-}
-@media(max-width:980px){ .grid{ grid-template-columns:repeat(5,1fr);} }
-@media(max-width:860px){ .grid{ grid-template-columns:repeat(4,1fr);} }
-@media(max-width:600px){
-  .grid{ grid-template-columns:repeat(3,1fr); gap:28px 26px; }
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
+gap:30px 26px;
 }
 
-/* Item */
 .item{
-  text-decoration:none;
-  color:inherit;
-  position:relative;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:12px;
-  padding:10px 8px;
-  border-radius:16px;
-  min-height:96px;
-  -webkit-tap-highlight-color: transparent;
-  outline:none;
-
-  transition: transform .36s var(--spring), background .22s var(--ease);
-  will-change: transform;
+text-align:center;
+text-decoration:none;
+color:var(--muted);
+position:relative;
+padding:8px;
+border-radius:14px;
+transition:.25s var(--ease);
 }
 
-/* subtle hover halo */
-.item::before{
-  content:"";
-  position:absolute;
-  inset:6px;
-  border-radius:18px;
-  background: radial-gradient(closest-side, rgba(255,255,255,.10), transparent 65%);
-  opacity:0;
-  transform: scale(.98);
-  transition: opacity .30s var(--ease), transform .30s var(--ease);
-  pointer-events:none;
-}
-
-/* brand glow layer */
-.item::after{
-  content:"";
-  position:absolute;
-  width:68px;height:68px;
-  left:50%;
-  top:24px;
-  transform: translateX(-50%) scale(.92);
-  border-radius:999px;
-  background: radial-gradient(circle at 50% 50%, var(--glow, rgba(255,255,255,.16)), transparent 62%);
-  filter: blur(10px);
-  opacity:0;
-  transition: opacity .36s var(--ease), transform .36s var(--spring);
-  pointer-events:none;
-}
-
-.item:hover{
-  transform: translateY(-4px);
-}
-.item:hover::before{ opacity:1; transform: scale(1); }
-.item:hover::after{ opacity:.55; transform: translateX(-50%) scale(1); }
-
-.item:active{
-  transform: translateY(-1px) scale(.99);
-}
-.item:active::after{ opacity:.60; }
-
-/* focus visible */
-.item:focus-visible{
-  outline: 1px solid var(--focus);
-  box-shadow: 0 0 0 4px rgba(255,255,255,.05), 0 0 0 10px var(--focusGlow);
-}
-
-/* icon sleeping/wake with spring */
 .icon{
-  width:30px;
-  height:30px;
-  display:block;
-  transform: translateZ(0);
-  filter: grayscale(100%) saturate(0) opacity(.72) drop-shadow(0 10px 18px rgba(0,0,0,.28));
-  transition: filter .40s var(--ease), transform .40s var(--spring);
-  will-change: transform, filter;
+width:54px;
+height:54px;
+margin:0 auto 10px;
+transition:.3s var(--ease);
+filter:grayscale(100%) opacity(.65);
 }
+
 .icon img{
-  width:100%;
-  height:100%;
-  object-fit:contain;
-  display:block;
-  image-rendering:auto;
+width:100%;
+height:100%;
+object-fit:contain;
+border-radius:12px;
 }
+
 .item:hover .icon,
-.item:active .icon,
 .item:focus-visible .icon{
-  filter: none drop-shadow(0 10px 18px rgba(0,0,0,.28));
-}
-.item:hover .icon{ transform: translateY(-1px) scale(1.06); }
-.item:active .icon{ transform: translateY(0) scale(1.02); }
-
-.name{
-  font-size:12.5px;
-  color:rgba(255,255,255,.56);
-  transition: color .22s var(--ease), transform .36s var(--spring);
-  user-select:none;
-}
-.item:hover .name,
-.item:active .name,
-.item:focus-visible .name{
-  color:rgba(255,255,255,.78);
-  transform: translateY(-.5px);
+filter:none;
+transform:translateY(-4px);
 }
 
-/* Stagger entrance */
-.item{
-  opacity:0;
-  transform: translateY(10px);
-}
-body.ready .item{
-  opacity:1;
-  transform: translateY(0);
-}
-body.ready .item{
-  transition:
-    opacity .45s var(--ease),
-    transform .55s var(--spring);
+.item:hover .label,
+.item:focus-visible .label{
+color:#fff;
 }
 
-/* contextual shortcut badge: shown by Alt or Ghost mode */
+.item:focus-visible{
+box-shadow:0 0 0 1px rgba(255,255,255,.2),0 0 0 6px rgba(124,92,255,.12);
+outline:none;
+}
+
+.label{
+font-size:13px;
+transition:.2s var(--ease2);
+}
+
 .kbd{
-  position:absolute;
-  top:10px;
-  right:12px;
-  font-family: ui-monospace,"JetBrains Mono","SF Mono",Menlo,monospace;
-  font-size:11px;
-  letter-spacing:.06em;
-  padding:4px 7px;
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,.12);
-  background:rgba(0,0,0,.28);
-  color:rgba(255,255,255,.70);
-  opacity:0;
-  transform: translateY(-4px) scale(.98);
-  transition: opacity .16s var(--ease), transform .18s cubic-bezier(.2,.9,.2,1);
-  pointer-events:none;
-}
-@media (hover:hover) and (pointer:fine){
-  body.alt .kbd,
-  body.ghost .kbd{
-    opacity:1;
-    transform: translateY(0) scale(1);
-  }
+position:absolute;
+top:-6px;
+right:2px;
+font-family:"JetBrains Mono",monospace;
+font-size:11px;
+padding:4px 7px;
+border-radius:10px;
+background:rgba(0,0,0,.3);
+border:1px solid rgba(255,255,255,.15);
+opacity:0;
+transform:translateY(-6px);
+transition:.18s var(--ease);
+pointer-events:none;
 }
 
-/* More panel */
-.morePanel{
-  overflow:hidden;
-  max-height:0;
-  opacity:0;
-  transform: translateY(-6px);
-  transition: max-height .35s var(--ease), opacity .25s var(--ease), transform .25s var(--ease);
-}
-.morePanel.open{
-  max-height:560px;
-  opacity:1;
-  transform: translateY(0);
+.show-hotkeys .kbd{
+opacity:1;
+transform:translateY(0);
 }
 
-/* Status widgets */
-.status{
-  width:min(860px,92vw);
-  margin:18px auto 0;
-  padding:0 6px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:14px;
-  color: rgba(255,255,255,.30);
-  font-size:11.5px;
-  letter-spacing: 0.02em; /* per your suggestion */
-  user-select:none;
-}
-.pill{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  padding:6px 10px;
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,.08);
-  background: rgba(255,255,255,.03);
-}
-.dot{
-  width:6px;height:6px;border-radius:999px;
-  background: rgba(34,197,94,.85);
-  box-shadow: 0 0 0 4px rgba(34,197,94,.10);
-}
-.dot.off{
-  background: rgba(239,68,68,.85);
-  box-shadow: 0 0 0 4px rgba(239,68,68,.10);
-}
-.todoBtn{
-  border:0;background:transparent;
-  color: rgba(255,255,255,.30);
-  cursor:pointer;padding:0;font:inherit;
-}
-.todoBtn:hover{ color: rgba(255,255,255,.44); }
-
-/* tiny todo panel */
-.todoPanel{
-  width:min(860px,92vw);
-  margin:10px auto 0;
-  padding:0 6px;
-  display:none;
-}
-.todoPanel.show{ display:block; }
-.todoCard{
-  border-radius:16px;
-  border:1px solid rgba(255,255,255,.10);
-  background: rgba(255,255,255,.04);
-  backdrop-filter: blur(14px);
-  padding:12px;
-}
-.todoRow{ display:flex; gap:10px; align-items:center; }
-.todoRow input{
-  flex:1;
-  border:1px solid rgba(255,255,255,.10);
-  background: rgba(0,0,0,.18);
-  color: var(--text);
-  padding:10px 12px;
-  border-radius:12px;
-  outline:none;
-}
-.todoRow input::placeholder{ color: rgba(255,255,255,.28); }
-.todoRow button{
-  border:1px solid rgba(255,255,255,.10);
-  background: rgba(255,255,255,.05);
-  color: rgba(255,255,255,.70);
-  padding:10px 12px;
-  border-radius:12px;
-  cursor:pointer;
-}
-.todoList{ margin:10px 0 0; padding:0; list-style:none; }
-.todoList li{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  padding:10px 10px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,.06);
-  background: rgba(255,255,255,.02);
-  color: rgba(255,255,255,.66);
-  margin-top:8px;
-}
-.todoList li button{
-  border:0;background:transparent;
-  color: rgba(255,255,255,.36);
-  cursor:pointer;
-}
-.todoList li button:hover{ color: rgba(255,255,255,.56); }
-
-/* reduce motion */
-@media (prefers-reduced-motion: reduce){
-  *{transition:none!important; animation:none!important}
-  body.ready .item{ opacity:1; transform:none; }
+.footer{
+text-align:center;
+margin-top:30px;
+opacity:.25;
+font-size:12px;
+letter-spacing:.05em;
 }
 </style>
 </head>
 
 <body>
-<div class="wrap">
+<div class="container">
 
-  <div class="topbar">
-    <div class="greet" id="greet"></div>
-    <div class="clock" id="clock"></div>
-  </div>
+<div class="top">
+<div class="greet" id="greet"></div>
+<div class="clock" id="clock"></div>
+</div>
 
-  <form class="search" id="searchForm" autocomplete="off">
-    <svg class="sicon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/>
-      <path d="M16.3 16.3 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-    <input id="q" placeholder="Search…" />
-    <span class="hint">↵</span>
-  </form>
+<form class="search" id="searchForm">
+<input id="q" placeholder="Search...">
+</form>
 
-  <div class="content">
-    <div class="sepRow">
-      <span class="sepLine"></span>
-      <span class="sepDot"></span>
-      <span class="sepLine"></span>
-      <button type="button" class="moreBtn" id="moreBtn">More</button>
-    </div>
+<div class="grid" id="grid"></div>
 
-    <div class="grid" id="essentials"></div>
-
-    <div class="morePanel" id="morePanel">
-      <div class="sepRow" style="margin-top:22px;">
-        <span class="sepLine"></span>
-        <span class="sepDot" style="opacity:.18"></span>
-        <span class="sepLine"></span>
-      </div>
-      <div class="grid" id="moreGrid"></div>
-    </div>
-
-    <div class="status">
-      <div class="pill"><span class="dot" id="netDot"></span><span id="netText">Online</span></div>
-      <div class="pill">
-        <button class="todoBtn" id="todoToggle" type="button">To-Do <span id="todoCount">0</span></button>
-      </div>
-    </div>
-
-    <div class="todoPanel" id="todoPanel">
-      <div class="todoCard">
-        <div class="todoRow">
-          <input id="todoInput" placeholder="Add a task…" />
-          <button id="todoAdd" type="button">Add</button>
-        </div>
-        <ul class="todoList" id="todoList"></ul>
-      </div>
-    </div>
-  </div>
+<div class="footer">harveyi.com</div>
 
 </div>
 
 <script>
-/* ---------- Adaptive UI: time-based background tuning ---------- */
-function setAmbient(){
-  const h = new Date().getHours();
-  // Deep night: darker, calmer
-  if(h >= 0 && h < 5){
-    document.documentElement.style.setProperty("--bgDim", "1.18");
-    document.documentElement.style.setProperty("--bgLift", "0.92");
-    document.documentElement.style.setProperty("--bgSat", "0.92");
-  }else if(h >= 5 && h < 10){
-    // Morning: slightly brighter
-    document.documentElement.style.setProperty("--bgDim", "0.92");
-    document.documentElement.style.setProperty("--bgLift", "1.08");
-    document.documentElement.style.setProperty("--bgSat", "1.02");
-  }else{
-    // Default
-    document.documentElement.style.setProperty("--bgDim", "1");
-    document.documentElement.style.setProperty("--bgLift", "1");
-    document.documentElement.style.setProperty("--bgSat", "1");
-  }
-}
-setAmbient();
-setInterval(setAmbient, 60_000);
-
-/* ---------- time ---------- */
-const pad=n=>String(n).padStart(2,"0");
-function tick(){
-  const d=new Date();
-  const h=d.getHours();
-  const greet = h<5 ? "Good night" : h<12 ? "Good morning" : h<18 ? "Good afternoon" : "Good evening";
-  document.getElementById("greet").textContent = greet + ".";
-  document.getElementById("clock").textContent = `${pad(h)}:${pad(d.getMinutes())}`;
-}
-tick(); setInterval(tick,1000);
-
-/* ---------- spotlight focus behavior ---------- */
-const q = document.getElementById("q");
-let typingTimer = null;
-
-q.addEventListener("focus", ()=> document.body.classList.add("searching"));
-q.addEventListener("blur",  ()=>{
-  document.body.classList.remove("searching","typing");
-});
-q.addEventListener("input", ()=>{
-  document.body.classList.add("typing");
-  clearTimeout(typingTimer);
-  typingTimer = setTimeout(()=> document.body.classList.remove("typing"), 450);
-});
-
-window.addEventListener("load", ()=> {
-  q.focus({preventScroll:true});
-  // Entrance stagger trigger
-  if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
-    requestAnimationFrame(()=> document.body.classList.add("ready"));
-  }else{
-    document.body.classList.add("ready");
-  }
-});
-
-/* ---------- favicon (HD fallback) ---------- */
-const favicon = (url) => {
-  const domain = new URL(url).hostname;
-  return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=256`;
-};
-
-/* ---------- brand glow palette ---------- */
-const glow = {
-  "google.com":          "rgba(66,133,244,.28)",
-  "mail.google.com":     "rgba(234,67,53,.28)",
-  "chatgpt.com":         "rgba(34,197,94,.24)",
-  "github.com":          "rgba(255,255,255,.18)",
-  "youtube.com":         "rgba(255,0,0,.26)",
-  "dash.cloudflare.com": "rgba(249,115,22,.26)",
-  "drive.google.com":    "rgba(34,197,94,.24)",
-  "calendar.google.com": "rgba(59,130,246,.26)",
-  "www.microsoft.com":   "rgba(59,130,246,.22)",
-  "my.vultr.com":        "rgba(0,114,206,.24)",
-  "cloud.oracle.com":    "rgba(239,68,68,.20)",
-  "my.racknerd.com":     "rgba(168,85,247,.22)",
-
-  "wikipedia.org":       "rgba(255,255,255,.12)",
-  "reddit.com":          "rgba(255,69,0,.20)",
-  "discord.com":         "rgba(88,101,242,.24)",
-  "x.com":               "rgba(255,255,255,.14)",
-  "netflix.com":         "rgba(229,9,20,.22)",
-  "apple.com":           "rgba(255,255,255,.12)"
-};
-function hostOf(url){ return new URL(url).hostname; }
-
-/* ---------- links ---------- */
-const essentials = [
-  {name:"Google",     url:"https://google.com",             key:"G"},
-  {name:"Gmail",      url:"https://mail.google.com",        key:"M"},
-  {name:"ChatGPT",    url:"https://chatgpt.com",            key:"C"},
-  {name:"GitHub",     url:"https://github.com",             key:"H"},
-  {name:"YouTube",    url:"https://youtube.com",            key:"Y"},
-  {name:"Cloudflare", url:"https://dash.cloudflare.com",    key:"F"},
-  {name:"Drive",      url:"https://drive.google.com",       key:"D"},
-  {name:"Calendar",   url:"https://calendar.google.com",    key:"L"},
-  {name:"Microsoft",  url:"https://www.microsoft.com",      key:"S"},
-  {name:"Vultr",      url:"https://my.vultr.com",           key:"V"},
-  {name:"Oracle",     url:"https://cloud.oracle.com",       key:"O"},
-  {name:"RackNerd",   url:"https://my.racknerd.com",        key:"R"},
+const sites=[
+{name:"Gmail",url:"https://mail.google.com/",key:"M"},
+{name:"ChatGPT",url:"https://chatgpt.com/",key:"C"},
+{name:"GitHub",url:"https://github.com/",key:"H"},
+{name:"Cloudflare",url:"https://dash.cloudflare.com/",key:"F"},
+{name:"Google",url:"https://google.com/",key:"G"},
+{name:"YouTube",url:"https://youtube.com/",key:"Y"},
+{name:"Drive",url:"https://drive.google.com/",key:"D"},
+{name:"Calendar",url:"https://calendar.google.com/",key:"K"},
+{name:"Microsoft",url:"https://microsoft.com/",key:"S"},
+{name:"Vultr",url:"https://my.vultr.com/",key:"V"},
+{name:"Oracle",url:"https://cloud.oracle.com/",key:"O"},
+{name:"RackNerd",url:"https://my.racknerd.com/",key:"R"}
 ];
 
-const more = [
-  {name:"Wikipedia", url:"https://wikipedia.org",            key:"W"},
-  {name:"Reddit",    url:"https://reddit.com",               key:"E"},
-  {name:"Discord",   url:"https://discord.com/channels/@me", key:"B"},
-  {name:"X",         url:"https://x.com",                    key:"X"},
-  {name:"Netflix",   url:"https://netflix.com",              key:"N"},
-  {name:"Apple",     url:"https://apple.com",                key:"A"},
-];
+const grid=document.getElementById("grid");
 
-/* ---------- render with stagger delay ---------- */
-function card(item, idx){
-  const a=document.createElement("a");
-  a.className="item";
-  a.href=item.url;
-  a.dataset.key=item.key || "";
-  const host = hostOf(item.url);
-  a.style.setProperty("--glow", glow[host] || "rgba(255,255,255,.14)");
+sites.forEach((s,i)=>{
+const a=document.createElement("a");
+a.className="item";
+a.href=s.url;
+a.target="_blank";
+a.innerHTML=`
+<span class="kbd">${s.key}</span>
+<div class="icon">
+<img src="https://www.google.com/s2/favicons?domain=${new URL(s.url).hostname}&sz=128">
+</div>
+<div class="label">${s.name}</div>
+`;
+grid.appendChild(a);
+});
 
-  // stagger: left->right, top->bottom approximated by DOM order
-  a.style.transitionDelay = `${Math.min(idx * 18, 240)}ms`;
+function updateTime(){
+const d=new Date();
+const h=d.getHours();
+const m=d.getMinutes();
+clock.textContent=String(h).padStart(2,"0")+":"+String(m).padStart(2,"0");
 
-  a.innerHTML = `
-    ${item.key ? `<span class="kbd">${item.key}</span>` : ``}
-    <span class="icon" aria-hidden="true"><img alt="" src="${favicon(item.url)}"></span>
-    <span class="name">${item.name}</span>
-  `;
-  return a;
+let g="Hello.";
+if(h<12) g="Good morning.";
+else if(h<18) g="Good afternoon.";
+else if(h<22) g="Good evening.";
+else g="Good night.";
+greet.textContent=g;
 }
+setInterval(updateTime,10000);
+updateTime();
 
-const essentialsEl=document.getElementById("essentials");
-essentials.forEach((x,i)=>essentialsEl.appendChild(card(x,i)));
+q.focus();
 
-const moreEl=document.getElementById("moreGrid");
-more.forEach((x,i)=>moreEl.appendChild(card(x, essentials.length + i)));
-
-/* ---------- search: Enter ---------- */
-document.getElementById("searchForm").addEventListener("submit",(e)=> e.preventDefault());
-q.addEventListener("keydown",(e)=>{
-  if(e.key === "Enter"){
-    e.preventDefault();
-    const v=q.value.trim();
-    if(!v) return;
-    const isUrl=/^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/.*)?$/i.test(v);
-    if(isUrl){ location.href = v.startsWith("http") ? v : ("https://" + v); return; }
-    location.href="https://www.google.com/search?q="+encodeURIComponent(v);
-  }
+searchForm.addEventListener("submit",e=>{
+e.preventDefault();
+const val=q.value.trim();
+if(!val)return;
+if(val.startsWith("/y "))
+window.open("https://youtube.com/results?search_query="+encodeURIComponent(val.slice(3)));
+else if(val.startsWith("/gh "))
+window.open("https://github.com/search?q="+encodeURIComponent(val.slice(4)));
+else
+window.open("https://google.com/search?q="+encodeURIComponent(val));
 });
 
-/* ---------- More toggle + FLIP + stagger refresh ---------- */
-const moreBtn=document.getElementById("moreBtn");
-const morePanel=document.getElementById("morePanel");
-let open=false;
-const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-function getRects(){
-  const els = [...document.querySelectorAll("#essentials .item, #moreGrid .item")];
-  const map = new Map();
-  els.forEach(el => map.set(el, el.getBoundingClientRect()));
-  return { els, map };
-}
-function playFLIP(before, after){
-  after.els.forEach(el=>{
-    const r0 = before.map.get(el);
-    const r1 = after.map.get(el);
-    if(!r0 || !r1) return;
-    const dx = r0.left - r1.left;
-    const dy = r0.top  - r1.top;
-    if(Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
-
-    el.animate(
-      [{ transform:`translate(${dx}px, ${dy}px)` }, { transform:"translate(0,0)" }],
-      { duration: 380, easing: "cubic-bezier(.2,.9,.2,1)", fill:"both" }
-    );
-  });
-}
-
-function applyMoreStagger(){
-  // When opening: wave in the "more" items
-  if(prefersReduced) return;
-  const items = [...document.querySelectorAll("#moreGrid .item")];
-  items.forEach((el, i)=>{
-    el.style.transitionDelay = `${Math.min(i * 20, 260)}ms`;
-  });
-}
-
-function toggleMore(){
-  if(prefersReduced){
-    open=!open;
-    morePanel.classList.toggle("open",open);
-    moreBtn.textContent=open?"Less":"More";
-    return;
-  }
-
-  const before=getRects();
-  open=!open;
-  morePanel.classList.toggle("open",open);
-  moreBtn.textContent=open?"Less":"More";
-
-  if(open) applyMoreStagger();
-
-  requestAnimationFrame(()=>{
-    const after=getRects();
-    playFLIP(before, after);
-  });
-}
-moreBtn.addEventListener("click", toggleMore);
-
-/* ---------- Alt to show keys + Alt+letter jump ---------- */
-let altDown=false;
-window.addEventListener("keydown",(e)=>{
-  if(e.key==="Alt" && !altDown){
-    altDown=true;
-    document.body.classList.add("alt");
-  }
+window.addEventListener("keydown",e=>{
+if(e.altKey)document.body.classList.add("show-hotkeys");
 });
-window.addEventListener("keyup",(e)=>{
-  if(e.key==="Alt"){
-    altDown=false;
-    document.body.classList.remove("alt");
-  }
-});
-window.addEventListener("keydown",(e)=>{
-  const active=document.activeElement;
-  const typing=active && (active.tagName==="INPUT" || active.tagName==="TEXTAREA");
-  if(!e.altKey || typing) return;
-
-  const k=(e.key||"").toUpperCase();
-  if(!k || k.length!==1) return;
-
-  const items=[...document.querySelectorAll(".item")];
-  const hit=items.find(x => (x.dataset.key||"").toUpperCase()===k);
-  if(hit){
-    e.preventDefault();
-    location.href=hit.href;
-  }
-});
-
-/* ---------- Ghost layer: double Shift toggles key badges ---------- */
-let lastShift = 0;
-let ghostTimer = null;
-
-window.addEventListener("keydown",(e)=>{
-  if(e.key !== "Shift") return;
-  const now = performance.now();
-  if(now - lastShift < 320){
-    // toggle ghost layer
-    const on = !document.body.classList.contains("ghost");
-    document.body.classList.toggle("ghost", on);
-
-    clearTimeout(ghostTimer);
-    if(on){
-      ghostTimer = setTimeout(()=> document.body.classList.remove("ghost"), 2600);
-    }
-    lastShift = 0;
-  }else{
-    lastShift = now;
-  }
-});
-
-/* ---------- keyboard activation for items ---------- */
-document.querySelectorAll(".item").forEach(a=>{
-  a.addEventListener("keydown",(e)=>{
-    if(e.key==="Enter" || e.key===" "){
-      e.preventDefault();
-      a.click();
-    }
-  });
-});
-
-/* ---------- subtle status: online/offline ---------- */
-const netDot=document.getElementById("netDot");
-const netText=document.getElementById("netText");
-function setNet(){
-  const online = navigator.onLine;
-  netDot.classList.toggle("off", !online);
-  netText.textContent = online ? "Online" : "Offline";
-}
-setNet();
-window.addEventListener("online", setNet);
-window.addEventListener("offline", setNet);
-
-/* ---------- To-Do (localStorage) ---------- */
-const LS_KEY="nav_todos_v1";
-const todoCountEl=document.getElementById("todoCount");
-const todoPanel=document.getElementById("todoPanel");
-const todoToggle=document.getElementById("todoToggle");
-const todoInput=document.getElementById("todoInput");
-const todoAdd=document.getElementById("todoAdd");
-const todoList=document.getElementById("todoList");
-
-function loadTodos(){
-  try{ return JSON.parse(localStorage.getItem(LS_KEY) || "[]"); }
-  catch{ return []; }
-}
-function saveTodos(arr){ localStorage.setItem(LS_KEY, JSON.stringify(arr)); }
-function renderTodos(){
-  const todos = loadTodos();
-  todoCountEl.textContent = String(todos.length);
-  todoList.innerHTML = "";
-  todos.forEach((t, idx)=>{
-    const li=document.createElement("li");
-    li.innerHTML = `<span>${t}</span><button type="button" aria-label="Remove">×</button>`;
-    li.querySelector("button").addEventListener("click", ()=>{
-      const next = loadTodos().filter((_,i)=>i!==idx);
-      saveTodos(next);
-      renderTodos();
-    });
-    todoList.appendChild(li);
-  });
-}
-renderTodos();
-
-todoToggle.addEventListener("click", ()=>{
-  todoPanel.classList.toggle("show");
-  if(todoPanel.classList.contains("show")){
-    setTimeout(()=>todoInput.focus({preventScroll:true}), 30);
-  }
-});
-todoAdd.addEventListener("click", ()=>{
-  const v = todoInput.value.trim();
-  if(!v) return;
-  const todos = loadTodos();
-  todos.unshift(v);
-  saveTodos(todos.slice(0, 20));
-  todoInput.value="";
-  renderTodos();
-});
-todoInput.addEventListener("keydown",(e)=>{
-  if(e.key==="Enter"){
-    e.preventDefault();
-    todoAdd.click();
-  }
-});
-
-/* Hotkey: T toggles todo when not typing */
-window.addEventListener("keydown",(e)=>{
-  const active=document.activeElement;
-  const typing=active && (active.tagName==="INPUT" || active.tagName==="TEXTAREA");
-  if(typing) return;
-  if(e.key.toLowerCase()==="t"){
-    todoToggle.click();
-  }
+window.addEventListener("keyup",e=>{
+if(!e.altKey)document.body.classList.remove("show-hotkeys");
 });
 </script>
+
 </body>
 </html>
