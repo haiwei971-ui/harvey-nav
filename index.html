@@ -1,577 +1,392 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>New Tab</title>
 
 <style>
-  :root{
-    --bg: #0b1020;
-    --text: rgba(255,255,255,.92);
-    --muted: rgba(255,255,255,.56);
-    --muted2: rgba(255,255,255,.38);
-    --line: rgba(255,255,255,.10);
-    --line2: rgba(255,255,255,.16);
-    --glass: rgba(255,255,255,.06);
-    --glass2: rgba(255,255,255,.085);
-    --shadow: 0 18px 60px rgba(0,0,0,.42);
-    --shadow2: 0 10px 26px rgba(0,0,0,.22);
-    --maxw: 980px;
+:root{
+  --bg:#0b1020;
+  --text:rgba(255,255,255,.92);
+  --muted:rgba(255,255,255,.56);
+  --line:rgba(255,255,255,.10);
+  --glass:rgba(255,255,255,.06);
+  --glass2:rgba(255,255,255,.085);
+  --shadow:0 18px 45px rgba(0,0,0,.35);
+  --ring:rgba(255,255,255,.10);
+}
 
-    /* neutral icon tone */
-    --icon-neutral: #A1A1AA; /* 你提的 #A1A1AA */
-  }
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",
+  Roboto,Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei";
+  color:var(--text);
+  background:
+    radial-gradient(1100px 650px at 18% 8%,rgba(99,102,241,.16),transparent 60%),
+    radial-gradient(900px 520px at 82% 18%,rgba(16,185,129,.12),transparent 62%),
+    radial-gradient(900px 700px at 55% 92%,rgba(56,189,248,.10),transparent 55%),
+    var(--bg);
+}
 
-  @media (prefers-color-scheme: light){
-    :root{
-      --bg: #f6f7fb;
-      --text: rgba(17,24,39,.92);
-      --muted: rgba(17,24,39,.54);
-      --muted2: rgba(17,24,39,.38);
-      --line: rgba(17,24,39,.10);
-      --line2: rgba(17,24,39,.16);
-      --glass: rgba(17,24,39,.04);
-      --glass2: rgba(17,24,39,.06);
-      --shadow: 0 16px 50px rgba(17,24,39,.10);
-      --shadow2: 0 10px 22px rgba(17,24,39,.10);
-      --icon-neutral: #6B7280;
-    }
-  }
+/* container */
+.wrap{
+  width:min(980px,92vw);
+  margin:56px auto 70px;
+}
+@media (max-width:600px){
+  .wrap{ margin-top:62px; }
+}
 
-  *{ box-sizing:border-box; }
-  html,body{ height:100%; }
-  body{
-    margin:0;
-    color:var(--text);
-    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
-      Roboto, Helvetica, Arial, "PingFang SC","Hiragino Sans GB","Microsoft YaHei";
+/* top */
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:16px;
+  margin-bottom:18px;
+}
+.greet{
+  font-size:14px;
+  font-weight:400;
+  opacity:.78;
+  letter-spacing:.01em;
+}
+.clock{
+  font-family: ui-monospace,"JetBrains Mono","SF Mono",Menlo,monospace;
+  font-size:18px;
+  font-weight:650;
+  letter-spacing:.10em;
+  opacity:.90;
+}
 
-    background:
-      radial-gradient(1200px 700px at 18% 12%, rgba(99,102,241,.16), transparent 55%),
-      radial-gradient(1000px 600px at 82% 18%, rgba(16,185,129,.12), transparent 55%),
-      radial-gradient(900px 700px at 50% 105%, rgba(59,130,246,.14), transparent 60%),
-      var(--bg);
-  }
+/* search */
+.search{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px 16px;
+  border-radius:999px;
+  background:var(--glass);
+  border:1px solid rgba(255,255,255,.10);
+  backdrop-filter:blur(18px);
+  box-shadow: var(--shadow);
+  transition: background .2s ease,border-color .2s ease,transform .2s ease;
+}
+.search:focus-within{
+  background:var(--glass2);
+  border-color:rgba(255,255,255,.18);
+  transform: translateY(-1px);
+}
+.search .icon{
+  width:18px;height:18px;opacity:.7;flex:0 0 auto;
+}
+.search input{
+  flex:1;border:0;outline:0;background:transparent;
+  color:var(--text);font-size:16px;
+}
+.search input::placeholder{ color: rgba(255,255,255,.38); }
+.search button{
+  border:0;background:rgba(255,255,255,.06);
+  color:rgba(255,255,255,.70);
+  padding:10px 14px;border-radius:999px;
+  font-weight:600;cursor:pointer;
+  transition:.18s ease;
+}
+.search button:hover{ background:rgba(255,255,255,.10); }
+.search button:active{ transform:scale(.98); }
 
-  .wrap{
-    width:min(var(--maxw), 92vw);
-    margin: 18px auto 52px;
-  }
+/* section */
+.row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin:26px 0 14px;
+}
+.label{
+  font-size:12px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.moreBtn{
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.04);
+  color:rgba(255,255,255,.68);
+  border-radius:999px;
+  padding:8px 12px;
+  cursor:pointer;
+  transition:.2s ease;
+}
+.moreBtn:hover{ background:rgba(255,255,255,.08); }
 
-  /* ===== Header: minimal hierarchy ===== */
-  .topbar{
-    width:min(860px, 92vw);
-    margin: 6px auto 14px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:14px;
-  }
-  .greet{
-    font-weight: 780;
-    letter-spacing:.2px;
-    color: var(--muted);
-    user-select:none;
-  }
-  .mono{
-    font-family: ui-monospace, "JetBrains Mono", "SF Mono", SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-weight: 900;
-    letter-spacing: .08em;
-    color: color-mix(in srgb, var(--muted) 92%, transparent);
-    user-select:none;
-    white-space:nowrap;
-  }
+/* grid */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:26px 18px;
+}
+@media(max-width:980px){ .grid{ grid-template-columns:repeat(5,1fr);} }
+@media(max-width:860px){ .grid{ grid-template-columns:repeat(4,1fr);} }
+@media(max-width:600px){ .grid{ grid-template-columns:repeat(3,1fr);} }
 
-  /* ===== Search: absolute pure ===== */
-  .search{
-    width:min(860px, 92vw);
-    margin: 0 auto 18px;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding: 12px 14px;
-    border-radius: 999px;
-    background: var(--glass);
-    border: 1px solid var(--line);
-    box-shadow: var(--shadow2);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
-  }
-  .search:focus-within{
-    border-color: var(--line2);
-    background: var(--glass2);
-    box-shadow: 0 18px 44px rgba(0,0,0,.30);
-  }
-  .sicon{ width:18px;height:18px; opacity:.70; }
-  .search input{
-    flex:1;
-    border:0;
-    outline:0;
-    background:transparent;
-    color:var(--text);
-    font-size:16px;
-  }
-  .search button{
-    border:0;
-    cursor:pointer;
-    padding: 9px 12px;
-    border-radius: 999px;
-    background: transparent;
-    color: var(--muted);
-    font-weight: 850;
-    letter-spacing:.02em;
-  }
-  .search button:hover{ color: var(--text); }
+/* item — 去底座但保持大热区 */
+.item{
+  text-decoration:none;
+  color:inherit;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  padding:10px 8px;
+  border-radius:16px;
+  /* 大热区：不靠底座，靠 padding + border-radius */
+  min-height:92px;
+  transition: transform .18s ease, background .18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
 
-  /* Optional: bang helper (only when typing '/') */
-  .bang{
-    width:min(860px, 92vw);
-    margin: -10px auto 14px;
-    padding: 10px 12px;
-    border-radius: 14px;
-    background: var(--glass);
-    border: 1px solid var(--line);
-    box-shadow: var(--shadow2);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+/* hover/press 反馈：轻微抬升 + 柔光，不出现“框” */
+.item::before{
+  content:"";
+  position:absolute;
+  inset:6px;
+  border-radius:18px;
+  background: radial-gradient(closest-side, rgba(255,255,255,.10), transparent 65%);
+  opacity:0;
+  transform: scale(.98);
+  transition: opacity .18s ease, transform .18s ease;
+  pointer-events:none;
+}
+.item:hover{ transform: translateY(-2px); }
+.item:hover::before{ opacity:1; transform: scale(1); }
+.item:active{ transform: translateY(0px) scale(.99); }
+.item:active::before{ opacity:.9; }
 
-    display:none;
-    color: var(--muted);
-    font-size: 12.5px;
-    line-height: 1.5;
-  }
-  .bang.show{ display:block; }
-  .bang code{
-    font-family: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Monaco, Consolas, monospace;
-    font-weight: 900;
-    color: color-mix(in srgb, var(--text) 80%, transparent);
-    background: rgba(255,255,255,.06);
-    padding: 2px 6px;
-    border-radius: 8px;
-    border: 1px solid var(--line);
-  }
+.icon{
+  width:30px;
+  height:30px;
+  display:block;
+  /* 让图标“漂浮”：给一点阴影，提升高级感 */
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,.28));
+  transform: translateZ(0);
+}
+.icon img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+  image-rendering:auto;
+}
+.name{
+  font-size:12.5px;
+  color:rgba(255,255,255,.62);
+}
 
-  /* ===== Section row ===== */
-  .row{
-    width:min(860px, 92vw);
-    margin: 10px auto 10px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    opacity:.92;
-  }
-  .label{
-    color: color-mix(in srgb, var(--muted) 92%, transparent);
-    font-size: 12px;
-    font-weight: 850;
-    letter-spacing: .18em;
-    text-transform: uppercase;
-    user-select:none;
-  }
-  .btn{
-    border:1px solid transparent;
-    background: transparent;
-    color: var(--muted);
-    padding: 8px 10px;
-    border-radius: 999px;
-    cursor:pointer;
-    font-weight: 850;
-    letter-spacing:.02em;
-    transition: background .12s ease, border-color .12s ease, color .12s ease, transform .08s ease;
-  }
-  .btn:hover{
-    color: var(--text);
-    background: var(--glass);
-    border-color: var(--line);
-  }
-  .btn:active{ transform: translateY(1px); }
+/* 快捷键徽标：默认隐藏，Alt 才出现 */
+.kbd{
+  position:absolute;
+  top:10px;
+  right:12px;
+  font-family: ui-monospace,"JetBrains Mono","SF Mono",Menlo,monospace;
+  font-size:11px;
+  letter-spacing:.06em;
+  padding:4px 7px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(0,0,0,.28);
+  color:rgba(255,255,255,.70);
+  opacity:0;
+  transform: translateY(-4px) scale(.98);
+  transition:.16s ease;
+  pointer-events:none;
+}
 
-  /* ===== Icons: floating, no base ===== */
-  .grid{
-    width:min(860px, 92vw);
-    margin: 8px auto 0;
-    display:grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 18px 16px;
-    justify-items:center;
-  }
-  @media (max-width: 980px){ .grid{ grid-template-columns: repeat(4,1fr);} }
-  @media (max-width: 560px){ .grid{ grid-template-columns: repeat(3,1fr); gap:16px 14px; } }
-
-  .item{
-    position:relative;
-    text-decoration:none;
-    color:inherit;
-    width: 120px;
-    padding: 10px 6px;
-    border-radius: 16px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:9px;
-    transition: transform .16s ease, background .16s ease;
-  }
-  /* subtle hover halo (no “底座”) */
-  .item:hover{
-    transform: translateY(-2px);
-    background: rgba(255,255,255,.03);
-  }
-  .item:active{ transform: translateY(-1px) scale(.99); }
-
-  .icon{
-    width: 36px;
-    height: 36px;
-    display:grid;
-    place-items:center;
-  }
-
-  /* default: neutral monochrome-ish */
-  .icon img{
-    width: 28px;
-    height: 28px;
-    object-fit: contain;
-    display:block;
-    filter: grayscale(1) saturate(0) brightness(1.35) contrast(1.05);
-    opacity: .78;
-    transition: filter .18s ease, opacity .18s ease, transform .18s ease;
-    image-rendering: -webkit-optimize-contrast;
-  }
-  /* hover: brand color pops */
-  .item:hover .icon img{
-    filter: none;
-    opacity: 1;
-    transform: translateY(-.5px);
-  }
-
-  .name{
-    font-size: 12.5px;
-    color: var(--muted2);
-    font-weight: 720;
-    letter-spacing:.1px;
-    transition: color .18s ease, transform .18s ease;
-    user-select:none;
-  }
-  .item:hover .name{
-    color: var(--muted);
-    transform: translateY(-.5px);
-  }
-
-  /* ===== Contextual shortcut badges ===== */
-  .kbd{
-    position:absolute;
-    top: 6px;
-    right: 10px;
-
-    font-family: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Monaco, Consolas, monospace;
-    font-size: 10px;
-    font-weight: 900;
-    letter-spacing:.04em;
-
-    padding: 3px 6px;
-    border-radius: 8px;
-    border: 1px solid var(--line);
-    background: rgba(255,255,255,.06);
-    color: color-mix(in srgb, var(--muted) 92%, transparent);
-
-    opacity: 0;
-    transform: translateY(-4px) scale(.96);
-    pointer-events:none;
-    transition: opacity .16s ease, transform .18s cubic-bezier(.2,.9,.2,1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-  }
-  body.show-keys .kbd{
-    opacity: 1;
+/* 只在桌面端允许显示快捷键 */
+@media (hover:hover) and (pointer:fine){
+  body.alt .kbd{
+    opacity:1;
     transform: translateY(0) scale(1);
   }
+}
 
-  /* ===== More panel ===== */
-  .more{
-    width:min(860px, 92vw);
-    margin: 14px auto 0;
-    padding: 14px 14px 10px;
-    border-radius: 22px;
-    background: var(--glass);
-    border: 1px solid var(--line);
-    box-shadow: var(--shadow2);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+/* More panel animation */
+.morePanel{
+  overflow:hidden;
+  max-height:0;
+  opacity:0;
+  transform: translateY(-6px);
+  transition: max-height .35s ease, opacity .25s ease, transform .25s ease;
+}
+.morePanel.open{
+  max-height:520px;
+  opacity:1;
+  transform: translateY(0);
+}
 
-    overflow: hidden;
-    max-height: 0;
-    opacity: 0;
-    transform: translateY(-6px) scale(.985);
-    transition:
-      max-height .38s cubic-bezier(.2,.9,.2,1),
-      opacity .22s ease,
-      transform .28s cubic-bezier(.2,.9,.2,1);
-  }
-  .more.show{
-    max-height: 520px;
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-
-  .footer{
-    width:min(860px, 92vw);
-    margin: 22px auto 0;
-    text-align:center;
-    color: var(--muted2);
-    font-size: 12px;
-    user-select:none;
-  }
+/* reduce motion */
+@media (prefers-reduced-motion: reduce){
+  *{transition:none!important}
+}
 </style>
 </head>
 
 <body>
-  <div class="wrap">
+<div class="wrap">
 
-    <div class="topbar">
-      <div class="greet" id="greet"></div>
-      <div class="mono" id="clock">--:--</div>
-    </div>
-
-    <form class="search" id="searchForm">
-      <svg class="sicon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"
-              stroke="currentColor" stroke-width="2" opacity=".9"/>
-        <path d="M16.5 16.5 21 21"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".9"/>
-      </svg>
-      <input id="q" placeholder="Search…" autocomplete="off" />
-      <button type="submit">Search</button>
-    </form>
-
-    <div class="bang" id="bang">
-      <div>Bang：</div>
-      <div><code>/y</code> YouTube　<code>/g</code> GitHub　<code>/r</code> Reddit　<code>/w</code> Wikipedia　<code>/c</code> ChatGPT</div>
-      <div style="margin-top:6px; opacity:.85;">直接输入 URL 也可跳转。</div>
-    </div>
-
-    <div class="row">
-      <div class="label">Essentials</div>
-      <button class="btn" id="toggle">More</button>
-    </div>
-
-    <div class="grid" id="gridMain"></div>
-
-    <div class="more" id="moreBox">
-      <div class="row" style="margin:0 0 10px;">
-        <div class="label">More</div>
-        <div class="label" style="text-align:right; opacity:.65; font-weight:700;">On demand</div>
-      </div>
-      <div class="grid" id="gridMore"></div>
-    </div>
-
-    <div class="footer">nav.harveyi.com</div>
+  <div class="topbar">
+    <div class="greet" id="greet"></div>
+    <div class="clock" id="clock"></div>
   </div>
 
+  <form class="search" id="searchForm">
+    <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/>
+      <path d="M16.3 16.3 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <input id="q" placeholder="Search…" autocomplete="off" />
+    <button type="submit">Search</button>
+  </form>
+
+  <div class="row">
+    <div class="label">Essentials</div>
+    <button type="button" class="moreBtn" id="moreBtn">More</button>
+  </div>
+
+  <div class="grid" id="essentials"></div>
+
+  <div class="morePanel" id="morePanel">
+    <div class="row" style="margin-top:22px;">
+      <div class="label">More</div>
+    </div>
+    <div class="grid" id="moreGrid"></div>
+  </div>
+
+</div>
+
 <script>
-  // ====== Header: short + clean ======
-  // 你说“把 Harvey 去掉”：这里默认不显示名字
-  const SHOW_NAME = false;
-  const NAME = "Harvey";
+/* ---------- time ---------- */
+const pad=n=>String(n).padStart(2,"0");
+function tick(){
+  const d=new Date();
+  const h=d.getHours();
+  const greet = h<5 ? "Good night" : h<12 ? "Good morning" : h<18 ? "Good afternoon" : "Good evening";
+  document.getElementById("greet").textContent = greet + ".";
+  document.getElementById("clock").textContent = `${pad(h)}:${pad(d.getMinutes())}`;
+}
+tick();
+setInterval(tick,1000);
 
-  const pad = (n) => String(n).padStart(2, "0");
-  function greeting(h){
-    if (h < 5) return "Good night";
-    if (h < 12) return "Good morning";
-    if (h < 18) return "Good afternoon";
-    return "Good evening";
+/* ---------- focus search ---------- */
+window.addEventListener("load", ()=> {
+  document.getElementById("q").focus({preventScroll:true});
+});
+
+/* ---------- favicon (高清兜底) ---------- */
+const favicon = (url) => {
+  const domain = new URL(url).hostname;
+  return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=256`;
+};
+
+/* ---------- links：常用排前 ---------- */
+const essentials = [
+  {name:"Google",     url:"https://google.com",             key:"G"},
+  {name:"Gmail",      url:"https://mail.google.com",        key:"M"},
+  {name:"ChatGPT",    url:"https://chatgpt.com",            key:"C"},
+  {name:"GitHub",     url:"https://github.com",             key:"H"},
+  {name:"YouTube",    url:"https://youtube.com",            key:"Y"},
+  {name:"Cloudflare", url:"https://dash.cloudflare.com",    key:"F"},
+  {name:"Drive",      url:"https://drive.google.com",       key:"D"},
+  {name:"Calendar",   url:"https://calendar.google.com",    key:"L"},
+  {name:"Microsoft",  url:"https://www.microsoft.com",      key:"S"},
+  {name:"Vultr",      url:"https://my.vultr.com",           key:"V"},
+  {name:"Oracle",     url:"https://cloud.oracle.com",       key:"O"},
+  {name:"RackNerd",   url:"https://my.racknerd.com",        key:"R"},
+];
+
+const more = [
+  {name:"Wikipedia", url:"https://wikipedia.org",           key:"W"},
+  {name:"Reddit",    url:"https://reddit.com",              key:"E"},
+  {name:"Discord",   url:"https://discord.com/channels/@me",key:"B"},
+  {name:"X",         url:"https://x.com",                   key:"X"},
+  {name:"Netflix",   url:"https://netflix.com",             key:"N"},
+  {name:"Apple",     url:"https://apple.com",               key:"A"},
+];
+
+/* ---------- render ---------- */
+function card(item){
+  const a=document.createElement("a");
+  a.className="item";
+  a.href=item.url;
+  a.dataset.key=item.key || "";
+  a.innerHTML = `
+    <span class="kbd">${item.key || ""}</span>
+    <span class="icon"><img alt="" src="${favicon(item.url)}"></span>
+    <span class="name">${item.name}</span>
+  `;
+  return a;
+}
+
+const essentialsEl=document.getElementById("essentials");
+essentials.forEach(x=>essentialsEl.appendChild(card(x)));
+
+const moreEl=document.getElementById("moreGrid");
+more.forEach(x=>moreEl.appendChild(card(x)));
+
+/* ---------- search ---------- */
+document.getElementById("searchForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const q=document.getElementById("q").value.trim();
+  if(!q) return;
+  location.href="https://www.google.com/search?q="+encodeURIComponent(q);
+});
+
+/* ---------- more toggle ---------- */
+const moreBtn=document.getElementById("moreBtn");
+const morePanel=document.getElementById("morePanel");
+let open=false;
+moreBtn.addEventListener("click",()=>{
+  open=!open;
+  morePanel.classList.toggle("open",open);
+  moreBtn.textContent = open ? "Less" : "More";
+});
+
+/* ---------- Alt 显示快捷键（桌面端） ---------- */
+let altDown=false;
+window.addEventListener("keydown",(e)=>{
+  if(e.key === "Alt" && !altDown){
+    altDown=true;
+    document.body.classList.add("alt");
   }
-  function tick(){
-    const d = new Date();
-    const h = d.getHours();
-    const m = d.getMinutes();
-    const greet = greeting(h) + (SHOW_NAME ? `, ${NAME}` : "") + ".";
-    document.getElementById("greet").textContent = greet;
-    // 只显示时间，日期你如果还想要，我可以做成 hover 才出现
-    document.getElementById("clock").textContent = `${pad(h)}:${pad(m)}`;
+});
+window.addEventListener("keyup",(e)=>{
+  if(e.key === "Alt"){
+    altDown=false;
+    document.body.classList.remove("alt");
   }
-  tick(); setInterval(tick, 1000);
+});
 
-  // ====== Focus search on load ======
-  window.addEventListener("DOMContentLoaded", () => {
-    const q = document.getElementById("q");
-    q.focus({ preventScroll:true });
-  });
+/* ---------- 快捷键跳转：按住 Alt + 字母 ---------- */
+window.addEventListener("keydown",(e)=>{
+  // 避免在输入框里触发
+  const active = document.activeElement;
+  const typing = active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA");
 
-  // ====== Favicons ======
-  const favicon = (u) => `https://www.google.com/s2/favicons?domain=${encodeURIComponent(u)}&sz=128`;
+  if(!e.altKey || typing) return;
 
-  // ====== Links (你现在这套够克制，More 里再放扩展) ======
-  const mainLinks = [
-    { name:"Gmail",      key:"M", url:"https://mail.google.com" },
-    { name:"ChatGPT",    key:"C", url:"https://chatgpt.com" },
-    { name:"GitHub",     key:"H", url:"https://github.com" },
-    { name:"Cloudflare", key:"F", url:"https://dash.cloudflare.com" },
-    { name:"Google",     key:"G", url:"https://google.com" },
-    { name:"YouTube",    key:"Y", url:"https://youtube.com" },
+  const k = (e.key || "").toUpperCase();
+  if(!k || k.length !== 1) return;
 
-    { name:"Drive",      key:"D", url:"https://drive.google.com" },
-    { name:"Calendar",   key:"L", url:"https://calendar.google.com" },
-    { name:"Vultr",      key:"V", url:"https://my.vultr.com" },
-    { name:"Oracle",     key:"O", url:"https://cloud.oracle.com" },
-    { name:"RackNerd",   key:"R", url:"https://my.racknerd.com" },
-    { name:"Microsoft",  key:"",  url:"https://www.microsoft.com" },
-  ];
-
-  const moreLinks = [
-    { name:"AWS",        key:"", url:"https://aws.amazon.com" },
-    { name:"Wikipedia",  key:"W", url:"https://wikipedia.org" },
-    { name:"Reddit",     key:"", url:"https://reddit.com" },
-    { name:"Telegram",   key:"", url:"https://web.telegram.org" },
-    { name:"Discord",    key:"", url:"https://discord.com" },
-    { name:"Speedtest",  key:"", url:"https://www.speedtest.net" },
-    { name:"Apple",      key:"", url:"https://apple.com" },
-    { name:"Netflix",    key:"", url:"https://netflix.com" },
-    { name:"X",          key:"", url:"https://x.com" }
-  ];
-
-  function render(el, arr){
-    el.innerHTML = arr.map(l => `
-      <a class="item" href="${l.url}" target="_blank" rel="noreferrer" data-key="${(l.key||"").toLowerCase()}">
-        ${l.key ? `<div class="kbd">${l.key}</div>` : ``}
-        <div class="icon" aria-hidden="true">
-          <img class="iconimg" src="${favicon(l.url)}" alt="${l.name}">
-        </div>
-        <div class="name">${l.name}</div>
-      </a>
-    `).join("");
-
-    el.querySelectorAll("img.iconimg").forEach(img => {
-      img.addEventListener("error", () => {
-        // fallback: letter (still floating)
-        const name = img.getAttribute("alt") || "";
-        const letter = (name.trim()[0] || "•").toUpperCase();
-        const fb = document.createElement("div");
-        fb.style.cssText = `
-          width:28px;height:28px;border-radius:10px;
-          display:grid;place-items:center;
-          font-weight:900;letter-spacing:.02em;
-          color: rgba(255,255,255,.75);
-        `;
-        fb.textContent = letter;
-        img.replaceWith(fb);
-      });
-    });
-  }
-
-  render(document.getElementById("gridMain"), mainLinks);
-  render(document.getElementById("gridMore"), moreLinks);
-
-  // ====== More toggle ======
-  const moreBox = document.getElementById("moreBox");
-  const btn = document.getElementById("toggle");
-  function setMore(show){
-    moreBox.classList.toggle("show", show);
-    btn.textContent = show ? "Less" : "More";
-  }
-  btn.addEventListener("click", () => setMore(!moreBox.classList.contains("show")));
-
-  // ====== Bang search (show tips only when starts with "/") ======
-  const bang = document.getElementById("bang");
-  const qInput = document.getElementById("q");
-
-  function updateBangUI(){
-    const v = qInput.value || "";
-    bang.classList.toggle("show", v.trim().startsWith("/"));
-  }
-  qInput.addEventListener("input", updateBangUI);
-  qInput.addEventListener("focus", updateBangUI);
-  qInput.addEventListener("blur", () => bang.classList.remove("show"));
-
-  function goSearch(raw){
-    const q = raw.trim();
-    if (!q) return;
-
-    const isUrl = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/.*)?$/i.test(q);
-    if (isUrl) { location.href = q.startsWith("http") ? q : "https://" + q; return; }
-
-    const cmd = q.match(/^\/([a-z]+)\s*(.*)$/i);
-    if (cmd){
-      const c = cmd[1].toLowerCase();
-      const rest = (cmd[2] || "").trim();
-
-      if (c === "c"){ location.href = "https://chatgpt.com"; return; }
-      if (!rest) return;
-
-      if (c === "y"){ location.href = "https://www.youtube.com/results?search_query=" + encodeURIComponent(rest); return; }
-      if (c === "g"){ location.href = "https://github.com/search?q=" + encodeURIComponent(rest); return; }
-      if (c === "r"){ location.href = "https://www.reddit.com/search/?q=" + encodeURIComponent(rest); return; }
-      if (c === "w"){ location.href = "https://en.wikipedia.org/w/index.php?search=" + encodeURIComponent(rest); return; }
-    }
-
-    location.href = "https://www.google.com/search?q=" + encodeURIComponent(q);
-  }
-
-  document.getElementById("searchForm").addEventListener("submit", (e) => {
+  const all = [...document.querySelectorAll(".item")];
+  const hit = all.find(x => (x.dataset.key || "").toUpperCase() === k);
+  if(hit){
     e.preventDefault();
-    goSearch(qInput.value);
-  });
-
-  // ====== Contextual shortcuts badges (Alt/Ctrl held) ======
-  let keyOverlay = false;
-  function setOverlay(on){
-    if (keyOverlay === on) return;
-    keyOverlay = on;
-    document.body.classList.toggle("show-keys", on);
+    location.href = hit.href;
   }
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Alt" || e.key === "Control" || e.altKey || e.ctrlKey) setOverlay(true);
-
-    // Esc: close more & blur
-    if (e.key === "Escape"){
-      setMore(false);
-      bang.classList.remove("show");
-      if (document.activeElement === qInput) qInput.blur();
-      return;
-    }
-
-    // "/" focus (only when not typing)
-    const typing = document.activeElement === qInput;
-    if (e.key === "/" && !typing){
-      e.preventDefault();
-      qInput.focus({ preventScroll:true });
-      return;
-    }
-  });
-  document.addEventListener("keyup", (e) => {
-    if (e.key === "Alt" || e.key === "Control"){
-      setOverlay(false);
-    }
-    // also handle cases where modifier released but another not pressed
-    if (!e.altKey && !e.ctrlKey) setOverlay(false);
-  });
-
-  // ====== Single-letter shortcuts (when NOT typing) ======
-  const quick = {
-    g: "https://google.com",
-    y: "https://youtube.com",
-    c: "https://chatgpt.com",
-    h: "https://github.com",
-    m: "https://mail.google.com",
-    d: "https://drive.google.com",
-    l: "https://calendar.google.com",
-    f: "https://dash.cloudflare.com",
-    v: "https://my.vultr.com",
-    o: "https://cloud.oracle.com",
-    r: "https://my.racknerd.com",
-    w: "https://wikipedia.org",
-  };
-
-  document.addEventListener("keypress", (e) => {
-    const typing = document.activeElement === qInput;
-    if (typing) return;
-    if (e.ctrlKey || e.metaKey || e.altKey) return;
-    if (e.key.length !== 1) return;
-
-    const k = e.key.toLowerCase();
-    if (quick[k]) location.href = quick[k];
-  });
+});
 </script>
 </body>
 </html>
