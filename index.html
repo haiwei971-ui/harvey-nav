@@ -9,23 +9,22 @@
   :root{
     --bg: #0b1020;
     --glass: rgba(255,255,255,.06);
-    --glass2: rgba(255,255,255,.08);
+    --glass2: rgba(255,255,255,.085);
     --border: rgba(255,255,255,.10);
-    --border2: rgba(255,255,255,.16);
+    --border2: rgba(255,255,255,.18);
     --text: rgba(255,255,255,.92);
     --muted: rgba(255,255,255,.58);
-    --shadow: 0 16px 48px rgba(0,0,0,.45);
+    --shadow: 0 16px 52px rgba(0,0,0,.44);
     --shadow2: 0 10px 26px rgba(0,0,0,.30);
     --maxw: 980px;
   }
-
   @media (prefers-color-scheme: light){
     :root{
       --bg: #f6f7fb;
       --glass: rgba(17,24,39,.04);
       --glass2: rgba(17,24,39,.06);
       --border: rgba(17,24,39,.10);
-      --border2: rgba(17,24,39,.16);
+      --border2: rgba(17,24,39,.18);
       --text: rgba(17,24,39,.92);
       --muted: rgba(17,24,39,.54);
       --shadow: 0 18px 60px rgba(17,24,39,.10);
@@ -53,11 +52,13 @@
     text-align:center;
   }
 
-  /* 顶部：更轻的时间胶囊 */
+  /* top chips */
   .top{
     display:flex;
     justify-content:center;
+    gap:10px;
     margin: 8px 0 18px;
+    flex-wrap:wrap;
   }
   .chip{
     display:inline-flex;
@@ -70,24 +71,13 @@
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
   }
-  .chip .t{
-    font-weight: 760;
-    letter-spacing: .2px;
-  }
-  .chip .d{
-    color: var(--muted);
-    font-weight: 600;
-  }
+  .chip .t{ font-weight: 760; letter-spacing:.2px; }
+  .chip .d{ color: var(--muted); font-weight: 600; }
 
-  /* 主体：让搜索成为中心 */
-  .center{
-    margin-top: 14px;
-  }
-
-  /* 更像 Chrome 的搜索框：薄、干净 */
+  /* search */
   .search{
     width:min(860px, 92vw);
-    margin: 0 auto 24px;
+    margin: 0 auto 22px;
     display:flex;
     align-items:center;
     gap:12px;
@@ -102,7 +92,7 @@
   }
   .search:focus-within{
     border-color: var(--border2);
-    box-shadow: 0 16px 40px rgba(0,0,0,.35);
+    box-shadow: 0 16px 40px rgba(0,0,0,.34);
     background: var(--glass2);
   }
   .search .sicon{ width:18px;height:18px; opacity:.70; }
@@ -124,12 +114,45 @@
     font-weight: 650;
   }
   .search button:hover{ color: var(--text); }
-  .search button:active{ transform: translateY(1px); }
 
-  /* 网格：更克制、间距更像原生新标签 */
+  /* section header */
+  .row{
+    width:min(860px, 92vw);
+    margin: 8px auto 8px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .hint{
+    text-align:left;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing:.2px;
+  }
+  .btn{
+    border:1px solid var(--border);
+    background: var(--glass);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 999px;
+    cursor:pointer;
+    font-weight: 650;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transition: transform .12s ease, border-color .12s ease, background .12s ease;
+  }
+  .btn:hover{
+    transform: translateY(-1px);
+    border-color: var(--border2);
+    background: var(--glass2);
+  }
+
+  /* grid */
   .grid{
     width:min(860px, 92vw);
-    margin: 6px auto 0;
+    margin: 10px auto 0;
     display:grid;
     grid-template-columns: repeat(6, 1fr);
     gap: 22px 16px;
@@ -148,7 +171,6 @@
     gap:10px;
   }
 
-  /* 图标容器：轻边框、轻玻璃、少阴影 */
   .bubble{
     width: 66px;
     height: 66px;
@@ -168,12 +190,11 @@
     border-color: var(--border2);
   }
 
-  /* plate：统一白底托起，避免暗色 icon 看不清 */
   .plate{
     width: 42px;
     height: 42px;
     border-radius: 14px;
-    background: rgba(255,255,255,.94);
+    background: rgba(255,255,255,.96);
     display:grid;
     place-items:center;
     box-shadow:
@@ -181,12 +202,7 @@
       0 8px 18px rgba(0,0,0,.18);
   }
   @media (prefers-color-scheme: light){
-    .plate{
-      background: rgba(255,255,255,.98);
-      box-shadow:
-        0 1px 0 rgba(255,255,255,.65) inset,
-        0 10px 18px rgba(17,24,39,.10);
-    }
+    .plate{ background: rgba(255,255,255,.99); box-shadow: 0 1px 0 rgba(255,255,255,.65) inset, 0 10px 18px rgba(17,24,39,.10); }
   }
 
   .plate img{
@@ -197,28 +213,41 @@
     border-radius: 10px;
     image-rendering: -webkit-optimize-contrast;
   }
-
   .name{
     font-size: 13px;
     color: var(--muted);
     font-weight: 600;
-    letter-spacing: .1px;
+    letter-spacing:.1px;
   }
-
   .fallback{
     width:42px; height:42px;
     border-radius:14px;
     display:grid; place-items:center;
     font-weight: 850;
     color: rgba(17,24,39,.9);
-    background: rgba(255,255,255,.94);
+    background: rgba(255,255,255,.96);
     box-shadow:
       0 1px 0 rgba(255,255,255,.55) inset,
       0 8px 18px rgba(0,0,0,.18);
   }
 
+  /* more panel */
+  .more{
+    width:min(860px, 92vw);
+    margin: 14px auto 0;
+    padding: 14px 14px 6px;
+    border-radius: 22px;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow2);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    display:none;
+  }
+  .more.show{ display:block; }
+
   .footer{
-    margin-top: 28px;
+    margin-top: 24px;
     font-size: 12px;
     color: var(--muted);
     opacity: .55;
@@ -233,27 +262,44 @@
         <span class="t" id="time">--:--</span>
         <span class="d" id="date">----</span>
       </div>
+      <!-- 天气位（默认隐藏，你要时我再给你加 Open-Meteo） -->
+      <div class="chip" id="weatherChip" style="display:none;">
+        <span class="t" id="weather">--</span>
+        <span class="d" id="city">--</span>
+      </div>
     </div>
 
-    <div class="center">
-      <form class="search" id="searchForm">
-        <svg class="sicon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"
-                stroke="currentColor" stroke-width="2" opacity=".9"/>
-          <path d="M16.5 16.5 21 21"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".9"/>
-        </svg>
-        <input id="q" placeholder="Search Google or type a URL" autocomplete="off" />
-        <button type="submit">Search</button>
-      </form>
+    <form class="search" id="searchForm">
+      <svg class="sicon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"
+              stroke="currentColor" stroke-width="2" opacity=".9"/>
+        <path d="M16.5 16.5 21 21"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".9"/>
+      </svg>
+      <input id="q" placeholder="Search Google or type a URL" autocomplete="off" />
+      <button type="submit">Search</button>
+    </form>
 
-      <div class="grid" id="grid"></div>
-      <div class="footer">nav.harveyi.com</div>
+    <div class="row">
+      <div class="hint">Essentials</div>
+      <button class="btn" id="toggle">More</button>
     </div>
+
+    <div class="grid" id="gridMain"></div>
+
+    <div class="more" id="moreBox">
+      <div class="row" style="margin:0 0 10px;">
+        <div class="hint">More</div>
+        <div class="hint" style="text-align:right;">Less clutter, same power.</div>
+      </div>
+      <div class="grid" id="gridMore"></div>
+    </div>
+
+    <div class="footer">nav.harveyi.com</div>
   </div>
 
 <script>
-  // 搜索：URL 直接跳转，否则 Google
+  // Search
   document.getElementById("searchForm").addEventListener("submit", (e) => {
     e.preventDefault();
     const q = document.getElementById("q").value.trim();
@@ -263,7 +309,7 @@
     else location.href = "https://www.google.com/search?q=" + encodeURIComponent(q);
   });
 
-  // 时间/日期
+  // Time
   const pad = (n) => String(n).padStart(2, "0");
   function tick(){
     const d = new Date();
@@ -273,54 +319,73 @@
   }
   tick(); setInterval(tick, 1000);
 
-  // 统一稳定的 favicon（避免站点自己 403）
+  // Stable favicons
   const favicon = (u) => `https://www.google.com/s2/favicons?domain=${encodeURIComponent(u)}&sz=128`;
 
-  const links = [
-    { name:"Google", url:"https://google.com" },
+  // 👇 只留第一屏 12 个（最常用 + 你业务相关）
+  const mainLinks = [
     { name:"Gmail", url:"https://mail.google.com" },
-    { name:"YouTube", url:"https://youtube.com" },
-    { name:"GitHub", url:"https://github.com" },
-    { name:"Microsoft", url:"https://www.microsoft.com" },
     { name:"ChatGPT", url:"https://chatgpt.com" },
-
-    { name:"Oracle", url:"https://cloud.oracle.com" },
-    { name:"AWS", url:"https://aws.amazon.com" },
+    { name:"GitHub", url:"https://github.com" },
     { name:"Cloudflare", url:"https://dash.cloudflare.com" },
-    { name:"Vultr", url:"https://my.vultr.com" },
-    { name:"RackNerd", url:"https://my.racknerd.com" },
-    { name:"Wikipedia", url:"https://wikipedia.org" },
+    { name:"Google", url:"https://google.com" },
+    { name:"YouTube", url:"https://youtube.com" },
 
+    { name:"Drive", url:"https://drive.google.com" },
+    { name:"Calendar", url:"https://calendar.google.com" },
+    { name:"Microsoft", url:"https://www.microsoft.com" },
+    { name:"Vultr", url:"https://my.vultr.com" },
+    { name:"Oracle", url:"https://cloud.oracle.com" },
+    { name:"RackNerd", url:"https://my.racknerd.com" },
+  ];
+
+  // More：娱乐/社区/杂项
+  const moreLinks = [
+    { name:"AWS", url:"https://aws.amazon.com" },
+    { name:"Wikipedia", url:"https://wikipedia.org" },
     { name:"X", url:"https://x.com" },
     { name:"Reddit", url:"https://reddit.com" },
     { name:"Telegram", url:"https://web.telegram.org" },
     { name:"Discord", url:"https://discord.com" },
     { name:"Netflix", url:"https://netflix.com" },
     { name:"Apple", url:"https://apple.com" },
+    { name:"Speedtest", url:"https://www.speedtest.net" },
   ];
 
-  const grid = document.getElementById("grid");
-  grid.innerHTML = links.map(l => `
-    <a class="item" href="${l.url}" target="_blank" rel="noreferrer">
-      <div class="bubble">
-        <div class="plate">
-          <img class="iconimg" src="${favicon(l.url)}" alt="${l.name}">
+  function render(el, arr){
+    el.innerHTML = arr.map(l => `
+      <a class="item" href="${l.url}" target="_blank" rel="noreferrer">
+        <div class="bubble">
+          <div class="plate">
+            <img class="iconimg" src="${favicon(l.url)}" alt="${l.name}">
+          </div>
         </div>
-      </div>
-      <div class="name">${l.name}</div>
-    </a>
-  `).join("");
+        <div class="name">${l.name}</div>
+      </a>
+    `).join("");
 
-  // 图标失败：字母兜底
-  document.querySelectorAll("img.iconimg").forEach(img => {
-    img.addEventListener("error", () => {
-      const name = img.getAttribute("alt") || "";
-      const letter = (name.trim()[0] || "•").toUpperCase();
-      const fb = document.createElement("div");
-      fb.className = "fallback";
-      fb.textContent = letter;
-      img.replaceWith(fb);
+    el.querySelectorAll("img.iconimg").forEach(img => {
+      img.addEventListener("error", () => {
+        const name = img.getAttribute("alt") || "";
+        const letter = (name.trim()[0] || "•").toUpperCase();
+        const fb = document.createElement("div");
+        fb.className = "fallback";
+        fb.textContent = letter;
+        img.replaceWith(fb);
+      });
     });
+  }
+
+  render(document.getElementById("gridMain"), mainLinks);
+  render(document.getElementById("gridMore"), moreLinks);
+
+  // More toggle
+  const moreBox = document.getElementById("moreBox");
+  const btn = document.getElementById("toggle");
+  btn.addEventListener("click", () => {
+    const show = !moreBox.classList.contains("show");
+    moreBox.classList.toggle("show", show);
+    btn.textContent = show ? "Less" : "More";
   });
 </script>
 </body>
