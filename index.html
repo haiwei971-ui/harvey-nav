@@ -8,29 +8,34 @@
 <style>
   :root{
     --bg: #0b1020;
+    --text: rgba(255,255,255,.92);
+    --muted: rgba(255,255,255,.56);
+    --muted2: rgba(255,255,255,.38);
+    --line: rgba(255,255,255,.10);
+    --line2: rgba(255,255,255,.16);
     --glass: rgba(255,255,255,.06);
     --glass2: rgba(255,255,255,.085);
-    --border: rgba(255,255,255,.10);
-    --border2: rgba(255,255,255,.18);
-    --text: rgba(255,255,255,.92);
-    --muted: rgba(255,255,255,.58);
-    --muted2: rgba(255,255,255,.42);
     --shadow: 0 18px 60px rgba(0,0,0,.42);
-    --shadow2: 0 12px 26px rgba(0,0,0,.22);
+    --shadow2: 0 10px 26px rgba(0,0,0,.22);
     --maxw: 980px;
+
+    /* neutral icon tone */
+    --icon-neutral: #A1A1AA; /* 你提的 #A1A1AA */
   }
+
   @media (prefers-color-scheme: light){
     :root{
       --bg: #f6f7fb;
-      --glass: rgba(17,24,39,.04);
-      --glass2: rgba(17,24,39,.06);
-      --border: rgba(17,24,39,.10);
-      --border2: rgba(17,24,39,.18);
       --text: rgba(17,24,39,.92);
       --muted: rgba(17,24,39,.54);
-      --muted2: rgba(17,24,39,.40);
-      --shadow: 0 18px 60px rgba(17,24,39,.10);
+      --muted2: rgba(17,24,39,.38);
+      --line: rgba(17,24,39,.10);
+      --line2: rgba(17,24,39,.16);
+      --glass: rgba(17,24,39,.04);
+      --glass2: rgba(17,24,39,.06);
+      --shadow: 0 16px 50px rgba(17,24,39,.10);
       --shadow2: 0 10px 22px rgba(17,24,39,.10);
+      --icon-neutral: #6B7280;
     }
   }
 
@@ -41,6 +46,7 @@
     color:var(--text);
     font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
       Roboto, Helvetica, Arial, "PingFang SC","Hiragino Sans GB","Microsoft YaHei";
+
     background:
       radial-gradient(1200px 700px at 18% 12%, rgba(99,102,241,.16), transparent 55%),
       radial-gradient(1000px 600px at 82% 18%, rgba(16,185,129,.12), transparent 55%),
@@ -50,64 +56,55 @@
 
   .wrap{
     width:min(var(--maxw), 92vw);
-    margin: 18px auto 46px;
-    text-align:center;
+    margin: 18px auto 52px;
   }
 
-  /* ===== Top: greeting + time ===== */
-  .top{
+  /* ===== Header: minimal hierarchy ===== */
+  .topbar{
+    width:min(860px, 92vw);
+    margin: 6px auto 14px;
     display:flex;
-    justify-content:center;
-    margin: 6px 0 14px;
-  }
-  .topcard{
-    display:flex;
-    align-items:baseline;
-    gap:12px;
-    padding: 10px 14px;
-    border-radius: 999px;
-    background: var(--glass);
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow2);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
   }
   .greet{
     font-weight: 780;
     letter-spacing:.2px;
+    color: var(--muted);
+    user-select:none;
   }
   .mono{
-    font-family: ui-monospace, "JetBrains Mono", "SF Mono", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-    font-weight: 800;
-    letter-spacing:.06em;
-    color: var(--muted);
-    font-size: 13px;
-    white-space: nowrap;
+    font-family: ui-monospace, "JetBrains Mono", "SF Mono", SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-weight: 900;
+    letter-spacing: .08em;
+    color: color-mix(in srgb, var(--muted) 92%, transparent);
+    user-select:none;
+    white-space:nowrap;
   }
 
-  /* ===== Search ===== */
+  /* ===== Search: absolute pure ===== */
   .search{
     width:min(860px, 92vw);
-    margin: 0 auto 16px;
+    margin: 0 auto 18px;
     display:flex;
     align-items:center;
     gap:12px;
-    padding: 11px 14px;
+    padding: 12px 14px;
     border-radius: 999px;
     background: var(--glass);
-    border: 1px solid var(--border);
+    border: 1px solid var(--line);
     box-shadow: var(--shadow2);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
-    transition: border-color .18s ease, box-shadow .18s ease, background .18s ease, transform .08s ease;
+    transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
   }
   .search:focus-within{
-    border-color: var(--border2);
+    border-color: var(--line2);
     background: var(--glass2);
     box-shadow: 0 18px 44px rgba(0,0,0,.30);
   }
-  .search:active{ transform: translateY(1px); }
-  .search .sicon{ width:18px;height:18px; opacity:.70; }
+  .sicon{ width:18px;height:18px; opacity:.70; }
   .search input{
     flex:1;
     border:0;
@@ -115,14 +112,6 @@
     background:transparent;
     color:var(--text);
     font-size:16px;
-  }
-  .search .hint{
-    color: var(--muted2);
-    font-weight: 700;
-    font-size: 12px;
-    padding-right: 6px;
-    user-select:none;
-    white-space: nowrap;
   }
   .search button{
     border:0;
@@ -136,10 +125,38 @@
   }
   .search button:hover{ color: var(--text); }
 
-  /* ===== Section header ===== */
+  /* Optional: bang helper (only when typing '/') */
+  .bang{
+    width:min(860px, 92vw);
+    margin: -10px auto 14px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: var(--glass);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow2);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    display:none;
+    color: var(--muted);
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+  .bang.show{ display:block; }
+  .bang code{
+    font-family: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Monaco, Consolas, monospace;
+    font-weight: 900;
+    color: color-mix(in srgb, var(--text) 80%, transparent);
+    background: rgba(255,255,255,.06);
+    padding: 2px 6px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+  }
+
+  /* ===== Section row ===== */
   .row{
     width:min(860px, 92vw);
-    margin: 12px auto 10px;
+    margin: 10px auto 10px;
     display:flex;
     align-items:center;
     justify-content:space-between;
@@ -147,12 +164,12 @@
     opacity:.92;
   }
   .label{
-    text-align:left;
     color: color-mix(in srgb, var(--muted) 92%, transparent);
     font-size: 12px;
     font-weight: 850;
     letter-spacing: .18em;
     text-transform: uppercase;
+    user-select:none;
   }
   .btn{
     border:1px solid transparent;
@@ -168,11 +185,11 @@
   .btn:hover{
     color: var(--text);
     background: var(--glass);
-    border-color: var(--border);
+    border-color: var(--line);
   }
   .btn:active{ transform: translateY(1px); }
 
-  /* ===== Grid ===== */
+  /* ===== Icons: floating, no base ===== */
   .grid{
     width:min(860px, 92vw);
     margin: 8px auto 0;
@@ -185,98 +202,100 @@
   @media (max-width: 560px){ .grid{ grid-template-columns: repeat(3,1fr); gap:16px 14px; } }
 
   .item{
+    position:relative;
     text-decoration:none;
     color:inherit;
-    width: 112px;
+    width: 120px;
+    padding: 10px 6px;
+    border-radius: 16px;
     display:flex;
     flex-direction:column;
     align-items:center;
-    gap:8px;
+    gap:9px;
+    transition: transform .16s ease, background .16s ease;
   }
+  /* subtle hover halo (no “底座”) */
+  .item:hover{
+    transform: translateY(-2px);
+    background: rgba(255,255,255,.03);
+  }
+  .item:active{ transform: translateY(-1px) scale(.99); }
 
-  /* Icon (no base, unified) */
   .icon{
-    width: 54px;
-    height: 54px;
-    border-radius: 999px;
-    background: rgba(255,255,255,.02);
-    border: 1px solid var(--border);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    width: 36px;
+    height: 36px;
     display:grid;
     place-items:center;
-    transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease;
   }
-  .item:hover .icon{
-    transform: translateY(-2px);
-    box-shadow: var(--shadow);
-    background: rgba(255,255,255,.04);
-    border-color: var(--border2);
-  }
-  .item:active .icon{ transform: translateY(-1px) scale(.985); }
 
-  /* Favicon unify: default monochrome-ish, hover shows brand color */
+  /* default: neutral monochrome-ish */
   .icon img{
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
     object-fit: contain;
     display:block;
-    filter: grayscale(1) saturate(0) brightness(1.55);
+    filter: grayscale(1) saturate(0) brightness(1.35) contrast(1.05);
     opacity: .78;
-    transition: filter .16s ease, opacity .16s ease, transform .16s ease;
+    transition: filter .18s ease, opacity .18s ease, transform .18s ease;
     image-rendering: -webkit-optimize-contrast;
   }
+  /* hover: brand color pops */
   .item:hover .icon img{
     filter: none;
     opacity: 1;
     transform: translateY(-.5px);
   }
 
-  .meta{
-    display:flex;
-    align-items:baseline;
-    gap:8px;
-  }
   .name{
     font-size: 12.5px;
-    color: var(--muted);
-    font-weight: 680;
+    color: var(--muted2);
+    font-weight: 720;
     letter-spacing:.1px;
+    transition: color .18s ease, transform .18s ease;
+    user-select:none;
   }
-  kbd{
-    font-family: ui-monospace, "JetBrains Mono", "SF Mono", SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 10.5px;
-    font-weight: 850;
-    color: color-mix(in srgb, var(--muted) 92%, transparent);
-    padding: 2px 6px;
-    border-radius: 7px;
-    border: 1px solid var(--border);
-    background: rgba(255,255,255,.03);
-    opacity: .75;
+  .item:hover .name{
+    color: var(--muted);
     transform: translateY(-.5px);
   }
-  .item:hover kbd{ opacity: .95; }
 
-  .fallback{
-    width: 26px;
-    height: 26px;
-    border-radius: 9px;
-    display:grid;
-    place-items:center;
+  /* ===== Contextual shortcut badges ===== */
+  .kbd{
+    position:absolute;
+    top: 6px;
+    right: 10px;
+
+    font-family: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Monaco, Consolas, monospace;
+    font-size: 10px;
     font-weight: 900;
-    letter-spacing:.02em;
-    color: rgba(255,255,255,.86);
-    opacity:.78;
+    letter-spacing:.04em;
+
+    padding: 3px 6px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,.06);
+    color: color-mix(in srgb, var(--muted) 92%, transparent);
+
+    opacity: 0;
+    transform: translateY(-4px) scale(.96);
+    pointer-events:none;
+    transition: opacity .16s ease, transform .18s cubic-bezier(.2,.9,.2,1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  body.show-keys .kbd{
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 
-  /* ===== More panel with spring-ish animation ===== */
+  /* ===== More panel ===== */
   .more{
     width:min(860px, 92vw);
     margin: 14px auto 0;
     padding: 14px 14px 10px;
     border-radius: 22px;
     background: var(--glass);
-    border: 1px solid var(--border);
+    border: 1px solid var(--line);
     box-shadow: var(--shadow2);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
@@ -291,20 +310,28 @@
       transform .28s cubic-bezier(.2,.9,.2,1);
   }
   .more.show{
-    max-height: 520px; /* enough for grid; adjust if you add more */
+    max-height: 520px;
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+
+  .footer{
+    width:min(860px, 92vw);
+    margin: 22px auto 0;
+    text-align:center;
+    color: var(--muted2);
+    font-size: 12px;
+    user-select:none;
   }
 </style>
 </head>
 
 <body>
   <div class="wrap">
-    <div class="top">
-      <div class="topcard">
-        <span class="greet" id="greet">Good evening.</span>
-        <span class="mono" id="clock">--:-- · ----</span>
-      </div>
+
+    <div class="topbar">
+      <div class="greet" id="greet"></div>
+      <div class="mono" id="clock">--:--</div>
     </div>
 
     <form class="search" id="searchForm">
@@ -314,10 +341,15 @@
         <path d="M16.5 16.5 21 21"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".9"/>
       </svg>
-      <input id="q" placeholder='Try: "/y 测评"  "/g repo"  "/r ai"' autocomplete="off" />
-      <span class="hint">/ focus · Esc close</span>
+      <input id="q" placeholder="Search…" autocomplete="off" />
       <button type="submit">Search</button>
     </form>
+
+    <div class="bang" id="bang">
+      <div>Bang：</div>
+      <div><code>/y</code> YouTube　<code>/g</code> GitHub　<code>/r</code> Reddit　<code>/w</code> Wikipedia　<code>/c</code> ChatGPT</div>
+      <div style="margin-top:6px; opacity:.85;">直接输入 URL 也可跳转。</div>
+    </div>
 
     <div class="row">
       <div class="label">Essentials</div>
@@ -329,44 +361,48 @@
     <div class="more" id="moreBox">
       <div class="row" style="margin:0 0 10px;">
         <div class="label">More</div>
-        <div class="label" style="text-align:right; opacity:.70; font-weight:700;">Clean. Fast. Quiet.</div>
+        <div class="label" style="text-align:right; opacity:.65; font-weight:700;">On demand</div>
       </div>
       <div class="grid" id="gridMore"></div>
     </div>
+
+    <div class="footer">nav.harveyi.com</div>
   </div>
 
 <script>
+  // ====== Header: short + clean ======
+  // 你说“把 Harvey 去掉”：这里默认不显示名字
+  const SHOW_NAME = false;
   const NAME = "Harvey";
 
-  // ---------- Time + Greeting ----------
   const pad = (n) => String(n).padStart(2, "0");
-  function greetByHour(h){
-    if (h < 5) return `Good night, ${NAME}.`;
-    if (h < 12) return `Good morning, ${NAME}.`;
-    if (h < 18) return `Good afternoon, ${NAME}.`;
-    return `Good evening, ${NAME}.`;
+  function greeting(h){
+    if (h < 5) return "Good night";
+    if (h < 12) return "Good morning";
+    if (h < 18) return "Good afternoon";
+    return "Good evening";
   }
   function tick(){
     const d = new Date();
     const h = d.getHours();
     const m = d.getMinutes();
-    document.getElementById("greet").textContent = greetByHour(h);
-    const opt = { weekday:"short", year:"numeric", month:"short", day:"numeric" };
-    const ds = d.toLocaleDateString(undefined, opt);
-    document.getElementById("clock").textContent = `${pad(h)}:${pad(m)} · ${ds}`;
+    const greet = greeting(h) + (SHOW_NAME ? `, ${NAME}` : "") + ".";
+    document.getElementById("greet").textContent = greet;
+    // 只显示时间，日期你如果还想要，我可以做成 hover 才出现
+    document.getElementById("clock").textContent = `${pad(h)}:${pad(m)}`;
   }
   tick(); setInterval(tick, 1000);
 
-  // ---------- Auto focus search ----------
+  // ====== Focus search on load ======
   window.addEventListener("DOMContentLoaded", () => {
     const q = document.getElementById("q");
     q.focus({ preventScroll:true });
   });
 
-  // ---------- Stable favicons ----------
+  // ====== Favicons ======
   const favicon = (u) => `https://www.google.com/s2/favicons?domain=${encodeURIComponent(u)}&sz=128`;
 
-  // ---------- Links ----------
+  // ====== Links (你现在这套够克制，More 里再放扩展) ======
   const mainLinks = [
     { name:"Gmail",      key:"M", url:"https://mail.google.com" },
     { name:"ChatGPT",    key:"C", url:"https://chatgpt.com" },
@@ -377,43 +413,47 @@
 
     { name:"Drive",      key:"D", url:"https://drive.google.com" },
     { name:"Calendar",   key:"L", url:"https://calendar.google.com" },
-    { name:"Microsoft",  key:"",  url:"https://www.microsoft.com" },
     { name:"Vultr",      key:"V", url:"https://my.vultr.com" },
     { name:"Oracle",     key:"O", url:"https://cloud.oracle.com" },
     { name:"RackNerd",   key:"R", url:"https://my.racknerd.com" },
+    { name:"Microsoft",  key:"",  url:"https://www.microsoft.com" },
   ];
 
   const moreLinks = [
     { name:"AWS",        key:"", url:"https://aws.amazon.com" },
     { name:"Wikipedia",  key:"W", url:"https://wikipedia.org" },
-    { name:"X",          key:"", url:"https://x.com" },
     { name:"Reddit",     key:"", url:"https://reddit.com" },
     { name:"Telegram",   key:"", url:"https://web.telegram.org" },
     { name:"Discord",    key:"", url:"https://discord.com" },
-    { name:"Netflix",    key:"", url:"https://netflix.com" },
-    { name:"Apple",      key:"", url:"https://apple.com" },
     { name:"Speedtest",  key:"", url:"https://www.speedtest.net" },
+    { name:"Apple",      key:"", url:"https://apple.com" },
+    { name:"Netflix",    key:"", url:"https://netflix.com" },
+    { name:"X",          key:"", url:"https://x.com" }
   ];
 
   function render(el, arr){
     el.innerHTML = arr.map(l => `
       <a class="item" href="${l.url}" target="_blank" rel="noreferrer" data-key="${(l.key||"").toLowerCase()}">
+        ${l.key ? `<div class="kbd">${l.key}</div>` : ``}
         <div class="icon" aria-hidden="true">
           <img class="iconimg" src="${favicon(l.url)}" alt="${l.name}">
         </div>
-        <div class="meta">
-          <div class="name">${l.name}</div>
-          ${l.key ? `<kbd>${l.key}</kbd>` : ``}
-        </div>
+        <div class="name">${l.name}</div>
       </a>
     `).join("");
 
     el.querySelectorAll("img.iconimg").forEach(img => {
       img.addEventListener("error", () => {
+        // fallback: letter (still floating)
         const name = img.getAttribute("alt") || "";
         const letter = (name.trim()[0] || "•").toUpperCase();
         const fb = document.createElement("div");
-        fb.className = "fallback";
+        fb.style.cssText = `
+          width:28px;height:28px;border-radius:10px;
+          display:grid;place-items:center;
+          font-weight:900;letter-spacing:.02em;
+          color: rgba(255,255,255,.75);
+        `;
         fb.textContent = letter;
         img.replaceWith(fb);
       });
@@ -423,7 +463,7 @@
   render(document.getElementById("gridMain"), mainLinks);
   render(document.getElementById("gridMore"), moreLinks);
 
-  // ---------- More toggle ----------
+  // ====== More toggle ======
   const moreBox = document.getElementById("moreBox");
   const btn = document.getElementById("toggle");
   function setMore(show){
@@ -432,28 +472,32 @@
   }
   btn.addEventListener("click", () => setMore(!moreBox.classList.contains("show")));
 
-  // ---------- Bang search ----------
+  // ====== Bang search (show tips only when starts with "/") ======
+  const bang = document.getElementById("bang");
+  const qInput = document.getElementById("q");
+
+  function updateBangUI(){
+    const v = qInput.value || "";
+    bang.classList.toggle("show", v.trim().startsWith("/"));
+  }
+  qInput.addEventListener("input", updateBangUI);
+  qInput.addEventListener("focus", updateBangUI);
+  qInput.addEventListener("blur", () => bang.classList.remove("show"));
+
   function goSearch(raw){
     const q = raw.trim();
     if (!q) return;
 
-    // URL direct
     const isUrl = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/.*)?$/i.test(q);
     if (isUrl) { location.href = q.startsWith("http") ? q : "https://" + q; return; }
 
-    // Commands
-    // /y xxx => YouTube
-    // /g xxx => GitHub (按你要求)
-    // /r xxx => Reddit
-    // /w xxx => Wikipedia
-    // /c     => ChatGPT
     const cmd = q.match(/^\/([a-z]+)\s*(.*)$/i);
     if (cmd){
       const c = cmd[1].toLowerCase();
       const rest = (cmd[2] || "").trim();
 
       if (c === "c"){ location.href = "https://chatgpt.com"; return; }
-      if (!rest){ return; }
+      if (!rest) return;
 
       if (c === "y"){ location.href = "https://www.youtube.com/results?search_query=" + encodeURIComponent(rest); return; }
       if (c === "g"){ location.href = "https://github.com/search?q=" + encodeURIComponent(rest); return; }
@@ -461,18 +505,49 @@
       if (c === "w"){ location.href = "https://en.wikipedia.org/w/index.php?search=" + encodeURIComponent(rest); return; }
     }
 
-    // default: Google
     location.href = "https://www.google.com/search?q=" + encodeURIComponent(q);
   }
 
   document.getElementById("searchForm").addEventListener("submit", (e) => {
     e.preventDefault();
-    goSearch(document.getElementById("q").value);
+    goSearch(qInput.value);
   });
 
-  // ---------- Keyboard shortcuts ----------
-  // "/" focus search; Esc close more & blur
-  // G Google, Y YouTube, C ChatGPT, H GitHub, M Gmail, D Drive, L Calendar, F Cloudflare, V Vultr, O Oracle, R RackNerd, W Wikipedia
+  // ====== Contextual shortcuts badges (Alt/Ctrl held) ======
+  let keyOverlay = false;
+  function setOverlay(on){
+    if (keyOverlay === on) return;
+    keyOverlay = on;
+    document.body.classList.toggle("show-keys", on);
+  }
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Alt" || e.key === "Control" || e.altKey || e.ctrlKey) setOverlay(true);
+
+    // Esc: close more & blur
+    if (e.key === "Escape"){
+      setMore(false);
+      bang.classList.remove("show");
+      if (document.activeElement === qInput) qInput.blur();
+      return;
+    }
+
+    // "/" focus (only when not typing)
+    const typing = document.activeElement === qInput;
+    if (e.key === "/" && !typing){
+      e.preventDefault();
+      qInput.focus({ preventScroll:true });
+      return;
+    }
+  });
+  document.addEventListener("keyup", (e) => {
+    if (e.key === "Alt" || e.key === "Control"){
+      setOverlay(false);
+    }
+    // also handle cases where modifier released but another not pressed
+    if (!e.altKey && !e.ctrlKey) setOverlay(false);
+  });
+
+  // ====== Single-letter shortcuts (when NOT typing) ======
   const quick = {
     g: "https://google.com",
     y: "https://youtube.com",
@@ -488,33 +563,14 @@
     w: "https://wikipedia.org",
   };
 
-  document.addEventListener("keydown", (e) => {
-    const q = document.getElementById("q");
-    const typing = document.activeElement === q;
-
-    // Esc
-    if (e.key === "Escape"){
-      setMore(false);
-      if (typing) q.blur();
-      return;
-    }
-
-    // "/" focus
-    if (e.key === "/" && !typing){
-      e.preventDefault();
-      q.focus({ preventScroll:true });
-      return;
-    }
-
-    // single-letter shortcuts only when NOT typing
+  document.addEventListener("keypress", (e) => {
+    const typing = document.activeElement === qInput;
     if (typing) return;
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     if (e.key.length !== 1) return;
 
     const k = e.key.toLowerCase();
-    if (quick[k]){
-      location.href = quick[k];
-    }
+    if (quick[k]) location.href = quick[k];
   });
 </script>
 </body>
