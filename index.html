@@ -3,32 +3,33 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Harvey</title>
+<title>New Tab</title>
 
 <style>
   :root{
     --bg: #0b1020;
-    --panel: rgba(255,255,255,.06);
-    --panel2: rgba(255,255,255,.08);
+    --glass: rgba(255,255,255,.06);
+    --glass2: rgba(255,255,255,.08);
     --border: rgba(255,255,255,.10);
+    --border2: rgba(255,255,255,.16);
     --text: rgba(255,255,255,.92);
-    --muted: rgba(255,255,255,.60);
-    --shadow: 0 18px 60px rgba(0,0,0,.55);
-    --shadow2: 0 10px 28px rgba(0,0,0,.35);
-    --radius: 20px;
-    --maxw: 1040px;
+    --muted: rgba(255,255,255,.58);
+    --shadow: 0 16px 48px rgba(0,0,0,.45);
+    --shadow2: 0 10px 26px rgba(0,0,0,.30);
+    --maxw: 980px;
   }
 
   @media (prefers-color-scheme: light){
     :root{
       --bg: #f6f7fb;
-      --panel: rgba(17,24,39,.04);
-      --panel2: rgba(17,24,39,.06);
+      --glass: rgba(17,24,39,.04);
+      --glass2: rgba(17,24,39,.06);
       --border: rgba(17,24,39,.10);
+      --border2: rgba(17,24,39,.16);
       --text: rgba(17,24,39,.92);
-      --muted: rgba(17,24,39,.55);
+      --muted: rgba(17,24,39,.54);
       --shadow: 0 18px 60px rgba(17,24,39,.10);
-      --shadow2: 0 10px 28px rgba(17,24,39,.10);
+      --shadow2: 0 10px 24px rgba(17,24,39,.10);
     }
   }
 
@@ -40,73 +41,71 @@
     font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
       Roboto, Helvetica, Arial, "PingFang SC","Hiragino Sans GB","Microsoft YaHei";
     background:
-      radial-gradient(1200px 700px at 20% 10%, rgba(99,102,241,.18), transparent 55%),
-      radial-gradient(1000px 600px at 80% 20%, rgba(16,185,129,.14), transparent 55%),
-      radial-gradient(900px 700px at 50% 100%, rgba(59,130,246,.16), transparent 60%),
+      radial-gradient(1200px 700px at 18% 12%, rgba(99,102,241,.16), transparent 55%),
+      radial-gradient(1000px 600px at 82% 18%, rgba(16,185,129,.12), transparent 55%),
+      radial-gradient(900px 700px at 50% 105%, rgba(59,130,246,.14), transparent 60%),
       var(--bg);
   }
 
   .wrap{
     width:min(var(--maxw), 92vw);
-    margin: 26px auto 50px;
+    margin: 26px auto 46px;
     text-align:center;
   }
 
-  /* 顶部时间 */
+  /* 顶部：更轻的时间胶囊 */
   .top{
     display:flex;
     justify-content:center;
-    margin: 6px 0 16px;
+    margin: 8px 0 18px;
   }
   .chip{
     display:inline-flex;
     gap:10px;
     align-items:center;
-    padding: 10px 14px;
+    padding: 9px 13px;
     border-radius: 999px;
-    background: var(--panel);
+    background: var(--glass);
     border: 1px solid var(--border);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
   }
   .chip .t{
-    font-weight: 750;
+    font-weight: 760;
     letter-spacing: .2px;
   }
   .chip .d{
     color: var(--muted);
-    font-weight: 550;
+    font-weight: 600;
   }
 
-  /* 标题 */
-  .title{
-    font-size: 56px;
-    font-weight: 850;
-    letter-spacing: -0.8px;
-    margin: 6px 0 18px;
-  }
-  @media (max-width: 560px){
-    .title{ font-size: 44px; }
+  /* 主体：让搜索成为中心 */
+  .center{
+    margin-top: 14px;
   }
 
-  /* 搜索框（更克制） */
+  /* 更像 Chrome 的搜索框：薄、干净 */
   .search{
-    width:min(920px, 92vw);
-    margin: 0 auto 26px;
+    width:min(860px, 92vw);
+    margin: 0 auto 24px;
     display:flex;
     align-items:center;
     gap:12px;
-    padding: 14px 16px;
+    padding: 12px 14px;
     border-radius: 999px;
-    background: var(--panel);
+    background: var(--glass);
     border: 1px solid var(--border);
     box-shadow: var(--shadow2);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
   }
-  .search .icon{
-    width:18px;height:18px; opacity:.72;
+  .search:focus-within{
+    border-color: var(--border2);
+    box-shadow: 0 16px 40px rgba(0,0,0,.35);
+    background: var(--glass2);
   }
+  .search .sicon{ width:18px;height:18px; opacity:.70; }
   .search input{
     flex:1;
     border:0;
@@ -118,18 +117,19 @@
   .search button{
     border:0;
     cursor:pointer;
-    padding: 10px 14px;
+    padding: 9px 12px;
     border-radius: 999px;
-    background: var(--panel2);
-    color: var(--text);
+    background: transparent;
+    color: var(--muted);
     font-weight: 650;
   }
+  .search button:hover{ color: var(--text); }
   .search button:active{ transform: translateY(1px); }
 
-  /* 网格：更像 Chrome 新标签 */
+  /* 网格：更克制、间距更像原生新标签 */
   .grid{
-    width:min(920px, 92vw);
-    margin: 8px auto 0;
+    width:min(860px, 92vw);
+    margin: 6px auto 0;
     display:grid;
     grid-template-columns: repeat(6, 1fr);
     gap: 22px 16px;
@@ -148,81 +148,80 @@
     gap:10px;
   }
 
+  /* 图标容器：轻边框、轻玻璃、少阴影 */
   .bubble{
     width: 66px;
     height: 66px;
     border-radius: 999px;
-    background: rgba(255,255,255,.07);
-    border: 1px solid rgba(255,255,255,.10);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    background: var(--glass);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     display:grid;
     place-items:center;
-    box-shadow: none;
-    transition: transform .14s ease, box-shadow .14s ease, background .14s ease;
+    transition: transform .14s ease, box-shadow .14s ease, background .14s ease, border-color .14s ease;
+  }
+  .item:hover .bubble{
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+    background: var(--glass2);
+    border-color: var(--border2);
+  }
+
+  /* plate：统一白底托起，避免暗色 icon 看不清 */
+  .plate{
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.94);
+    display:grid;
+    place-items:center;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.55) inset,
+      0 8px 18px rgba(0,0,0,.18);
   }
   @media (prefers-color-scheme: light){
-    .bubble{
-      background: rgba(17,24,39,.05);
-      border: 1px solid rgba(17,24,39,.10);
+    .plate{
+      background: rgba(255,255,255,.98);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.65) inset,
+        0 10px 18px rgba(17,24,39,.10);
     }
   }
 
-  .item:hover .bubble{
-    transform: translateY(-3px);
-    box-shadow: var(--shadow);
-    background: rgba(255,255,255,.09);
-  }
-  @media (prefers-color-scheme: light){
-    .item:hover .bubble{ background: rgba(17,24,39,.07); }
-  }
-
-  .bubble img{
-    width: 34px;
-    height: 34px;
+  .plate img{
+    width: 30px;
+    height: 30px;
     object-fit: contain;
     display:block;
     border-radius: 10px;
-    filter: saturate(1.05) contrast(1.05);
-  }
-
-  /* 如果图标太暗：自动加一层微弱白底托起 */
-  .bubble .plate{
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
-    background: rgba(255,255,255,.92);
-    display:grid;
-    place-items:center;
-  }
-  @media (prefers-color-scheme: dark){
-    .bubble .plate{ background: rgba(255,255,255,.90); }
-  }
-  @media (prefers-color-scheme: light){
-    .bubble .plate{ background: rgba(255,255,255,.98); }
+    image-rendering: -webkit-optimize-contrast;
   }
 
   .name{
     font-size: 13px;
     color: var(--muted);
     font-weight: 600;
+    letter-spacing: .1px;
   }
 
-  /* 兜底 */
   .fallback{
-    width:40px; height:40px;
-    border-radius:12px;
+    width:42px; height:42px;
+    border-radius:14px;
     display:grid; place-items:center;
     font-weight: 850;
     color: rgba(17,24,39,.9);
-    background: rgba(255,255,255,.92);
+    background: rgba(255,255,255,.94);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.55) inset,
+      0 8px 18px rgba(0,0,0,.18);
   }
 
   .footer{
-    margin-top: 30px;
+    margin-top: 28px;
     font-size: 12px;
     color: var(--muted);
-    opacity: .75;
+    opacity: .55;
   }
 </style>
 </head>
@@ -236,20 +235,21 @@
       </div>
     </div>
 
-    <div class="title">Harvey</div>
+    <div class="center">
+      <form class="search" id="searchForm">
+        <svg class="sicon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"
+                stroke="currentColor" stroke-width="2" opacity=".9"/>
+          <path d="M16.5 16.5 21 21"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".9"/>
+        </svg>
+        <input id="q" placeholder="Search Google or type a URL" autocomplete="off" />
+        <button type="submit">Search</button>
+      </form>
 
-    <form class="search" id="searchForm">
-      <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2" opacity=".9"/>
-        <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".9"/>
-      </svg>
-      <input id="q" placeholder="Search Google or type a URL" autocomplete="off" />
-      <button type="submit">Search</button>
-    </form>
-
-    <div class="grid" id="grid"></div>
-
-    <div class="footer">nav.harveyi.com</div>
+      <div class="grid" id="grid"></div>
+      <div class="footer">nav.harveyi.com</div>
+    </div>
   </div>
 
 <script>
@@ -273,44 +273,45 @@
   }
   tick(); setInterval(tick, 1000);
 
-  // 站点：使用更稳定的 favicon 源（很多站自己的图会 403）
+  // 统一稳定的 favicon（避免站点自己 403）
   const favicon = (u) => `https://www.google.com/s2/favicons?domain=${encodeURIComponent(u)}&sz=128`;
 
   const links = [
-    { name:"Google", url:"https://google.com", plate:true },
-    { name:"Gmail", url:"https://mail.google.com", plate:true },
-    { name:"YouTube", url:"https://youtube.com", plate:true },
-    { name:"GitHub", url:"https://github.com", plate:true },
-    { name:"Microsoft", url:"https://www.microsoft.com", plate:true },
-    { name:"ChatGPT", url:"https://chatgpt.com", plate:true },
+    { name:"Google", url:"https://google.com" },
+    { name:"Gmail", url:"https://mail.google.com" },
+    { name:"YouTube", url:"https://youtube.com" },
+    { name:"GitHub", url:"https://github.com" },
+    { name:"Microsoft", url:"https://www.microsoft.com" },
+    { name:"ChatGPT", url:"https://chatgpt.com" },
 
-    { name:"Oracle", url:"https://cloud.oracle.com", plate:true },
-    { name:"AWS", url:"https://aws.amazon.com", plate:true },
-    { name:"Cloudflare", url:"https://dash.cloudflare.com", plate:true },
-    { name:"Vultr", url:"https://my.vultr.com", plate:true },
-    { name:"RackNerd", url:"https://my.racknerd.com", plate:true },
-    { name:"Wikipedia", url:"https://wikipedia.org", plate:true },
+    { name:"Oracle", url:"https://cloud.oracle.com" },
+    { name:"AWS", url:"https://aws.amazon.com" },
+    { name:"Cloudflare", url:"https://dash.cloudflare.com" },
+    { name:"Vultr", url:"https://my.vultr.com" },
+    { name:"RackNerd", url:"https://my.racknerd.com" },
+    { name:"Wikipedia", url:"https://wikipedia.org" },
 
-    { name:"X", url:"https://x.com", plate:true },
-    { name:"Reddit", url:"https://reddit.com", plate:true },
-    { name:"Telegram", url:"https://web.telegram.org", plate:true },
-    { name:"Discord", url:"https://discord.com", plate:true },
-    { name:"Netflix", url:"https://netflix.com", plate:true },
-    { name:"Apple", url:"https://apple.com", plate:true },
+    { name:"X", url:"https://x.com" },
+    { name:"Reddit", url:"https://reddit.com" },
+    { name:"Telegram", url:"https://web.telegram.org" },
+    { name:"Discord", url:"https://discord.com" },
+    { name:"Netflix", url:"https://netflix.com" },
+    { name:"Apple", url:"https://apple.com" },
   ];
 
   const grid = document.getElementById("grid");
   grid.innerHTML = links.map(l => `
     <a class="item" href="${l.url}" target="_blank" rel="noreferrer">
       <div class="bubble">
-        ${l.plate ? `<div class="plate"><img class="iconimg" src="${favicon(l.url)}" alt="${l.name}"></div>`
-                  : `<img class="iconimg" src="${favicon(l.url)}" alt="${l.name}">`}
+        <div class="plate">
+          <img class="iconimg" src="${favicon(l.url)}" alt="${l.name}">
+        </div>
       </div>
       <div class="name">${l.name}</div>
     </a>
   `).join("");
 
-  // 图标加载失败：字母兜底
+  // 图标失败：字母兜底
   document.querySelectorAll("img.iconimg").forEach(img => {
     img.addEventListener("error", () => {
       const name = img.getAttribute("alt") || "";
