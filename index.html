@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Harveyi</title>
 
-  <!-- 字体：更“产品级”的质感（可选，失败也不影响显示） -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -14,16 +13,9 @@
     :root{
       --bg0:#070A12;
       --bg1:#09112A;
-      --bg2:#0A1C2C;
       --text: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.62);
-      --muted2: rgba(255,255,255,.45);
-      --hair: rgba(255,255,255,.10);
       --hair2: rgba(255,255,255,.08);
-      --glass: rgba(255,255,255,.06);
-      --glass2: rgba(255,255,255,.08);
-      --focus: rgba(124, 92, 255, .55);
-      --radius: 22px;
       --ease: cubic-bezier(.34,1.56,.64,1);
       --ease2: cubic-bezier(.22,.61,.36,1);
     }
@@ -108,11 +100,7 @@
       box-shadow: 0 22px 80px rgba(0,0,0,.35), 0 0 0 6px rgba(124,92,255,.12);
       transform: translateY(-1px);
     }
-    .search svg{
-      width:18px; height:18px;
-      opacity:.75;
-      flex:0 0 auto;
-    }
+    .search svg{ width:18px; height:18px; opacity:.75; flex:0 0 auto; }
     .search input{
       width:100%;
       border:0;
@@ -122,9 +110,7 @@
       font-size: 18px;
       padding: 2px 2px;
     }
-    .search input::placeholder{
-      color: rgba(255,255,255,.45);
-    }
+    .search input::placeholder{ color: rgba(255,255,255,.45); }
     .hint{
       flex:0 0 auto;
       display:flex;
@@ -143,7 +129,6 @@
       font-family: "JetBrains Mono", ui-monospace, monospace;
     }
 
-    /* 搜索聚焦舞台感 */
     .dim-on-focus .grid,
     .dim-on-focus .sectionbar{
       opacity:.52;
@@ -189,7 +174,6 @@
     .morebtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18); }
     .morebtn:active{ transform: translateY(0px) scale(.98); }
 
-    /* 网格整体下移一点 */
     .grid{
       display:grid;
       grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -239,12 +223,20 @@
       height: 36px;
       display:block;
     }
-    .icon img{
-      width: 52px;
-      height: 52px;
-      object-fit: contain;
-      image-rendering: -webkit-optimize-contrast;
-      border-radius: 12px;
+
+    /* === 视觉等大校正（关键） ===
+       每个 item 可以传 data-scale="0.92/1.06 ..."，只缩放 SVG，不影响 hover 位移与 glow */
+    .icon .glyph{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transform: scale(var(--s, 1));
+      transition: transform .28s var(--ease);
+      will-change: transform;
+    }
+    .item:hover .icon .glyph,
+    .item:focus-visible .icon .glyph{
+      transform: scale(var(--s, 1)) translateY(0); /* 保持校正倍率不丢 */
     }
 
     .item:hover .icon,
@@ -309,16 +301,10 @@
       transform: translateY(0) scale(1);
     }
 
-    .more-area{
-      overflow:hidden;
-    }
-    .more-area[aria-hidden="true"]{
-      display:none;
-    }
+    .more-area{ overflow:hidden; }
+    .more-area[aria-hidden="true"]{ display:none; }
 
-    .reveal{
-      animation: rise .7s var(--ease) both;
-    }
+    .reveal{ animation: rise .7s var(--ease) both; }
     @keyframes rise{
       from{ opacity:0; transform: translateY(10px); filter: blur(2px); }
       to{ opacity:1; transform: translateY(0); filter: blur(0); }
@@ -373,7 +359,6 @@
 
   <script>
     // ========= SVG 资产（内嵌真矢量） =========
-
     const SVG_CHATGPT = `
       <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d="M22.28 9.82a5.98 5.98 0 0 0-.51-4.91 6.05 6.05 0 0 0-3.95-3.13 6.03 6.03 0 0 0-5.17 1.04 6.03 6.03 0 0 0-4.38-1.93 6.05 6.05 0 0 0-5.04 2.75 6 6 0 0 0-1.47 5.03c.12 1.83.68 3.51 1.55 4.91a6.05 6.05 0 0 0 3.95 3.13 6.03 6.03 0 0 0 5.17-1.04 6.03 6.03 0 0 0 4.38 1.93 6.05 6.05 0 0 0 5.04-2.75 6 6 0 0 0-1.47-5.03c-.12-1.83-.68-3.51-1.55-4.91zm-7.1 9.45a3.73 3.73 0 0 1-2.68-.31l.1-.06 5.28-3.05a.43.43 0 0 0 .21-.37v-7.37l2.12 1.22a3.74 3.74 0 0 1 1.63 3.56 3.75 3.75 0 0 1-2.48 3.49l-4.18 2.41z"/>
@@ -401,7 +386,6 @@
       </svg>
     `;
 
-    // Vultr / Oracle / RackNerd（真 SVG，适配 currentColor）
     const SVG_VULTR = `
       <svg viewBox="0 0 64 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d="M10 14c0-2.2 1.8-4 4-4h10c2.2 0 4 1.8 4 4v2.8c0 1-.4 2-1.1 2.8L28 23 18.7 49.3c-.7 2-2.6 3.3-4.7 3.3H14c-2.8 0-4.9-2.7-4-5.4L20.2 22.2 11.1 19.6c-.7-.2-1.1-.8-1.1-1.5V14z" opacity=".95"/>
@@ -424,7 +408,6 @@
       </svg>
     `;
 
-    // ====== More 区域：全部换成真 SVG ======
     const SVG_REDDIT = `
       <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d="M24 11.779c0-1.459-1.192-2.645-2.657-2.645-.71 0-1.348.273-1.823.717-1.624-1.137-3.844-1.87-6.303-1.957l1.085-5.11 3.554.757c.05.803.713 1.44 1.527 1.44 1.082 0 1.962-.884 1.962-1.964s-.88-1.964-1.962-1.964c-.754 0-1.41.428-1.743 1.056l-3.984-.85a.486.486 0 0 0-.573.344l-1.22 5.75c-2.525.04-4.814.786-6.48 1.948-.474-.438-1.103-.702-1.799-.702-1.465 0-2.656 1.187-2.656 2.646 0 .973.533 1.82 1.32 2.274-.053.34-.08.683-.08 1.03 0 3.536 4.102 6.413 9.143 6.413 5.042 0 9.143-2.877 9.143-6.413 0-.337-.026-.67-.076-1.002.822-.445 1.383-1.3 1.383-2.296zm-15.046 2.15c0-1.082.88-1.963 1.962-1.963s1.962.88 1.962 1.963-.88 1.963-1.962 1.963-1.962-.88-1.962-1.963zm9.23 4.417c-1.3 1.303-3.753 1.408-4.183 1.408-.432 0-2.884-.105-4.183-1.408a.486.486 0 1 1 .687-.687c.88.88 2.723 1.1 3.496 1.1.77 0 2.614-.22 3.496-1.1a.486.486 0 1 1 .687.687zm-1.144-2.454c-1.082 0-1.962-.88-1.962-1.963s.88-1.963 1.962-1.963 1.962.88 1.962 1.963-.88 1.963-1.962 1.963z"/>
@@ -443,63 +426,63 @@
       </svg>
     `;
 
-    // Wikipedia（极简 W + 圆形底，仍然无“底座感”，只是 logo 形态本身）
     const SVG_WIKIPEDIA = `
       <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d="M12 1a11 11 0 1 0 11 11A11.013 11.013 0 0 0 12 1Zm6.2 7.1-2.9 8.8h-1.7l-1.7-5.2-1.7 5.2H8.5L5.8 8.1h1.9l1.6 5.6 1.7-5.6h1.9l1.7 5.6 1.6-5.6h2Z"/>
       </svg>
     `;
 
-    // Netflix（极简 N，适配 currentColor + hover 唤醒）
     const SVG_NETFLIX = `
       <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d="M6 3h3.1l5.8 13.2V3H18v18h-3.1L9 7.8V21H6V3z"/>
       </svg>
     `;
 
-    // ========= 1) 配置：站点 =========
+    // ========= 站点：Essentials（Netflix 已前移，云服务固定最后三位） =========
     const essentials = [
-      { name:"ChatGPT",  url:"https://chatgpt.com/",            key:"C", glow:"#10A37F", svg: SVG_CHATGPT, cls:"chatgpt" },
-      { name:"Gemini",   url:"https://gemini.google.com/",      key:"G", glow:"#4E85FF", svg: SVG_GEMINI,  cls:"gemini"  },
-      { name:"Claude",   url:"https://claude.ai/",              key:"L", glow:"#D97757", svg: SVG_CLAUDE,  cls:"claude"  },
-      { name:"Copilot",  url:"https://copilot.microsoft.com/",  key:"P", glow:"#43E6F0", svg: SVG_COPILOT, cls:"copilot" },
+      { name:"ChatGPT",  url:"https://chatgpt.com/",            key:"C", glow:"#10A37F", svg: SVG_CHATGPT, cls:"chatgpt",  scale:0.96 },
+      { name:"Gemini",   url:"https://gemini.google.com/",      key:"G", glow:"#4E85FF", svg: SVG_GEMINI,  cls:"gemini",   scale:1.08 },
+      { name:"Claude",   url:"https://claude.ai/",              key:"L", glow:"#D97757", svg: SVG_CLAUDE,  cls:"claude",   scale:1.04 },
+      { name:"Copilot",  url:"https://copilot.microsoft.com/",  key:"P", glow:"#43E6F0", svg: SVG_COPILOT, cls:"copilot",  scale:1.02 },
 
-      { name:"Gmail",      url:"https://mail.google.com/",        key:"M", glow:"#EA4335", svg: `
+      { name:"Gmail",    url:"https://mail.google.com/",        key:"M", glow:"#EA4335", svg: `
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
           <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L12 9.573l8.073-6.08c1.618-1.214 3.927-.059 3.927 1.964z"/>
-        </svg>` },
+        </svg>`, scale:1.02 },
 
-      { name:"Google",     url:"https://www.google.com/",          key:"O", glow:"#4285F4", svg: `
+      { name:"Google",   url:"https://www.google.com/",          key:"O", glow:"#4285F4", svg: `
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
           <path d="M12.48 10.92v3.28h7.84c-.31 1.62-1.83 4.75-4.56 4.75-2.36 0-4.27-1.96-4.27-4.37s1.91-4.37 4.27-4.37c1.35 0 2.26.57 2.78 1.07l2.6-2.51c-1.67-1.56-3.82-2.52-5.38-2.52-5.1 0-9.24 4.14-9.24 9.24s4.14 9.24 9.24 9.24c5.33 0 8.87-3.75 8.87-9.02 0-.6-.06-1.06-.13-1.52h-8.73z"/>
-        </svg>` },
+        </svg>`, scale:0.98 },
 
-      { name:"YouTube",    url:"https://www.youtube.com/",         key:"Y", glow:"#FF0033", svg: `
+      { name:"YouTube",  url:"https://www.youtube.com/",        key:"Y", glow:"#FF0033", svg: `
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
           <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-        </svg>` },
+        </svg>`, scale:1.02 },
 
-      { name:"GitHub",     url:"https://github.com/",              key:"H", glow:"#FFFFFF", svg: `
+      { name:"GitHub",   url:"https://github.com/",             key:"H", glow:"#FFFFFF", svg: `
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
-        </svg>` },
+        </svg>`, scale:0.90 },
 
-      { name:"Cloudflare", url:"https://dash.cloudflare.com/",     key:"F", glow:"#F48120", svg: `
+      { name:"Cloudflare", url:"https://dash.cloudflare.com/",   key:"F", glow:"#F48120", svg: `
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
           <path d="M24 15.111c0 2.444-1.889 4.444-4.222 4.444H6.889C3.111 19.555 0 16.444 0 12.666c0-3.333 2.444-6.111 5.667-6.555.778-3.111 3.556-5.444 6.889-5.444 3 0 5.556 1.889 6.556 4.555 2.889.334 5.111 2.778 5.111 5.778 0 .333 0 .667-.111 1.111C23 12.333 24 13.555 24 15.111z"/>
-        </svg>` },
+        </svg>`, scale:1.06 },
 
-      { name:"Vultr",    url:"https://my.vultr.com/",            key:"V", glow:"#007BFC", svg: SVG_VULTR, cls:"vultr" },
-      { name:"Oracle",   url:"https://cloud.oracle.com/",        key:"O", glow:"#FF3B30", svg: SVG_ORACLE, cls:"oracle" },
-      { name:"RackNerd", url:"https://my.racknerd.com/",         key:"R", glow:"#7C5CFF", svg: SVG_RACKNERD, cls:"racknerd" }
+      { name:"Netflix",  url:"https://www.netflix.com/",         key:"N", glow:"#E50914", svg: SVG_NETFLIX, cls:"netflix", scale:1.10 },
+
+      /* 固定最后三位：云服务器 */
+      { name:"Vultr",    url:"https://my.vultr.com/",            key:"V", glow:"#007BFC", svg: SVG_VULTR, cls:"vultr",   scale:0.96 },
+      { name:"Oracle",   url:"https://cloud.oracle.com/",        key:"O", glow:"#FF3B30", svg: SVG_ORACLE, cls:"oracle",  scale:0.90 },
+      { name:"RackNerd", url:"https://my.racknerd.com/",         key:"R", glow:"#7C5CFF", svg: SVG_RACKNERD, cls:"racknerd", scale:1.06 }
     ];
 
     const more = [
-      { name:"Reddit",    url:"https://www.reddit.com/",         key:"U", glow:"#FF4500", svg: SVG_REDDIT,    cls:"reddit"   },
-      { name:"Telegram",  url:"https://web.telegram.org/",       key:"T", glow:"#2AABEE", svg: SVG_TELEGRAM,  cls:"telegram" },
-      { name:"Discord",   url:"https://discord.com/app",         key:"I", glow:"#5865F2", svg: SVG_DISCORD,   cls:"discord"  },
-      { name:"Wikipedia", url:"https://www.wikipedia.org/",      key:"W", glow:"#FFFFFF", svg: SVG_WIKIPEDIA, cls:"wiki"     },
-      { name:"Netflix",   url:"https://www.netflix.com/",        key:"N", glow:"#E50914", svg: SVG_NETFLIX,   cls:"netflix"  }
+      { name:"Reddit",    url:"https://www.reddit.com/",         key:"U", glow:"#FF4500", svg: SVG_REDDIT,   cls:"reddit",   scale:1.00 },
+      { name:"Telegram",  url:"https://web.telegram.org/",       key:"T", glow:"#2AABEE", svg: SVG_TELEGRAM, cls:"telegram", scale:1.02 },
+      { name:"Discord",   url:"https://discord.com/app",         key:"I", glow:"#5865F2", svg: SVG_DISCORD,  cls:"discord",  scale:0.98 },
+      { name:"Wikipedia", url:"https://www.wikipedia.org/",      key:"W", glow:"#FFFFFF", svg: SVG_WIKIPEDIA,cls:"wiki",     scale:1.00 }
     ];
 
     // ========= 2) 渲染 =========
@@ -519,9 +502,12 @@
       a.classList.add("reveal");
       a.style.animationDelay = (idx * 28) + "ms";
 
-      const iconHTML = site.svg
-        ? site.svg
-        : `<img src="${site.icon}" alt="${site.name}" loading="lazy" />`;
+      const scale = (typeof site.scale === "number") ? site.scale : 1;
+      const iconHTML = `
+        <span class="glyph" style="--s:${scale}">
+          ${site.svg}
+        </span>
+      `;
 
       a.innerHTML = `
         <span class="kbd">${site.key || ""}</span>
@@ -618,12 +604,8 @@
     function setHotkeys(on){
       document.body.classList.toggle("show-hotkeys", on);
     }
-    window.addEventListener("keydown", (e)=>{
-      if(e.altKey) setHotkeys(true);
-    });
-    window.addEventListener("keyup", (e)=>{
-      if(!e.altKey) setHotkeys(false);
-    });
+    window.addEventListener("keydown", (e)=>{ if(e.altKey) setHotkeys(true); });
+    window.addEventListener("keyup",   (e)=>{ if(!e.altKey) setHotkeys(false); });
 
     // ========= 6) 单键快捷跳转（不打扰输入框） =========
     const shortcutMap = new Map();
@@ -650,7 +632,7 @@
       }
     });
 
-    // ========= 7) More 展开：FLIP 动画（网格不跳动） =========
+    // ========= 7) More 展开：FLIP 动画 =========
     const moreArea = document.getElementById("moreArea");
     const btnMore = document.getElementById("toggleMore");
     const btnLess = document.getElementById("toggleLess");
@@ -692,7 +674,7 @@
   </script>
 
   <style>
-    /* ====== 品牌色 Hover（只针对你关心的）====== */
+    /* ====== 品牌色 Hover ====== */
     .item.chatgpt:hover .icon, .item.chatgpt:focus-visible .icon{ color:#10a37f; }
     .item.gemini:hover  .icon, .item.gemini:focus-visible  .icon{ color:#4e85ff; }
     .item.claude:hover  .icon, .item.claude:focus-visible  .icon{ color:#d97757; }
