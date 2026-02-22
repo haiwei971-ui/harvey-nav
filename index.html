@@ -28,14 +28,17 @@
       font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+
+      /* 基底更深，呼吸交给 bg-flow */
       background:
-        radial-gradient(1000px 700px at 16% 20%, rgba(90,80,255,.20), transparent 55%),
-        radial-gradient(900px 700px at 78% 24%, rgba(0,210,255,.12), transparent 55%),
-        radial-gradient(900px 700px at 60% 90%, rgba(0,255,170,.07), transparent 55%),
+        radial-gradient(900px 700px at 16% 20%, rgba(90,80,255,.12), transparent 60%),
+        radial-gradient(900px 700px at 78% 24%, rgba(0,210,255,.08), transparent 60%),
         linear-gradient(180deg, var(--bg1), var(--bg0));
+
       overflow-x:hidden;
     }
 
+    /* 轻微磨砂颗粒 */
     body::before{
       content:"";
       position:fixed; inset:0;
@@ -43,6 +46,50 @@
       opacity:.08;
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
       mix-blend-mode: overlay;
+      z-index:-1;
+    }
+
+    /* ========= Atmospheric Flow：动态流体背景（超克制） ========= */
+    .bg-flow{
+      position: fixed;
+      inset: -20%;
+      pointer-events: none;
+      z-index: -3;
+      filter: blur(150px);
+      opacity: .55;
+    }
+    .bg-flow .blob{
+      position:absolute;
+      width: 70vmax;
+      height: 70vmax;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, rgba(90,80,255,.18), transparent 60%);
+      animation: drift1 60s var(--ease2) infinite alternate;
+      transform: translate3d(0,0,0);
+    }
+    .bg-flow .blob.b2{
+      width: 64vmax;
+      height: 64vmax;
+      background: radial-gradient(circle at 30% 30%, rgba(0,210,255,.14), transparent 60%);
+      animation: drift2 70s var(--ease2) infinite alternate;
+    }
+    .bg-flow .blob.b3{
+      width: 58vmax;
+      height: 58vmax;
+      background: radial-gradient(circle at 30% 30%, rgba(0,255,170,.08), transparent 60%);
+      animation: drift3 80s var(--ease2) infinite alternate;
+    }
+    @keyframes drift1{
+      from{ transform: translate(-10vmax, -6vmax) scale(1); }
+      to  { transform: translate(14vmax, 10vmax) scale(1.08); }
+    }
+    @keyframes drift2{
+      from{ transform: translate(18vmax, -12vmax) scale(1.02); }
+      to  { transform: translate(-8vmax, 12vmax) scale(1.10); }
+    }
+    @keyframes drift3{
+      from{ transform: translate(-14vmax, 18vmax) scale(1.00); }
+      to  { transform: translate(10vmax, -10vmax) scale(1.06); }
     }
 
     .wrap{
@@ -77,9 +124,10 @@
       font-weight: 600;
       color: rgba(255,255,255,.88);
       letter-spacing: .02em;
-      font-variant-numeric: tabular-nums;
+      font-variant-numeric: tabular-nums; /* 防抖 */
     }
 
+    /* 搜索 */
     .search{
       position:relative;
       display:flex;
@@ -94,11 +142,14 @@
       box-shadow: 0 18px 60px rgba(0,0,0,.30);
       transition: border-color .25s var(--ease2), box-shadow .25s var(--ease2), transform .25s var(--ease2);
       margin-bottom: 16px;
+
+      width: 100%;
+      transform-origin: center;
     }
     .search:focus-within{
       border-color: rgba(124,92,255,.45);
       box-shadow: 0 22px 80px rgba(0,0,0,.35), 0 0 0 6px rgba(124,92,255,.12);
-      transform: translateY(-1px);
+      transform: translateY(-1px) scaleX(1.05); /* 宽度 +5% */
     }
     .search svg{ width:18px; height:18px; opacity:.75; flex:0 0 auto; }
     .search input{
@@ -129,14 +180,16 @@
       font-family: "JetBrains Mono", ui-monospace, monospace;
     }
 
+    /* 搜索聚焦：舞台感（更强降噪） */
     .dim-on-focus .grid,
     .dim-on-focus .sectionbar{
-      opacity:.52;
-      filter: blur(6px);
-      transform: translateY(2px) scale(.985);
+      opacity:.42;
+      filter: blur(8px);
+      transform: translateY(2px) scale(.98);
       transition: opacity .25s var(--ease2), filter .25s var(--ease2), transform .25s var(--ease2);
     }
 
+    /* 分组条：目录式优雅 */
     .sectionbar{
       display:flex;
       align-items:center;
@@ -149,10 +202,11 @@
       align-items:center;
       gap:12px;
       color: rgba(255,255,255,.55);
-      font-size: 12px;
-      letter-spacing: .18em;
+      font-size: 11px;
+      letter-spacing: .15em;  /* 你要的 0.15em */
       text-transform: uppercase;
       user-select:none;
+      opacity: .92;
     }
     .dotline{
       height:1px;
@@ -174,11 +228,12 @@
     .morebtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18); }
     .morebtn:active{ transform: translateY(0px) scale(.98); }
 
+    /* 网格 */
     .grid{
       display:grid;
       grid-template-columns: repeat(6, minmax(0, 1fr));
       gap: 26px 34px;
-      padding: 16px 6px 8px;
+      padding: 16px 6px 8px; /* 下移一点，视觉重心更稳 */
       transition: opacity .25s var(--ease2), filter .25s var(--ease2), transform .25s var(--ease2);
     }
     @media (max-width: 860px){
@@ -191,6 +246,7 @@
       .search input{ font-size: 17px; }
     }
 
+    /* 去底座：只保留“足够大点击区域” */
     .item{
       position:relative;
       display:flex;
@@ -198,25 +254,29 @@
       align-items:center;
       gap:10px;
       text-decoration:none;
-      color: var(--muted);
+      color: rgba(255,255,255,.70);
       border-radius: 16px;
       padding: 10px 8px;
       outline: none;
       -webkit-tap-highlight-color: transparent;
       transform: translateZ(0);
+
+      transition: transform .25s var(--ease2);
+      will-change: transform;
     }
 
+    /* 默认：降噪（灰度 + 半透明） */
     .icon{
       width: 52px;
       height: 52px;
       display:grid;
       place-items:center;
-      transition: transform .28s var(--ease), filter .28s var(--ease2), opacity .28s var(--ease2), color .28s var(--ease2);
+      transition: transform .32s var(--ease), filter .32s var(--ease2), opacity .32s var(--ease2), color .32s var(--ease2);
       filter: grayscale(100%) opacity(.62);
       opacity: .92;
-      will-change: transform, filter, opacity;
       color: rgba(255,255,255,.92);
       position:relative;
+      will-change: transform, filter, opacity, color;
     }
     .icon svg{
       width: 36px;
@@ -224,8 +284,7 @@
       display:block;
     }
 
-    /* === 视觉等大校正（关键） ===
-       每个 item 可以传 data-scale="0.92/1.06 ..."，只缩放 SVG，不影响 hover 位移与 glow */
+    /* 视觉等大校正：只缩放 glyph，不影响 hover 位移与 glow */
     .icon .glyph{
       display:flex;
       align-items:center;
@@ -234,50 +293,55 @@
       transition: transform .28s var(--ease);
       will-change: transform;
     }
-    .item:hover .icon .glyph,
-    .item:focus-visible .icon .glyph{
-      transform: scale(var(--s, 1)) translateY(0); /* 保持校正倍率不丢 */
-    }
 
+    /* Hover/Focus：唤醒（彩色 + 轻浮起） */
     .item:hover .icon,
     .item:focus-visible .icon{
       filter: none;
       transform: translateY(-4px);
     }
 
+    /* Layered Shadows：品牌色外扩光晕（更大、更淡） */
+    .item:hover .icon::after,
+    .item:focus-visible .icon::after{
+      content:"";
+      position:absolute;
+      width: 66px; height: 66px;
+      border-radius: 20px;
+      background: radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--glow) 70%, transparent), transparent 62%);
+      filter: blur(18px);
+      opacity: .28; /* 超克制的“投光” */
+      z-index:-1;
+      transform: translateY(3px);
+      pointer-events:none;
+    }
+
+    /* 额外一层下投影（不抢戏） */
+    .item:hover{
+      filter: drop-shadow(0 18px 28px rgba(0,0,0,.22));
+    }
+
+    /* 无障碍 + 高级：Tab 聚焦 outline */
+    .item:focus-visible{
+      box-shadow: 0 0 0 1px rgba(255,255,255,.18), 0 0 0 6px rgba(124,92,255,.14);
+    }
+
+    /* 文字隐退：默认更淡，hover 才显露 */
+    .label{
+      font-size: 13px;
+      letter-spacing: .01em;
+      color: rgba(255,255,255,.58);
+      opacity: .40;
+      transition: color .22s var(--ease2), opacity .22s var(--ease2);
+      user-select:none;
+    }
     .item:hover .label,
     .item:focus-visible .label{
       color: rgba(255,255,255,.86);
       opacity: 1;
     }
 
-    .item:hover .icon::after,
-    .item:focus-visible .icon::after{
-      content:"";
-      position:absolute;
-      width: 56px; height: 56px;
-      border-radius: 18px;
-      background: radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--glow) 70%, transparent), transparent 60%);
-      filter: blur(12px);
-      opacity: .65;
-      z-index:-1;
-      transform: translateY(2px);
-      pointer-events:none;
-    }
-
-    .item:focus-visible{
-      box-shadow: 0 0 0 1px rgba(255,255,255,.18), 0 0 0 6px rgba(124,92,255,.14);
-    }
-
-    .label{
-      font-size: 13px;
-      letter-spacing: .01em;
-      color: rgba(255,255,255,.58);
-      opacity: .55;
-      transition: color .22s var(--ease2), opacity .22s var(--ease2), transform .22s var(--ease2);
-      user-select:none;
-    }
-
+    /* 快捷键提示：默认隐藏，按住 Alt 才显示 */
     .kbd{
       position:absolute;
       top: -6px;
@@ -301,9 +365,11 @@
       transform: translateY(0) scale(1);
     }
 
+    /* More 区域 */
     .more-area{ overflow:hidden; }
     .more-area[aria-hidden="true"]{ display:none; }
 
+    /* 入场交错动画 */
     .reveal{ animation: rise .7s var(--ease) both; }
     @keyframes rise{
       from{ opacity:0; transform: translateY(10px); filter: blur(2px); }
@@ -313,6 +379,13 @@
 </head>
 
 <body>
+  <!-- 动态流体背景 -->
+  <div class="bg-flow" aria-hidden="true">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+  </div>
+
   <div class="wrap">
     <div class="shell" id="app">
       <div class="topbar">
@@ -473,16 +546,16 @@
       { name:"Netflix",  url:"https://www.netflix.com/",         key:"N", glow:"#E50914", svg: SVG_NETFLIX, cls:"netflix", scale:1.10 },
 
       /* 固定最后三位：云服务器 */
-      { name:"Vultr",    url:"https://my.vultr.com/",            key:"V", glow:"#007BFC", svg: SVG_VULTR, cls:"vultr",   scale:0.96 },
-      { name:"Oracle",   url:"https://cloud.oracle.com/",        key:"O", glow:"#FF3B30", svg: SVG_ORACLE, cls:"oracle",  scale:0.90 },
+      { name:"Vultr",    url:"https://my.vultr.com/",            key:"V", glow:"#007BFC", svg: SVG_VULTR, cls:"vultr",     scale:0.96 },
+      { name:"Oracle",   url:"https://cloud.oracle.com/",        key:"O", glow:"#FF3B30", svg: SVG_ORACLE, cls:"oracle",   scale:0.90 },
       { name:"RackNerd", url:"https://my.racknerd.com/",         key:"R", glow:"#7C5CFF", svg: SVG_RACKNERD, cls:"racknerd", scale:1.06 }
     ];
 
     const more = [
-      { name:"Reddit",    url:"https://www.reddit.com/",         key:"U", glow:"#FF4500", svg: SVG_REDDIT,   cls:"reddit",   scale:1.00 },
-      { name:"Telegram",  url:"https://web.telegram.org/",       key:"T", glow:"#2AABEE", svg: SVG_TELEGRAM, cls:"telegram", scale:1.02 },
-      { name:"Discord",   url:"https://discord.com/app",         key:"I", glow:"#5865F2", svg: SVG_DISCORD,  cls:"discord",  scale:0.98 },
-      { name:"Wikipedia", url:"https://www.wikipedia.org/",      key:"W", glow:"#FFFFFF", svg: SVG_WIKIPEDIA,cls:"wiki",     scale:1.00 }
+      { name:"Reddit",    url:"https://www.reddit.com/",         key:"U", glow:"#FF4500", svg: SVG_REDDIT,    cls:"reddit",   scale:1.00 },
+      { name:"Telegram",  url:"https://web.telegram.org/",       key:"T", glow:"#2AABEE", svg: SVG_TELEGRAM,  cls:"telegram", scale:1.02 },
+      { name:"Discord",   url:"https://discord.com/app",         key:"I", glow:"#5865F2", svg: SVG_DISCORD,   cls:"discord",  scale:0.98 },
+      { name:"Wikipedia", url:"https://www.wikipedia.org/",      key:"W", glow:"#FFFFFF", svg: SVG_WIKIPEDIA, cls:"wiki",     scale:1.00 }
     ];
 
     // ========= 2) 渲染 =========
@@ -503,15 +576,12 @@
       a.style.animationDelay = (idx * 28) + "ms";
 
       const scale = (typeof site.scale === "number") ? site.scale : 1;
-      const iconHTML = `
-        <span class="glyph" style="--s:${scale}">
-          ${site.svg}
-        </span>
-      `;
 
       a.innerHTML = `
         <span class="kbd">${site.key || ""}</span>
-        <span class="icon">${iconHTML}</span>
+        <span class="icon">
+          <span class="glyph" style="--s:${scale}">${site.svg}</span>
+        </span>
         <span class="label">${site.name}</span>
       `;
 
@@ -547,6 +617,7 @@
       else g = "Good night.";
       greetEl.textContent = g;
 
+      // 环境光适配：深夜更冷、更沉；清晨稍亮
       const root = document.documentElement;
       if(h >= 2 && h <= 5){
         root.style.setProperty("--bg0", "#05070E");
@@ -596,7 +667,10 @@
       window.open(url, "_blank", "noopener");
     });
 
+    // 打开即输入
     window.addEventListener("load", ()=> q.focus({preventScroll:true}));
+
+    // 搜索聚焦：舞台感
     q.addEventListener("focus", ()=> app.classList.add("dim-on-focus"));
     q.addEventListener("blur", ()=> app.classList.remove("dim-on-focus"));
 
@@ -668,23 +742,67 @@
 
       btnMore.style.visibility = show ? "hidden" : "visible";
     }
-
     btnMore.addEventListener("click", ()=> flipToggle(true));
     btnLess.addEventListener("click", ()=> flipToggle(false));
+
+    // ========= 8) Magnetic Hover：20px 感应，2~3px 偏移 =========
+    (function magnetic(){
+      const items = Array.from(document.querySelectorAll(".item"));
+      const MAX_DIST = 20;
+      const MAX_MOVE = 3;
+      const SPRING_IN  = "cubic-bezier(.34,1.56,.64,1)";
+      const SPRING_OUT = "cubic-bezier(.22,.61,.36,1)";
+
+      const isTouch = matchMedia("(pointer: coarse)").matches;
+      if(isTouch) return;
+
+      items.forEach(el=>{
+        el.style.willChange = "transform";
+        el.addEventListener("mousemove", (e)=>{
+          const r = el.getBoundingClientRect();
+          const cx = r.left + r.width/2;
+          const cy = r.top + r.height/2;
+
+          const dx = e.clientX - cx;
+          const dy = e.clientY - cy;
+
+          const dist = Math.sqrt(dx*dx + dy*dy);
+          if(dist > Math.max(r.width, r.height)/2 + MAX_DIST){
+            el.style.transitionTimingFunction = SPRING_OUT;
+            el.style.transform = "";
+            return;
+          }
+
+          const nx = dx / (r.width/2 + MAX_DIST);
+          const ny = dy / (r.height/2 + MAX_DIST);
+
+          const mx = Math.max(-1, Math.min(1, nx)) * MAX_MOVE;
+          const my = Math.max(-1, Math.min(1, ny)) * MAX_MOVE;
+
+          el.style.transitionTimingFunction = SPRING_IN;
+          el.style.transform = `translate3d(${mx}px, ${my}px, 0)`;
+        });
+
+        el.addEventListener("mouseleave", ()=>{
+          el.style.transitionTimingFunction = SPRING_OUT;
+          el.style.transform = "";
+        });
+      });
+    })();
   </script>
 
+  <!-- 品牌色 Hover：只改 icon 的“currentColor” -->
   <style>
-    /* ====== 品牌色 Hover ====== */
-    .item.chatgpt:hover .icon, .item.chatgpt:focus-visible .icon{ color:#10a37f; }
-    .item.gemini:hover  .icon, .item.gemini:focus-visible  .icon{ color:#4e85ff; }
-    .item.claude:hover  .icon, .item.claude:focus-visible  .icon{ color:#d97757; }
-    .item.copilot:hover .icon, .item.copilot:focus-visible .icon{ color:#43e6f0; }
+    .item.chatgpt:hover .icon,  .item.chatgpt:focus-visible .icon{ color:#10a37f; }
+    .item.gemini:hover  .icon,  .item.gemini:focus-visible  .icon{ color:#4e85ff; }
+    .item.claude:hover  .icon,  .item.claude:focus-visible  .icon{ color:#d97757; }
+    .item.copilot:hover .icon,  .item.copilot:focus-visible .icon{ color:#43e6f0; }
 
-    .item.vultr:hover .icon,  .item.vultr:focus-visible .icon{ color:#007BFC; }
-    .item.oracle:hover .icon, .item.oracle:focus-visible .icon{ color:#FF3B30; }
-    .item.racknerd:hover .icon,.item.racknerd:focus-visible .icon{ color:#7C5CFF; }
+    .item.vultr:hover   .icon,  .item.vultr:focus-visible   .icon{ color:#007BFC; }
+    .item.oracle:hover  .icon,  .item.oracle:focus-visible  .icon{ color:#FF3B30; }
+    .item.racknerd:hover .icon, .item.racknerd:focus-visible .icon{ color:#7C5CFF; }
 
-    .item.reddit:hover .icon,   .item.reddit:focus-visible .icon{ color:#FF4500; }
+    .item.reddit:hover  .icon,  .item.reddit:focus-visible  .icon{ color:#FF4500; }
     .item.telegram:hover .icon, .item.telegram:focus-visible .icon{ color:#2AABEE; }
     .item.discord:hover .icon,  .item.discord:focus-visible .icon{ color:#5865F2; }
     .item.netflix:hover .icon,  .item.netflix:focus-visible .icon{ color:#E50914; }
