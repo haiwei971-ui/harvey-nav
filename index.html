@@ -53,7 +53,6 @@
       overflow-x:hidden; transition: background 1.8s var(--easeWave), color 1.8s var(--easeWave);
     }
 
-    /* 噪点纹理随主题调整 opacity */
     body::before{
       content:""; position:fixed; inset:0; pointer-events:none; z-index:-1;
       opacity: var(--noise-opacity);
@@ -73,7 +72,6 @@
     .greet{ font-size:18px; font-weight:500; opacity:.85; letter-spacing:.01em; transition: color 1.2s var(--easeWave); }
     .clock{ font-family:'DM Mono', monospace; font-size:18px; font-weight:600; font-variant-numeric:tabular-nums; transition: color 1.2s var(--easeWave); }
 
-    /* 搜索框：移动端隐藏 hint */
     .search{
       display:flex; align-items:center; gap:12px; padding:15px 22px; border-radius:999px;
       background: var(--search-bg); border:1px solid var(--hair); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
@@ -83,7 +81,6 @@
     .search input{ width:100%; border:0; outline:none; background:transparent; color:var(--text); font-size:18px; font-family: 'DM Sans', -apple-system, sans-serif; }
     .search input::placeholder { color: var(--text-muted); }
     .hint{ display:flex; gap:10px; color:var(--text-muted); font-size:12px; font-family:'DM Mono', monospace; white-space:nowrap; flex-shrink: 0; }
-    /* 小屏隐藏 hint，避免截断 */
     @media (max-width: 520px){ .hint{ display:none; } }
 
     .dim-on-focus .grid, .dim-on-focus .sectionbar, .dim-on-focus .morebtn{ opacity:0.28; filter:blur(4px); transform:scale(0.985); transition:.22s var(--easeWave); }
@@ -111,7 +108,6 @@
     .reveal{ animation: rise .72s var(--easeWave) both; animation-delay: var(--d, 0ms); will-change: transform, opacity, filter; }
     @keyframes rise{ from{ opacity:0; transform:translateY(20px) scale(.98); filter:blur(5px); } to{ opacity:1; transform:translateY(0) scale(1); filter:blur(0); } }
 
-    /* 品牌 Hover 颜色 */
     .item.chatgpt:hover .icon{color:#10A37F}
     .item.gemini:hover .icon{color:#4E85FF}
     .item.claude:hover .icon{color:#D97757}
@@ -122,127 +118,36 @@
     .item.racknerd:hover .icon{color:#7C5CFF}
     .item.gmail:hover .icon{color:#EA4335}
     .item.google:hover .icon{color:#4285F4}
-< truncated lines 125-213 >
-      { name:"Vultr",     url:"https://my.vultr.com/",                      key:"V", glow:"#007BFC", svg:SVGS.vultr,     rank:9,   scale:0.96, cls:"vultr" },
-      { name:"Oracle",    url:"https://cloud.oracle.com/",                  key:"J", glow:"#FF3B30", svg:SVGS.oracle,    rank:9,   scale:0.90, ty:-0.5, cls:"oracle" },
-      { name:"RackNerd",  url:"https://my.racknerd.com/",                   key:"R", glow:"#7C5CFF", svg:SVGS.racknerd,  rank:9,   scale:1.06, cls:"racknerd" },
-      { name:"DMIT",      url:"https://www.dmit.io/clientarea.php",         key:"D", glow:"#0052cc", svg:SVGS.dmit,      rank:9,   scale:1.05, cls:"dmit" },
-      { name:"BWG",       url:"https://bandwagonhost.com/clientarea.php",   key:"B", glow:"#e67e22", svg:SVGS.bandwagon, rank:9,   scale:1.02, cls:"bwg" }
-    ];
+    .item.youtube:hover .icon{color:#FF0033}
+    .item.github:hover .icon{color:#333}
+    .theme-night .item.github:hover .icon{color:#FFF}
+    .item.reddit:hover .icon{color:#FF4500}
+    .item.telegram:hover .icon{color:#2AABEE}
+    .item.discord:hover .icon{color:#5865F2}
+    .item.wiki:hover .icon{color:#7C5CFF}
+    .item.dmit:hover .icon{color:#0052cc}
+    .item.bwg:hover .icon{color:#e67e22}
+    .item.cloudflare:hover .icon{color:#F48120}
+  </style>
+</head>
 
-    function applyVars(v){ const root=document.documentElement; for(const [k,val] of Object.entries(v)) root.style.setProperty(k,val); }
+<body>
+  <div class="bg-flow"><div class="blob"></div></div>
+  <div class="wrap"><div class="shell" id="app">
+    <div class="topbar"><div class="greet" id="greet">Hello.</div><div class="clock" id="clock">00:00</div></div>
+    <form class="search" id="searchForm" autocomplete="off">
+      <input id="q" type="text" placeholder="Search..." autofocus />
+      <div class="hint"><span>/g Google</span><span>/y YouTube</span><span>/c ChatGPT</span></div>
+    </form>
+    <div class="sectionbar"><span>Essentials</span><div class="dotline"></div></div>
+    <div class="grid" id="gridEssentials"></div>
+    <div id="moreArea" aria-hidden="true">
+      <div class="sectionbar" style="margin-top:40px"><span>Extended</span><div class="dotline"></div></div>
+      <div class="grid" id="gridMore"></div>
+    </div>
+    <button class="morebtn" id="toggleBtn" type="button">More Icons</button>
+  </div></div>
 
-    function updateTheme(){
-      const h=new Date().getHours(), b=document.body, g=document.getElementById("greet");
-      b.classList.remove("theme-dawn","theme-day","theme-twilight","theme-night");
-      if(h>=5 && h<8){
-        b.classList.add("theme-dawn");
-        applyVars({"--bg-top":"#FDFCFB","--bg-bottom":"#E2D1C3","--text":"#1F2937","--text-muted":"rgba(31,41,55,0.55)","--hair":"rgba(31,41,55,0.1)","--search-bg":"rgba(255,255,255,0.62)","--icon-opacity":"0.52","--icon-color":"#2b2b2b","--accent":"#ff9a9e","--noise-opacity":"0.04"});
-        g.textContent="Good morning, Dawn.";
-      } else if(h>=8 && h<17){
-        b.classList.add("theme-day");
-        applyVars({"--bg-top":"#FFFFFF","--bg-bottom":"#F2F2F7","--text":"#1D1D1F","--text-muted":"rgba(0,0,0,0.42)","--hair":"rgba(0,0,0,0.07)","--search-bg":"rgba(0,0,0,0.04)","--icon-opacity":"0.42","--icon-color":"#333","--accent":"#a1c4fd","--noise-opacity":"0.03"});
-        g.textContent=(h<12)?"Good morning.":"Good afternoon.";
-      } else if(h>=17 && h<20){
-        b.classList.add("theme-twilight");
-        applyVars({"--bg-top":"#2D1B4D","--bg-bottom":"#1A0B2E","--text":"#FDEBD0","--text-muted":"rgba(253,235,208,0.58)","--hair":"rgba(253,235,208,0.16)","--search-bg":"rgba(253,235,208,0.08)","--icon-opacity":"0.55","--icon-color":"rgba(253,235,208,0.92)","--accent":"#fad0c4","--noise-opacity":"0.05"});
-        g.textContent="Good evening, Twilight.";
-      } else {
-        b.classList.add("theme-night");
-        applyVars({"--bg-top":"#09112A","--bg-bottom":"#070A12","--text":"rgba(255,255,255,0.92)","--text-muted":"rgba(255,255,255,0.45)","--hair":"rgba(255,255,255,0.08)","--search-bg":"rgba(255,255,255,0.08)","--icon-opacity":"0.50","--icon-color":"rgba(255,255,255,0.9)","--accent":"rgba(90,80,255,0.55)","--noise-opacity":"0.06"});
-        g.textContent="Good night.";
-      }
-    }
-
-    function getCols(){ const w=window.innerWidth; return w<=520?3:w<=860?4:6; }
-
-    function computeLayout(){
-      const cols=getCols(), maxEss=cols*2;
-      const sorted=[...ALL_SITES].sort((a,b)=>(a.rank-b.rank)||a.name.localeCompare(b.name));
-      return {essentials:sorted.slice(0,maxEss), more:sorted.slice(maxEss)};
-    }
-
-    function waveDelay(i,seed){
-      const cols=getCols(), r=Math.floor(i/cols), c=i%cols;
-      return Math.max(0,(i*22)+(r*18)+(c*8)+(((seed+i*7)%13)-6));
-    }
-
-    function makeItem(s,i,seed){
-      const d=waveDelay(i,seed);
-      return `<a class="item reveal ${s.cls||""}" href="${s.url}" target="_blank" rel="noopener noreferrer" style="--glow:${s.glow};--d:${d}ms;"><span class="kbd">${s.key||""}</span><div class="icon"><span class="glyph" style="--s:${s.scale??1};--ty:${s.ty??0}px">${s.svg}</span></div><div class="label">${s.name}</div></a>`;
-    }
-
-    let exp=false, _lastMin="";
-
-    function render(){
-      const {essentials,more}=computeLayout(), seed=(Date.now()/1000)|0;
-      document.getElementById("gridEssentials").innerHTML=essentials.map((s,i)=>makeItem(s,i,seed)).join("");
-      document.getElementById("gridMore").innerHTML=more.map((s,i)=>makeItem(s,i+essentials.length,seed)).join("");
-      const btn=document.getElementById("toggleBtn");
-      btn.style.display=more.length?"block":"none";
-      if(!more.length){ document.getElementById("moreArea").setAttribute("aria-hidden","true"); btn.textContent="More Icons"; exp=false; }
-      else { document.getElementById("moreArea").setAttribute("aria-hidden",(!exp).toString()); btn.textContent=exp?"Less Icons":"More Icons"; }
-      bindMagnetic();
-    }
-
-    function bindMagnetic(){
-      if(matchMedia("(pointer: coarse)").matches) return;
-      document.querySelectorAll(".item").forEach(el=>{
-        if(el.__magBound) return; el.__magBound=true;
-        let tx=0,ty=0,x=0,y=0,anim=0;
-        const label=el.querySelector(".label");
-        const step=()=>{
-          x+=(tx-x)*0.18; y+=(ty-y)*0.18;
-          el.style.setProperty("--mx",x.toFixed(2)+"px");
-          el.style.setProperty("--my",y.toFixed(2)+"px");
-          if(label){ label.style.setProperty("--lx",(x*0.45).toFixed(2)+"px"); label.style.setProperty("--ly",(y*0.45).toFixed(2)+"px"); }
-          if(Math.abs(tx-x)+Math.abs(ty-y)<0.02){anim=0;return;}
-          anim=requestAnimationFrame(step);
-        };
-        el.addEventListener("mousemove",e=>{
-          const r=el.getBoundingClientRect(), dx=e.clientX-(r.left+r.width/2), dy=e.clientY-(r.top+r.height/2), dist=Math.hypot(dx,dy);
-          if(dist>Math.max(r.width,r.height)/2+20){tx=0;ty=0;}
-          else{tx=(dx/(r.width/2+20))*3;ty=(dy/(r.height/2+20))*3;}
-          if(!anim)anim=requestAnimationFrame(step);
-        });
-        el.addEventListener("mouseleave",()=>{tx=0;ty=0;if(!anim)anim=requestAnimationFrame(step);});
-      });
-    }
-
-    window.addEventListener("resize",()=>{clearTimeout(window.rT);window.rT=setTimeout(render,90);});
-    document.getElementById("toggleBtn").onclick=()=>{exp=!exp;render();};
-
-    window.addEventListener("keydown",e=>{
-      const active=document.activeElement, typing=active&&(active.tagName==="INPUT"||active.tagName==="TEXTAREA"||active.isContentEditable);
-      if(typing)return;
-      if(e.key==="/"){e.preventDefault();document.getElementById("q").focus({preventScroll:true});return;}
-      if(e.altKey){document.body.classList.add("show-hotkeys");}
-      const k=e.key.toUpperCase();
-      const s=ALL_SITES.find(x=>x.key===k);
-      if(s&&!e.altKey){e.preventDefault();window.open(s.url,"_blank");}
-    });
-    window.addEventListener("keyup",e=>{if(e.key==="Alt")document.body.classList.remove("show-hotkeys");});
-
-    document.getElementById("searchForm").onsubmit=e=>{
-      e.preventDefault();
-      const v=document.getElementById("q").value.trim();
-      if(!v)return;
-      const engines={"/g":"https://google.com/search?q=","/y":"https://youtube.com/results?search_query=","/c":"https://chatgpt.com/"};
-      const prefix=v.slice(0,2);
-      if(engines[prefix]) window.open(prefix==="/c"?engines["/c"]:engines[prefix]+encodeURIComponent(v.slice(3)),"_blank");
-      else window.open("https://google.com/search?q="+encodeURIComponent(v),"_blank");
-    };
-
-    document.getElementById("q").onfocus=()=>document.getElementById("app").classList.add("dim-on-focus");
-    document.getElementById("q").onblur=()=>document.getElementById("app").classList.remove("dim-on-focus");
-
-    function tick(){
-      const d=new Date(), h=d.getHours(), m=d.getMinutes(), k=`${h}:${m}`;
-      document.getElementById("clock").textContent=`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
-      if(k!==_lastMin){_lastMin=k;updateTheme();}
-    }
-
-    tick(); setInterval(tick,1000); render();
-  </script>
-</body>
-</html>
+  <script>
+    const SVGS = {
+      chatgpt: `<svg viewBox="0 0 41 41" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M37.532 16.87a9.963 9.963 0 0 0-.856-8.184 10.078 10.078 0 0 0-10.855-4.835 9.964 9.964 0 0 0-7.505-3.348 10.079 10.079 0 0 0-9.612 6.977 9.967 9.967 0 0 0-6.664 4.834 10.08 10.08 0 0 0 1.24 11.817 9.965 9.965 0 0 0 .856 8.185 10.079 10.079 0 0 0 10.855 4.835 9.965 9.965 0 0 0 7.504 3.348 10.079 10.079 0 0 0 9.617-6.981 9.967 9.967 0 0 0 6.663-4.834 10.079 10.079 0 0 0-1.243-11.814zm-22.282 11.649c-1.144 0-2.21-.469-2.987-1.243a2.992 2.992 0 0 1-.692-3.254 5.95 5.95 0 0 0 .433.026c2.12 0 3.867-1.544 4.15-3.65 1.127.621 1.883 1.82 1.883 3.199 0 1.655-1.343 3-2.998 3zm4.42-7.7c-.252.693-.822 1.205-1.536 1.375-.138.034-.277.05-.416.05-.622 0-1.195-.296-1.571-.814a3.065 3.065 0 0 1-.516-1.818c0-.623.18-1.199.5-1.679.325-.48.793-.82 1.327-.955.137-.034.276-.05.416-.05.622 0 1.195.295 1.571.813.377.518.516 1.176.516 1.818 0 .411-.094.806-.291 1.26zm1.768-11.38c1.144 0 2.21.469 2.987 1.243.777.774 1.208 1.81 1.208 2.905 0 .624-.16 1.228-.46 1.775a5.95 5.95 0 0 0-.434-.026c-2.12 0-3.866 1.544-4.149 3.65-1.127-.621-1.883-1.82-1.883-3.199 0-1.655 1.343-3 2.998-3zm-6.57 1.625a3.002 3.002 0 0 1 4.524-.282 5.835 5.835 0 0 0-1.69 4.099 5.835 5.835 0 0 0 .737 2.832 2.985 2.985 0 0 1-1.882.667c-1.655 0-3-1.345-3-3 0-.98.474-1.848 1.217-2.4a2.97 2.97 0 0 1 .094-.916zm-3.82 9.536c0-1.095.43-2.13 1.207-2.905a3.002 3.002 0 0 1 3.254-.692
