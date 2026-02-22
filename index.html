@@ -3,8 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-
-  <title>Harvey — Home</title>
+  <title>Home</title>
   <meta name="theme-color" content="#070A12" />
   <link rel="icon" href="data:,">
 
@@ -19,7 +18,7 @@
 
       --text: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.52);
-      --muted2: rgba(255,255,255,.38);
+      --muted2: rgba(255,255,255,.36);
 
       --hair: rgba(255,255,255,.10);
       --hair2: rgba(255,255,255,.08);
@@ -28,8 +27,7 @@
       --ease2: cubic-bezier(.22,.61,.36,1);
 
       --icons-offset: 18px;
-
-      --icon-size-essential: 55px;
+      --icon-size-essential: 56px;
       --icon-size-more: 52px;
 
       --spot: rgba(124,92,255,.18);
@@ -49,23 +47,23 @@
       position:relative;
     }
 
-    /* 呼吸背景 */
-    .aura{
+    /* 呼吸背景（极克制） */
+    .aura, .aura2{
       position:fixed; inset:-30%;
       pointer-events:none;
       z-index:-2;
       filter: blur(150px);
-      opacity:.40;
+      opacity:.38;
     }
     .aura::before, .aura::after{
       content:"";
       position:absolute;
       width: 55vw; height: 55vw;
       border-radius: 999px;
-      background: radial-gradient(circle at 30% 30%, rgba(90,80,255,.28), transparent 60%);
-      animation: drift1 42s ease-in-out infinite;
       left: 10%;
       top: 10%;
+      background: radial-gradient(circle at 30% 30%, rgba(90,80,255,.28), transparent 60%);
+      animation: drift1 42s ease-in-out infinite;
     }
     .aura::after{
       width: 62vw; height: 62vw;
@@ -74,13 +72,7 @@
       background: radial-gradient(circle at 40% 30%, rgba(0,210,255,.18), transparent 62%);
       animation: drift2 48s ease-in-out infinite;
     }
-    .aura2{
-      position:fixed; inset:-30%;
-      pointer-events:none;
-      z-index:-2;
-      filter: blur(160px);
-      opacity:.22;
-    }
+    .aura2{ opacity:.22; filter: blur(160px); }
     .aura2::before{
       content:"";
       position:absolute;
@@ -142,7 +134,6 @@
     }
 
     /* 搜索 */
-    .searchWrap{ position:relative; }
     .search{
       position:relative;
       display:flex;
@@ -177,70 +168,10 @@
     }
     .search input::placeholder{ color: rgba(255,255,255,.40); }
 
-    .rightInfo{
-      flex:0 0 auto;
-      display:flex;
-      align-items:center;
-      justify-content:flex-end;
-      gap:10px;
-      min-width: 210px;
-      user-select:none;
-      color: rgba(255,255,255,.35);
-      font-size: 12px;
-      letter-spacing:.02em;
-      transition: opacity .3s var(--ease2), transform .3s var(--ease2);
-    }
-    .rightInfo.fade{ opacity:0; transform: translateY(2px); }
-    .keycap{
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      padding: 4px 8px;
-      border-radius: 10px;
-      font-family: "JetBrains Mono", ui-monospace, monospace;
-    }
-    .calc{
-      font-family: "JetBrains Mono", ui-monospace, monospace;
-      color: rgba(255,255,255,.70);
-      letter-spacing: .03em;
-      white-space: nowrap;
-    }
-
-    /* 预览 panel */
-    .panel{
-      position:absolute;
-      left: 0;
-      right: 0;
-      top: calc(100% + 10px);
-      border-radius: 18px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.10);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      box-shadow: 0 24px 90px rgba(0,0,0,.45);
-      overflow:hidden;
-      display:none;
-    }
-    .panel.show{ display:block; }
-    .panel .row{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding: 12px 14px;
-      cursor:pointer;
-      color: rgba(255,255,255,.78);
-      transition: background .18s var(--ease2);
-    }
-    .panel .row:hover{ background: rgba(255,255,255,.06); }
-    .panel .row .sub{
-      margin-left:auto;
-      color: rgba(255,255,255,.35);
-      font-size: 12px;
-      font-family: "JetBrains Mono", ui-monospace, monospace;
-    }
-    .panel .row .dot{
-      width:6px;height:6px;border-radius:50%;
-      background: rgba(124,92,255,.65);
-      box-shadow: 0 0 12px rgba(124,92,255,.35);
+    .icons-zone{
+      margin-top: var(--icons-offset);
+      transition: opacity .25s var(--ease2), filter .25s var(--ease2), transform .25s var(--ease2);
+      will-change: transform, filter, opacity;
     }
 
     /* Ghost 分割线 */
@@ -252,7 +183,7 @@
     }
     .dotline{
       height:1px;
-      width: 92px;
+      width: 120px;
       background: linear-gradient(90deg, rgba(255,255,255,.22), transparent);
       border-radius: 1px;
     }
@@ -269,30 +200,23 @@
     .morebtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18); }
     .morebtn:active{ transform: translateY(0px) scale(.98); }
 
-    .icons-zone{
-      margin-top: var(--icons-offset);
-      transition: opacity .25s var(--ease2), filter .25s var(--ease2), transform .25s var(--ease2);
-      will-change: transform, filter, opacity;
-    }
-
     .grid{
       display:grid;
       grid-template-columns: repeat(6, minmax(0, 1fr));
       gap: 26px 34px;
       padding: 10px 6px 8px;
-      transition: opacity .25s var(--ease2), filter .25s var(--ease2), transform .25s var(--ease2);
     }
     @media (max-width: 860px){
       .grid{ grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px 26px; }
     }
     @media (max-width: 520px){
       .grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px 22px; }
-      .rightInfo{ display:none; }
       .greet,.clock{ font-size: 16px; }
       .search input{ font-size: 17px; }
       :root{ --icons-offset: 10px; }
     }
 
+    /* 去底座：靠 padding 保证点击区域足够大 */
     .item{
       position:relative;
       display:flex;
@@ -308,39 +232,18 @@
       color: var(--muted2);
     }
 
-    /* 其它站点：img */
-    .icon{
-      position:relative;
-      width: var(--icon-size-more);
-      height: var(--icon-size-more);
-      display:grid;
-      place-items:center;
-      transition: transform .28s var(--ease), filter .28s var(--ease2), opacity .28s var(--ease2);
-      filter: grayscale(100%) opacity(.62);
-      opacity: .92;
-      will-change: transform, filter, opacity;
-    }
-    .icon img{
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      image-rendering: -webkit-optimize-contrast;
-      border-radius: 12px;
-    }
-    .grid.essentials .icon{ width: var(--icon-size-essential); height: var(--icon-size-essential); }
-
-    /* SVG 核心图标：icon-wrapper */
+    /* SVG 容器 */
     .icon-wrapper{
       width: var(--icon-size-more);
       height: var(--icon-size-more);
       display:flex;
       align-items:center;
       justify-content:center;
-      color: rgba(255,255,255,0.40); /* 默认休眠灰 */
-      transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-      filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
       position: relative;
       will-change: transform, filter, color;
+      transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      color: rgba(255,255,255,0.25); /* 默认休眠灰 */
+      filter: drop-shadow(0 0 0 rgba(255,255,255,0));
     }
     .grid.essentials .icon-wrapper{
       width: var(--icon-size-essential);
@@ -350,44 +253,18 @@
       width: 36px;
       height: 36px;
       display:block;
+      transition: inherit;
     }
 
-    /* Hover/Focus：唤醒 */
-    .item:hover .icon,
-    .item:focus-visible .icon{
-      filter:none;
-      transform: translateY(-4px);
-    }
+    /* Hover/Focus：唤醒（色彩 + 位移 + 微光） */
     .item:hover .icon-wrapper,
     .item:focus-visible .icon-wrapper{
-      transform: translateY(-5px) scale(1.06);
-      filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.3));
+      transform: translateY(-4px) scale(1.10);
+      color: #fff;
+      filter: drop-shadow(0 0 10px rgba(255,255,255,0.20));
     }
 
-    /* 品牌色（仅这三个 SVG） */
-    .icon-gemini{ color: rgba(255,255,255,0.40); }
-    .icon-claude{ color: rgba(255,255,255,0.40); }
-    .icon-chatgpt{ color: rgba(255,255,255,0.40); }
-
-    .item:hover .icon-gemini,
-    .item:focus-visible .icon-gemini{
-      color:#4e85ff;
-      filter: drop-shadow(0 0 12px rgba(78,133,255,0.50));
-    }
-    .item:hover .icon-claude,
-    .item:focus-visible .icon-claude{
-      color:#d97757;
-      filter: drop-shadow(0 0 12px rgba(217,119,87,0.40));
-    }
-    .item:hover .icon-chatgpt,
-    .item:focus-visible .icon-chatgpt{
-      color:#10a37f;
-      filter: drop-shadow(0 0 12px rgba(16,163,127,0.28));
-    }
-
-    /* Spotlight */
-    .item:hover .icon::before,
-    .item:focus-visible .icon::before,
+    /* Spotlight（舞台感） */
     .item:hover .icon-wrapper::before,
     .item:focus-visible .icon-wrapper::before{
       content:"";
@@ -401,15 +278,15 @@
       pointer-events:none;
     }
 
+    /* 标签文字：默认更隐退，hover 才“出现” */
     .label{
       font-size: 13px;
       font-weight: 300;
       letter-spacing: .02em;
-      color: rgba(255,255,255,.36);
+      color: rgba(255,255,255,.34);
       transition: color .22s var(--ease2), background-position .6s var(--ease2);
       user-select:none;
     }
-
     .item:hover .label,
     .item:focus-visible .label{
       background: linear-gradient(90deg, rgba(255,255,255,.60), rgba(255,255,255,1), rgba(255,255,255,.60));
@@ -417,11 +294,11 @@
       background-clip: text;
       color: transparent;
       background-size: 220% 100%;
-      background-position: 0% 0%;
       animation: sweep 650ms var(--ease2) both;
     }
     @keyframes sweep{ from{ background-position: 0% 0%; } to{ background-position: 100% 0%; } }
 
+    /* Tab 聚焦 outline（细 + 高级） */
     .item:focus-visible{
       box-shadow: 0 0 0 1px rgba(255,255,255,.18), 0 0 0 6px rgba(124,92,255,.14);
     }
@@ -447,6 +324,7 @@
     }
     .show-hotkeys .kbd{ opacity: 1; transform: translateY(0) scale(1); }
 
+    /* More 区域折叠 */
     .more-area{
       overflow:hidden;
       max-height: 0px;
@@ -454,20 +332,60 @@
       transform: translateY(-4px);
       transition: max-height .55s var(--ease2), opacity .35s var(--ease2), transform .35s var(--ease2);
     }
-    .more-area.is-open{ max-height: 1200px; opacity: 1; transform: translateY(0); }
+    .more-area.is-open{ max-height: 1400px; opacity: 1; transform: translateY(0); }
 
+    /* 入场交错 */
     .reveal{ animation: rise .7s var(--ease) both; }
     @keyframes rise{
       from{ opacity:0; transform: translateY(10px); filter: blur(2px); }
       to{ opacity:1; transform: translateY(0); filter: blur(0); }
     }
 
-    /* 搜索聚焦舞台感 */
+    /* 搜索聚焦：舞台感（世界退后） */
     .dim-on-focus .icons-zone{
       opacity:.42;
       filter: blur(8px);
       transform: translateY(6px) scale(.98);
     }
+
+    /* 品牌 hover 光晕：通过 data-brand 控制 */
+    .item:hover .icon-wrapper,
+    .item:focus-visible .icon-wrapper{
+      filter: drop-shadow(0 0 12px rgba(255,255,255,.12));
+    }
+    .item[data-brand="chatgpt"]:hover .icon-wrapper,
+    .item[data-brand="chatgpt"]:focus-visible .icon-wrapper{ color:#10a37f; filter: drop-shadow(0 0 14px rgba(16,163,127,.30)); }
+    .item[data-brand="claude"]:hover .icon-wrapper,
+    .item[data-brand="claude"]:focus-visible .icon-wrapper{ color:#d97757; filter: drop-shadow(0 0 14px rgba(217,119,87,.34)); }
+    .item[data-brand="gemini"]:hover .icon-wrapper,
+    .item[data-brand="gemini"]:focus-visible .icon-wrapper{ color:#4e85ff; filter: drop-shadow(0 0 15px rgba(78,133,255,.50)); }
+
+    .item[data-brand="gmail"]:hover .icon-wrapper,
+    .item[data-brand="gmail"]:focus-visible .icon-wrapper{ color:#ea4335; filter: drop-shadow(0 0 14px rgba(234,67,53,.32)); }
+    .item[data-brand="google"]:hover .icon-wrapper,
+    .item[data-brand="google"]:focus-visible .icon-wrapper{ color:#ffffff; }
+    .item[data-brand="youtube"]:hover .icon-wrapper,
+    .item[data-brand="youtube"]:focus-visible .icon-wrapper{ color:#ff0033; filter: drop-shadow(0 0 14px rgba(255,0,51,.34)); }
+    .item[data-brand="github"]:hover .icon-wrapper,
+    .item[data-brand="github"]:focus-visible .icon-wrapper{ color:#ffffff; filter: drop-shadow(0 0 12px rgba(255,255,255,.22)); }
+
+    .item[data-brand="cloudflare"]:hover .icon-wrapper,
+    .item[data-brand="cloudflare"]:focus-visible .icon-wrapper{ color:#f48120; filter: drop-shadow(0 0 14px rgba(244,129,32,.34)); }
+    .item[data-brand="vultr"]:hover .icon-wrapper,
+    .item[data-brand="vultr"]:focus-visible .icon-wrapper{ color:#007bfc; filter: drop-shadow(0 0 14px rgba(0,123,252,.34)); }
+    .item[data-brand="oracle"]:hover .icon-wrapper,
+    .item[data-brand="oracle"]:focus-visible .icon-wrapper{ color:#ff3b30; filter: drop-shadow(0 0 14px rgba(255,59,48,.30)); }
+    .item[data-brand="racknerd"]:hover .icon-wrapper,
+    .item[data-brand="racknerd"]:focus-visible .icon-wrapper{ color:#7c5cff; filter: drop-shadow(0 0 14px rgba(124,92,255,.34)); }
+
+    .item[data-brand="reddit"]:hover .icon-wrapper,
+    .item[data-brand="reddit"]:focus-visible .icon-wrapper{ color:#ff4500; filter: drop-shadow(0 0 14px rgba(255,69,0,.34)); }
+    .item[data-brand="telegram"]:hover .icon-wrapper,
+    .item[data-brand="telegram"]:focus-visible .icon-wrapper{ color:#2aabee; filter: drop-shadow(0 0 14px rgba(42,171,238,.34)); }
+    .item[data-brand="discord"]:hover .icon-wrapper,
+    .item[data-brand="discord"]:focus-visible .icon-wrapper{ color:#5865f2; filter: drop-shadow(0 0 14px rgba(88,101,242,.34)); }
+    .item[data-brand="netflix"]:hover .icon-wrapper,
+    .item[data-brand="netflix"]:focus-visible .icon-wrapper{ color:#e50914; filter: drop-shadow(0 0 14px rgba(229,9,20,.34)); }
   </style>
 </head>
 
@@ -477,25 +395,19 @@
 
   <div class="wrap">
     <div class="shell" id="app">
+
       <div class="topbar">
         <div class="greet" id="greet">Hello.</div>
         <div class="clock" id="clock">00:00</div>
       </div>
 
-      <div class="searchWrap">
-        <form class="search" id="searchForm" autocomplete="off">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="rgba(255,255,255,.8)" stroke-width="1.6"/>
-            <path d="M16.5 16.5 21 21" stroke="rgba(255,255,255,.8)" stroke-width="1.6" stroke-linecap="round"/>
-          </svg>
-          <input id="q" type="text" placeholder="Search..." />
-          <div class="rightInfo" id="rightInfo" aria-hidden="true">
-            <span class="keycap" id="hintKey">/g</span><span id="hintText">Google</span>
-            <span class="calc" id="calcOut"></span>
-          </div>
-        </form>
-        <div class="panel" id="panel" role="listbox" aria-label="Suggestions"></div>
-      </div>
+      <form class="search" id="searchForm" autocomplete="off">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="rgba(255,255,255,.8)" stroke-width="1.6"/>
+          <path d="M16.5 16.5 21 21" stroke="rgba(255,255,255,.8)" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <input id="q" type="text" placeholder="Search..." />
+      </form>
 
       <div class="icons-zone">
         <div class="sectionbar">
@@ -513,80 +425,79 @@
           <div class="grid" id="gridMore"></div>
         </div>
       </div>
-      <!-- ✅ footer 已去掉 -->
+
     </div>
   </div>
 
   <script>
-    // ========== 站点配置：仅 3 个核心用 SVG ==========
+    // ========= SVG 资产（来自你这条消息 + 之前你给的 AI 三个） =========
+    const SVG = {
+      // AI（你之前给过）
+      chatgpt: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.28 9.82a5.98 5.98 0 0 0-.51-4.91 6.05 6.05 0 0 0-3.95-3.13 6.03 6.03 0 0 0-5.17 1.04 6.03 6.03 0 0 0-4.38-1.93 6.05 6.05 0 0 0-5.04 2.75 6 6 0 0 0-1.47 5.03c.12 1.83.68 3.51 1.55 4.91a6.05 6.05 0 0 0 3.95 3.13 6.03 6.03 0 0 0 5.17-1.04 6.03 6.03 0 0 0 4.38 1.93 6.05 6.05 0 0 0 5.04-2.75 6 6 0 0 0-1.47-5.03c-.12-1.83-.68-3.51-1.55-4.91zm-7.1 9.45a3.73 3.73 0 0 1-2.68-.31l.1-.06 5.28-3.05a.43.43 0 0 0 .21-.37v-7.37l2.12 1.22a3.74 3.74 0 0 1 1.63 3.56 3.75 3.75 0 0 1-2.48 3.49l-4.18 2.41z"/></svg>`,
+      claude: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L4.5 20.5H19.5L12 2Z" /><circle cx="12" cy="13" r="3" /></svg>`,
+      gemini: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>`,
+
+      // Essentials（你这条消息给的）
+      gmail: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L12 9.573l8.073-6.08c1.618-1.214 3.927-.059 3.927 1.964z"/></svg>`,
+      google: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12.48 10.92v3.28h7.84c-.31 1.62-1.83 4.75-4.56 4.75-2.36 0-4.27-1.96-4.27-4.37s1.91-4.37 4.27-4.37c1.35 0 2.26.57 2.78 1.07l2.6-2.51c-1.67-1.56-3.82-2.52-5.38-2.52-5.1 0-9.24 4.14-9.24 9.24s4.14 9.24 9.24 9.24c5.33 0 8.87-3.75 8.87-9.02 0-.6-.06-1.06-.13-1.52h-8.73z"/></svg>`,
+      youtube: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`,
+      github: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>`,
+
+      // Infrastructure（你给的 4 个）
+      cloudflare: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M24 15.111c0 2.444-1.889 4.444-4.222 4.444H6.889C3.111 19.555 0 16.444 0 12.666c0-3.333 2.444-6.111 5.667-6.555.778-3.111 3.556-5.444 6.889-5.444 3 0 5.556 1.889 6.556 4.555 2.889.334 5.111 2.778 5.111 5.778 0 .333 0 .667-.111 1.111C23 12.333 24 13.555 24 15.111z"/></svg>`,
+      vultr: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 24L3.6 12h5.1L12 16.9 15.3 12h5.1L12 24zM24 0H0v2.4h24V0z"/></svg>`,
+      oracle: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 3.7c-4.6 0-8.3 3.7-8.3 8.3s3.7 8.3 8.3 8.3 8.3-3.7 8.3-8.3-3.7-8.3-8.3-8.3zm0 13.6c-2.9 0-5.3-2.4-5.3-5.3s2.4-5.3 5.3-5.3 5.3 2.4 5.3 5.3-2.4 5.3-5.3 5.3z"/></svg>`,
+      racknerd: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.97 4.44c-.31.17-.69.17-1 0l-7.97-4.44c-.32-.17-.53-.5-.53-.88v-9c0-.38.21-.71.53-.88l7.97-4.44c.31-.17.69-.17 1 0l7.97 4.44c.32.17.53.5.53.88v9z"/><rect x="6" y="10" width="12" height="2" fill="rgba(255,255,255,0.5)"/><rect x="6" y="14" width="12" height="2" fill="rgba(255,255,255,0.5)"/></svg>`,
+
+      // More（你给的 3 个）
+      reddit: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M24 11.779c0-1.459-1.192-2.645-2.657-2.645-.71 0-1.348.273-1.823.717-1.624-1.137-3.844-1.87-6.303-1.957l1.085-5.11 3.554.757c.05.803.713 1.44 1.527 1.44 1.082 0 1.962-.884 1.962-1.964s-.88-1.964-1.962-1.964c-.754 0-1.41.428-1.743 1.056l-3.984-.85a.486.486 0 0 0-.573.344l-1.22 5.75c-2.525.04-4.814.786-6.48 1.948-.474-.438-1.103-.702-1.799-.702-1.465 0-2.656 1.187-2.656 2.646 0 .973.533 1.82 1.32 2.274-.053.34-.08.683-.08 1.03 0 3.536 4.102 6.413 9.143 6.413 5.042 0 9.143-2.877 9.143-6.413 0-.337-.026-.67-.076-1.002.822-.445 1.383-1.3 1.383-2.296zm-15.046 2.15c0-1.082.88-1.963 1.962-1.963s1.962.88 1.962 1.963-.88 1.963-1.962 1.963-1.962-.88-1.962-1.963zm9.23 4.417c-1.3 1.303-3.753 1.408-4.183 1.408-.432 0-2.884-.105-4.183-1.408a.486.486 0 1 1 .687-.687c.88.88 2.723 1.1 3.496 1.1.77 0 2.614-.22 3.496-1.1a.486.486 0 1 1 .687.687zm-1.144-2.454c-1.082 0-1.962-.88-1.962-1.963s.88-1.963 1.962-1.963 1.962.88 1.962 1.963-.88 1.963-1.962 1.963z"/></svg>`,
+      telegram: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.944 0C5.356 0 0 5.356 0 11.944s5.356 11.944 11.944 11.944 11.944-5.356 11.944-11.944S18.532 0 11.944 0zm5.83 8.04l-1.99 9.382c-.15.666-.543.83-1.1.52l-3.033-2.235-1.464 1.408c-.162.162-.3.298-.616.298l.218-3.09 5.625-5.082c.245-.218-.053-.34-.378-.122L8.046 13.43l-2.997-.937c-.652-.204-.666-.652.136-.966l11.714-4.514c.543-.204 1.018.12 0 0 .12.83.12.96 0 1.028z"/></svg>`,
+      discord: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>`
+      ,
+      netflix: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 24L3.6 12h5.1L12 16.9 15.3 12h5.1L12 24zM24 0H0v2.4h24V0z"/></svg>`
+    };
+
+    // ========= 配置：把 AI 往前移 =========
     const essentials = [
-      { name:"ChatGPT", url:"https://chatgpt.com/",           key:"C", kind:"svg", svg:"chatgpt", cls:"icon-chatgpt" },
-      { name:"Claude",  url:"https://claude.ai/",             key:"L", kind:"svg", svg:"claude",  cls:"icon-claude"  },
-      { name:"Gemini",  url:"https://gemini.google.com/",     key:"E", kind:"svg", svg:"gemini",  cls:"icon-gemini"  },
+      { name:"ChatGPT",  url:"https://chatgpt.com/",           key:"C", brand:"chatgpt",  svg:"chatgpt" },
+      { name:"Claude",   url:"https://claude.ai/",             key:"L", brand:"claude",   svg:"claude"  },
+      { name:"Gemini",   url:"https://gemini.google.com/",     key:"E", brand:"gemini",   svg:"gemini"  },
+      { name:"Copilot",  url:"https://copilot.microsoft.com/", key:"P", brand:"gemini",   svg:"gemini"  }, // Copilot 你没给 SVG：先临时用 Gemini 星形做占位（你给 Copilot SVG 我立刻替换）
 
-      { name:"Copilot", url:"https://copilot.microsoft.com/", key:"P", kind:"img", icon:"https://www.google.com/s2/favicons?domain=copilot.microsoft.com&sz=256" },
-      { name:"Gmail",   url:"https://mail.google.com/",       key:"M", kind:"img", icon:"https://www.google.com/s2/favicons?domain=gmail.com&sz=256" },
-      { name:"Google",  url:"https://www.google.com/",        key:"G", kind:"img", icon:"https://www.google.com/s2/favicons?domain=google.com&sz=256" },
-      { name:"YouTube", url:"https://www.youtube.com/",       key:"Y", kind:"img", icon:"https://www.google.com/s2/favicons?domain=youtube.com&sz=256" },
-      { name:"GitHub",  url:"https://github.com/",            key:"H", kind:"img", icon:"https://www.google.com/s2/favicons?domain=github.com&sz=256" },
-      { name:"Cloudflare", url:"https://dash.cloudflare.com/",key:"F", kind:"img", icon:"https://www.google.com/s2/favicons?domain=cloudflare.com&sz=256" },
+      { name:"Gmail",    url:"https://mail.google.com/",       key:"M", brand:"gmail",    svg:"gmail"   },
+      { name:"Google",   url:"https://www.google.com/",        key:"G", brand:"google",   svg:"google"  },
+      { name:"YouTube",  url:"https://www.youtube.com/",       key:"Y", brand:"youtube",  svg:"youtube" },
+      { name:"GitHub",   url:"https://github.com/",            key:"H", brand:"github",   svg:"github"  },
 
-      { name:"Vultr",   url:"https://my.vultr.com/",          key:"V", kind:"img", icon:"https://www.google.com/s2/favicons?domain=vultr.com&sz=256" },
-      { name:"Oracle",  url:"https://cloud.oracle.com/",      key:"O", kind:"img", icon:"https://www.google.com/s2/favicons?domain=oracle.com&sz=256" },
-      { name:"RackNerd",url:"https://my.racknerd.com/",       key:"R", kind:"img", icon:"https://www.google.com/s2/favicons?domain=racknerd.com&sz=256" }
+      { name:"Cloudflare", url:"https://dash.cloudflare.com/", key:"F", brand:"cloudflare", svg:"cloudflare" },
+      { name:"Vultr",    url:"https://my.vultr.com/",          key:"V", brand:"vultr",    svg:"vultr"   },
+      { name:"Oracle",   url:"https://cloud.oracle.com/",      key:"O", brand:"oracle",   svg:"oracle"  },
+      { name:"RackNerd", url:"https://my.racknerd.com/",       key:"R", brand:"racknerd", svg:"racknerd"}
     ];
 
     const more = [
-      { name:"Reddit",   url:"https://www.reddit.com/",       key:"U", kind:"img", icon:"https://www.google.com/s2/favicons?domain=reddit.com&sz=256" },
-      { name:"Telegram", url:"https://web.telegram.org/",     key:"T", kind:"img", icon:"https://www.google.com/s2/favicons?domain=telegram.org&sz=256" },
-      { name:"Discord",  url:"https://discord.com/app",       key:"I", kind:"img", icon:"https://www.google.com/s2/favicons?domain=discord.com&sz=256" },
-      { name:"Wikipedia",url:"https://www.wikipedia.org/",    key:"W", kind:"img", icon:"https://www.google.com/s2/favicons?domain=wikipedia.org&sz=256" },
-      { name:"Netflix",  url:"https://www.netflix.com/",      key:"N", kind:"img", icon:"https://www.google.com/s2/favicons?domain=netflix.com&sz=256" }
+      { name:"Reddit",   url:"https://www.reddit.com/",        key:"U", brand:"reddit",   svg:"reddit"  },
+      { name:"Telegram", url:"https://web.telegram.org/",      key:"T", brand:"telegram", svg:"telegram"},
+      { name:"Discord",  url:"https://discord.com/app",        key:"I", brand:"discord",  svg:"discord" },
+      { name:"Netflix",  url:"https://www.netflix.com/",       key:"N", brand:"netflix",  svg:"netflix" }
     ];
 
-    // ========== SVG 资产（按你最新提供的 3 个） ==========
-    const SVG = {
-      gemini: `
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="currentColor"/>
-        </svg>
-      `,
-      claude: `
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M12 2L4.5 20.5H19.5L12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-          <circle cx="12" cy="13" r="3" stroke="currentColor" stroke-width="1.5"/>
-        </svg>
-      `,
-      chatgpt: `
-        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M22.28 9.82a5.98 5.98 0 0 0-.51-4.91 6.05 6.05 0 0 0-3.95-3.13 6.03 6.03 0 0 0-5.17 1.04 6.03 6.03 0 0 0-4.38-1.93 6.05 6.05 0 0 0-5.04 2.75 6 6 0 0 0-1.47 5.03c.12 1.83.68 3.51 1.55 4.91a6.05 6.05 0 0 0 3.95 3.13 6.03 6.03 0 0 0 5.17-1.04 6.03 6.03 0 0 0 4.38 1.93 6.05 6.05 0 0 0 5.04-2.75 6 6 0 0 0 1.47-5.03c-.12-1.83-.68-3.51-1.55-4.91zm-7.1 9.45a3.73 3.73 0 0 1-2.68-.31l.1-.06 5.28-3.05a.43.43 0 0 0 .21-.37v-7.37l2.12 1.22a3.74 3.74 0 0 1 1.63 3.56 3.75 3.75 0 0 1-2.48 3.49l-4.18 2.41z"/>
-        </svg>
-      `
-    };
-
-    // ========== 渲染 ==========
+    // ========= 渲染 =========
     const gridEss = document.getElementById("gridEssentials");
     const gridMore = document.getElementById("gridMore");
 
     function makeItem(site, idx){
       const a = document.createElement("a");
-      a.className = "item";
+      a.className = "item reveal";
       a.href = site.url;
       a.target = "_blank";
       a.rel = "noopener noreferrer";
-      a.classList.add("reveal");
+      a.dataset.brand = site.brand || "";
       a.style.animationDelay = (idx * 26) + "ms";
-
-      const iconHTML = site.kind === "svg"
-        ? `<span class="icon-wrapper ${site.cls || ""}">${SVG[site.svg] || ""}</span>`
-        : (() => {
-            const icon2x = site.icon.replace("sz=256","sz=512");
-            return `<span class="icon"><img src="${site.icon}" srcset="${site.icon} 1x, ${icon2x} 2x" alt="${site.name}" loading="lazy" decoding="async"></span>`;
-          })();
 
       a.innerHTML = `
         <span class="kbd">${site.key || ""}</span>
-        ${iconHTML}
+        <span class="icon-wrapper">${SVG[site.svg] || ""}</span>
         <span class="label">${site.name}</span>
       `;
       if(!site.key) a.querySelector(".kbd").style.display = "none";
@@ -601,9 +512,11 @@
     }
     render();
 
-    // ========== 时间 + 问候 ==========
+    // ========= 时间 + 问候 =========
+    const app = document.getElementById("app");
     const greetEl = document.getElementById("greet");
     const clockEl = document.getElementById("clock");
+    const q = document.getElementById("q");
 
     const pad = (n)=> String(n).padStart(2,"0");
     function updateTime(){
@@ -634,31 +547,31 @@
     updateTime();
     setInterval(updateTime, 1000 * 15);
 
-    // ========== 搜索 + Deep Search ==========
-    const app = document.getElementById("app");
-    const q = document.getElementById("q");
-    const searchForm = document.getElementById("searchForm");
-    const panel = document.getElementById("panel");
-    const calcOut = document.getElementById("calcOut");
+    // 打开即聚焦
+    window.addEventListener("load", ()=> q.focus({preventScroll:true}));
 
+    // 搜索聚焦舞台感
+    q.addEventListener("focus", ()=> app.classList.add("dim-on-focus"));
+    q.addEventListener("blur",  ()=> app.classList.remove("dim-on-focus"));
+
+    // ========= 搜索（Bangs） =========
+    const searchForm = document.getElementById("searchForm");
     const engines = {
       "/g":  (t)=> `https://www.google.com/search?q=${encodeURIComponent(t)}`,
       "/y":  (t)=> `https://www.youtube.com/results?search_query=${encodeURIComponent(t)}`,
       "/gh": (t)=> `https://github.com/search?q=${encodeURIComponent(t)}`,
       "/r":  (t)=> `https://www.reddit.com/search/?q=${encodeURIComponent(t)}`,
+      "/c":  ()=> `https://chatgpt.com/`,
       "/cl": ()=> `https://claude.ai/`,
       "/gm": ()=> `https://gemini.google.com/`,
-      "/cp": ()=> `https://copilot.microsoft.com/`,
-      "/c":  ()=> `https://chatgpt.com/`
+      "/cp": ()=> `https://copilot.microsoft.com/`
     };
-    function openURL(url){ window.open(url, "_blank", "noopener"); }
+    const openURL = (url)=> window.open(url, "_blank", "noopener");
 
     searchForm.addEventListener("submit", (e)=>{
       e.preventDefault();
       const raw = (q.value || "").trim();
       if(!raw) return;
-
-      saveHistory(raw);
 
       const parts = raw.split(/\s+/);
       const prefix = parts[0];
@@ -672,32 +585,15 @@
       openURL(url);
     });
 
-    // ⌘K / Ctrl+K 呼出
-    window.addEventListener("keydown", (e)=>{
-      const isK = (e.key || "").toLowerCase() === "k";
-      if((e.metaKey || e.ctrlKey) && isK){
-        e.preventDefault();
-        q.value = "";
-        q.focus({preventScroll:true});
-        showPanelFromInput();
-      }
-    });
-
-    window.addEventListener("load", ()=> q.focus({preventScroll:true}));
-    q.addEventListener("focus", ()=> app.classList.add("dim-on-focus"));
-    q.addEventListener("blur",  ()=> {
-      app.classList.remove("dim-on-focus");
-      setTimeout(()=> hidePanel(), 120);
-    });
-
-    // Alt 才显示快捷键
+    // ========= Alt 才显示快捷键 =========
     const setHotkeys = (on)=> document.body.classList.toggle("show-hotkeys", on);
     window.addEventListener("keydown", (e)=>{ if(e.altKey) setHotkeys(true); });
     window.addEventListener("keyup",   (e)=>{ if(!e.altKey) setHotkeys(false); });
 
-    // 单键跳转（不在输入框）
+    // ========= 单键快捷跳转（不打扰输入） =========
     const shortcutMap = new Map();
     [...essentials, ...more].forEach(s=>{ if(s.key) shortcutMap.set(s.key.toUpperCase(), s.url); });
+
     window.addEventListener("keydown", (e)=>{
       const active = document.activeElement;
       const typing = active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA" || active.isContentEditable);
@@ -716,7 +612,7 @@
       }
     });
 
-    // More：FLIP
+    // ========= More：FLIP（网格不跳） =========
     const moreArea = document.getElementById("moreArea");
     const btnMore = document.getElementById("toggleMore");
     const btnLess = document.getElementById("toggleLess");
@@ -753,208 +649,9 @@
 
       btnMore.style.visibility = show ? "hidden" : "visible";
     }
+
     btnMore.addEventListener("click", ()=> flipToggle(true));
     btnLess.addEventListener("click", ()=> flipToggle(false));
-
-    // ===== Deep Search：历史 + Google Suggest(JSONP) + 计算器/单位/汇率 =====
-    const HIST_KEY = "nav_history_v1";
-    const MAX_HIST = 8;
-    function getHistory(){
-      try{ return JSON.parse(localStorage.getItem(HIST_KEY) || "[]"); }catch{ return []; }
-    }
-    function saveHistory(qs){
-      const h = getHistory().filter(x=> x !== qs);
-      h.unshift(qs);
-      localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0, MAX_HIST)));
-    }
-
-    function escapeHTML(s){
-      return String(s).replace(/[&<>"']/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
-    }
-    function hidePanel(){
-      panel.classList.remove("show");
-      panel.innerHTML = "";
-    }
-    function showPanel(rows){
-      panel.innerHTML = "";
-      rows.forEach(r=>{
-        const div = document.createElement("div");
-        div.className = "row";
-        div.innerHTML = `<span class="dot"></span><span>${escapeHTML(r.text)}</span><span class="sub">${escapeHTML(r.sub || "")}</span>`;
-        div.addEventListener("mousedown", (e)=>{ e.preventDefault(); });
-        div.addEventListener("click", ()=>{
-          q.value = r.fill || r.text;
-          q.focus({preventScroll:true});
-          if(r.action === "search"){
-            saveHistory(q.value.trim());
-            openURL(engines["/g"](q.value.trim()));
-          }
-        });
-        panel.appendChild(div);
-      });
-      panel.classList.add("show");
-    }
-
-    const unitMap = {
-      "in": { "cm": v=> v*2.54, "m": v=> v*0.0254 },
-      "cm": { "in": v=> v/2.54, "m": v=> v/100 },
-      "m":  { "ft": v=> v*3.28084, "cm": v=> v*100 },
-      "km": { "mi": v=> v*0.621371 },
-      "mi": { "km": v=> v/0.621371 }
-    };
-
-    async function fxConvert(amount, from, to){
-      try{
-        const url = `https://api.exchangerate.host/convert?amount=${encodeURIComponent(amount)}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
-        const res = await fetch(url, { cache:"no-store" });
-        const data = await res.json();
-        if(typeof data.result === "number") return data.result;
-      }catch(_){}
-      return null;
-    }
-
-    function formatNum(n){
-      const abs = Math.abs(n);
-      if(abs >= 1000) return n.toLocaleString(undefined, { maximumFractionDigits: 4 });
-      return n.toLocaleString(undefined, { maximumFractionDigits: 6 });
-    }
-
-    let fxTimer = null;
-    let lastFxKey = "";
-
-    function tryCompute(raw){
-      calcOut.textContent = "";
-      const s = raw.trim();
-
-      if(/^[\d\s\.\+\-\*\/\%\(\)]+$/.test(s) && /[\+\-\*\/\%]/.test(s)){
-        try{
-          const v = Function(`"use strict";return (${s})`)();
-          if(Number.isFinite(v)){
-            calcOut.textContent = `= ${formatNum(v)}`;
-            return;
-          }
-        }catch(_){}
-      }
-
-      const um = s.match(/^(\d+(?:\.\d+)?)\s*([a-zA-Z]+)\s*(?:to|in)\s*([a-zA-Z]+)$/i);
-      if(um){
-        const val = parseFloat(um[1]);
-        const from = um[2].toLowerCase();
-        const to = um[3].toLowerCase();
-        if(unitMap[from] && unitMap[from][to]){
-          const out = unitMap[from][to](val);
-          calcOut.textContent = `= ${formatNum(out)} ${to}`;
-          return;
-        }
-      }
-
-      const fm = s.match(/^(\d+(?:\.\d+)?)\s*([A-Za-z]{3})\s*(?:to|in)\s*([A-Za-z]{3})$/);
-      if(fm){
-        const amt = parseFloat(fm[1]);
-        const from = fm[2].toUpperCase();
-        const to = fm[3].toUpperCase();
-        const k = `${amt}-${from}-${to}`;
-        if(k === lastFxKey) return;
-        lastFxKey = k;
-
-        clearTimeout(fxTimer);
-        fxTimer = setTimeout(async ()=>{
-          const r = await fxConvert(amt, from, to);
-          if(r !== null){
-            calcOut.textContent = `≈ ${formatNum(r)} ${to}`;
-          }
-        }, 220);
-      }
-    }
-
-    let jsonpId = 0;
-    function googleSuggest(query){
-      return new Promise((resolve)=>{
-        const cb = `__gcb_${++jsonpId}`;
-        window[cb] = (data)=>{
-          try{
-            const arr = (data && data[1]) ? data[1].map(x=> (Array.isArray(x)? x[0] : x)) : [];
-            resolve(arr.slice(0,6));
-          }catch(_){ resolve([]); }
-          cleanup();
-        };
-        const script = document.createElement("script");
-        script.src = `https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(query)}&callback=${cb}`;
-        script.async = true;
-        const cleanup = ()=>{
-          if(script && script.parentNode) script.parentNode.removeChild(script);
-          try{ delete window[cb]; }catch(_){ window[cb] = undefined; }
-        };
-        script.onerror = ()=>{ resolve([]); cleanup(); };
-        document.body.appendChild(script);
-      });
-    }
-
-    let suggestTimer = null;
-    async function showPanelFromInput(){
-      const raw = (q.value || "").trim();
-      tryCompute(raw);
-
-      if(!raw){
-        const hist = getHistory();
-        if(hist.length){
-          showPanel(hist.map(t=>({ text:t, sub:"history", fill:t, action:"search" })));
-        }else hidePanel();
-        return;
-      }
-
-      const hist = getHistory().filter(x=> x.toLowerCase().includes(raw.toLowerCase())).slice(0,4);
-      const rows = hist.map(t=>({ text:t, sub:"history", fill:t, action:"search" }));
-      showPanel(rows.length ? rows : [{ text: raw, sub:"search", fill: raw, action:"search" }]);
-
-      clearTimeout(suggestTimer);
-      suggestTimer = setTimeout(async ()=>{
-        if(raw.startsWith("/")) return;
-        const sug = await googleSuggest(raw);
-        const sugRows = sug.map(t=>({ text:t, sub:"suggest", fill:t, action:"search" }));
-        if(sugRows.length){
-          const merged = [...rows, ...sugRows].slice(0,7);
-          showPanel(merged);
-        }
-      }, 180);
-    }
-    q.addEventListener("input", showPanelFromInput);
-    q.addEventListener("focus", showPanelFromInput);
-
-    window.addEventListener("keydown", (e)=>{
-      if(e.key === "Escape"){
-        hidePanel();
-        q.blur();
-      }
-    });
-
-    // 右侧提示轮播
-    const hintKey = document.getElementById("hintKey");
-    const hintText = document.getElementById("hintText");
-    const rightInfo = document.getElementById("rightInfo");
-
-    const hintItems = [
-      { k:"/g",  t:"Google" },
-      { k:"/gh", t:"GitHub" },
-      { k:"/y",  t:"YouTube" },
-      { k:"/r",  t:"Reddit" },
-      { k:"/cl", t:"Claude" },
-      { k:"/gm", t:"Gemini" },
-      { k:"/cp", t:"Copilot" },
-      { k:"/c",  t:"ChatGPT" },
-      { k:"⌘K",  t:"Focus Search" }
-    ];
-    let hintIdx = 0;
-    function rotateHint(){
-      rightInfo.classList.add("fade");
-      setTimeout(()=>{
-        hintIdx = (hintIdx + 1) % hintItems.length;
-        hintKey.textContent = hintItems[hintIdx].k;
-        hintText.textContent = hintItems[hintIdx].t;
-        rightInfo.classList.remove("fade");
-      }, 220);
-    }
-    setInterval(rotateHint, 3200);
   </script>
 </body>
 </html>
