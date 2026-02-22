@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Harveyi</title>
 
-  <link rel="apple-touch-icon" href="https://gemini.google.com/favicon.ico">
+  <link rel="apple-touch-icon" href="https://harveyi.com/favicon.ico">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
@@ -17,398 +17,349 @@
     :root{
       --easeWave: cubic-bezier(0.16, 1, 0.3, 1);
       --ease2: cubic-bezier(.22,.61,.36,1);
-      /* 核心变量：默认白天模式 */
+
+      /* 默认：白天 */
       --bg-top:#FFFFFF; --bg-bottom:#F5F5F7;
       --text:#1D1D1F; --text-muted:rgba(0,0,0,0.45);
       --hair:rgba(0,0,0,0.06); --search-bg:rgba(0,0,0,0.03);
-      --icon-opacity:0.42; --icon-color:#333; --accent:#a1c4fd;
-      --glow-opacity: 0.08; /* ✅ 关键：白天模式光晕极淡 */
-    }
+      --icon-opacity:0.44;
 
-    body.theme-night {
+      /* 白天光晕：更淡 */
+      --glow-opacity: 0.08;
+      --glow-blur: 32px;
+    }
+    body.theme-night{
       --bg-top:#09112A; --bg-bottom:#070A12;
       --text:rgba(255,255,255,0.92); --text-muted:rgba(255,255,255,0.45);
       --hair:rgba(255,255,255,0.08); --search-bg:rgba(255,255,255,0.08);
-      --icon-opacity:0.50; --icon-color:rgba(255,255,255,0.90); --accent:rgba(90,80,255,0.55);
-      --glow-opacity: 0.3;
-    }
+      --icon-opacity:0.52;
 
-    body.theme-twilight {
-      --bg-top:#2D1B4D; --bg-bottom:#1A0B2E;
-      --text:#FDEBD0; --text-muted:rgba(253,235,208,0.58);
-      --hair:rgba(253,235,208,0.16); --search-bg:rgba(253,235,208,0.08);
-      --icon-opacity:0.55; --icon-color:rgba(253,235,208,0.92); --accent:#fad0c4;
+      --glow-opacity: 0.30;
+      --glow-blur: 28px;
     }
 
     *{ box-sizing:border-box; }
     html,body{ height:100%; margin:0; }
     body{
-      color:var(--text); font-family: Inter, -apple-system, sans-serif;
-      -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+      color:var(--text);
+      font-family: Inter, -apple-system, system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
       background: linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
-      overflow-x:hidden; transition: background 1.8s var(--easeWave), color 1.8s var(--easeWave);
+      overflow-x:hidden;
+      transition: background 1.8s var(--easeWave), color 1.8s var(--easeWave);
     }
     body::before{
-      content:""; position:fixed; inset:0; opacity:.06; pointer-events:none; z-index:-1;
+      content:"";
+      position:fixed; inset:0;
+      opacity:.06;
+      pointer-events:none;
+      z-index:-1;
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
       mix-blend-mode: overlay;
     }
 
     .bg-flow{ position:fixed; inset:-20%; pointer-events:none; z-index:-3; filter:blur(120px); opacity:.38; }
-    .bg-flow .blob{ position:absolute; width:70vmax; height:70vmax; border-radius:999px; background: radial-gradient(circle, var(--accent), transparent 60%); animation: drift 60s var(--ease2) infinite alternate; }
+    .bg-flow .blob{
+      position:absolute; width:70vmax; height:70vmax; border-radius:999px;
+      background: radial-gradient(circle, rgba(161,196,253,0.9), transparent 60%);
+      animation: drift 60s var(--ease2) infinite alternate;
+    }
+    body.theme-night .bg-flow .blob{
+      background: radial-gradient(circle, rgba(90,80,255,0.55), transparent 60%);
+    }
     @keyframes drift{ from{transform:translate(-5%,-5%)} to{transform:translate(10%,10%)} }
 
     .wrap{ min-height:100%; display:flex; justify-content:center; padding:calc(60px + env(safe-area-inset-top)) 18px 60px; }
-    .shell{ width:min(980px, 100%); transition: .4s var(--ease2); }
+    .shell{ width:min(980px, 100%); }
 
     .topbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
     .greet{ font-size:18px; font-weight:500; opacity:.85; letter-spacing:.02em; }
     .clock{ font-family:"JetBrains Mono"; font-size:18px; font-weight:600; font-variant-numeric:tabular-nums; }
 
     .search{
-      display:flex; align-items:center; gap:12px; padding:15px 22px; border-radius:999px;
-      background: var(--search-bg); border:1px solid var(--hair); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-      box-shadow:0 10px 30px rgba(0,0,0,0.03); transition:.3s var(--easeWave); margin-bottom:48px;
+      display:flex; align-items:center; gap:12px;
+      padding:15px 22px;
+      border-radius:999px;
+      background: var(--search-bg);
+      border:1px solid var(--hair);
+      backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+      box-shadow:0 10px 30px rgba(0,0,0,0.03);
+      transition:.3s var(--easeWave);
+      margin-bottom:48px;
     }
-    .search:focus-within{ transform:scaleX(1.03); border-color: rgba(124,92,255,0.5); box-shadow: 0 20px 60px rgba(0,0,0,0.08), inset 0 0 0 1px rgba(124,92,255,0.2); }
-    .search input{ width:100%; border:0; outline:none; background:transparent; color:var(--text); font-size:18px; }
+    .search:focus-within{
+      transform:scaleX(1.03);
+      border-color: rgba(124,92,255,0.5);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.08), inset 0 0 0 1px rgba(124,92,255,0.2);
+    }
+    .search input{
+      width:100%;
+      border:0; outline:none;
+      background:transparent;
+      color:var(--text);
+      font-size:18px;
+    }
 
-    .dim-on-focus .grid, .dim-on-focus .sectionbar, .dim-on-focus .morebtn{ opacity:0.28; filter:blur(4px); transform:scale(0.985); }
-
-    .sectionbar{ display:flex; align-items:center; gap:15px; margin:20px 0; color: var(--text-muted); font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:600; }
+    .sectionbar{
+      display:flex; align-items:center; gap:15px;
+      margin:20px 0;
+      color: var(--text-muted);
+      font-size:11px;
+      letter-spacing:.2em;
+      text-transform:uppercase;
+      font-weight:600;
+    }
     .dotline{ height:1px; flex:1; background: var(--hair); }
 
     .grid{ display:grid; grid-template-columns:repeat(6, 1fr); gap:32px 20px; transition:.4s var(--ease2); }
     @media (max-width: 860px){ .grid{grid-template-columns:repeat(4,1fr)} }
     @media (max-width: 520px){ .grid{grid-template-columns:repeat(3,1fr)} }
 
-    /* ✅ 强制锁定 relative 定位，修复字母错位 */
     .item{
-      position:relative; display:flex; flex-direction:column; align-items:center; gap:14px;
+      position:relative;
+      display:flex; flex-direction:column; align-items:center; gap:14px;
       text-decoration:none; outline:none;
       --mx:0px; --my:0px;
       transform:translate3d(var(--mx), var(--my), 0);
       transition:transform .22s var(--easeWave);
     }
-
-    /* ✅ 物理触控反馈 */
     .item:active{
       transform: scale(0.96) translate3d(var(--mx), var(--my), 0);
       transition: transform 0.1s ease;
     }
 
     .icon{
-      width:54px; height:54px; display:grid; place-items:center;
-      color: var(--icon-color);
-      filter:grayscale(100%) opacity(var(--icon-opacity));
-      transition:.35s var(--easeWave);
+      width:54px; height:54px;
+      display:grid; place-items:center;
       position:relative;
+      transition:.35s var(--easeWave);
+      filter: grayscale(100%) opacity(var(--icon-opacity));
     }
-    .icon svg{ width:36px; height:36px; display:block; }
-    .glyph{ transform: scale(var(--s, 1)) translateY(var(--ty, 0px)); transition: .28s var(--easeWave); display:grid; place-items:center; }
 
-    .item:hover .icon{ filter:none; transform:translateY(-6px); }
+    /* ✅ img 图标：确保看起来像“原厂” */
+    .icon img{
+      width:36px; height:36px;
+      display:block;
+      object-fit:contain;
+      image-rendering:auto;
+      -webkit-user-drag:none;
+      user-select:none;
+    }
 
-    /* ✅ 全局光晕（默认雾化） */
+    .item:hover .icon{
+      filter: grayscale(0%) opacity(1);
+      transform:translateY(-6px);
+    }
+
+    /* ✅ 通用光晕 */
     .item:hover .icon::after{
-      content:""; position:absolute; inset:-12px; border-radius:50%; z-index:-1;
-      filter:blur(32px); opacity:var(--glow-opacity);
-      background:radial-gradient(circle, var(--glow), transparent 75%);
+      content:"";
+      position:absolute; inset:-12px;
+      border-radius:50%;
+      z-index:-1;
+      filter: blur(var(--glow-blur));
+      opacity:var(--glow-opacity);
+      background: radial-gradient(circle, var(--glow), transparent 75%);
       transform: translate(calc(var(--mx) * -0.8), calc(var(--my) * -0.8 + 4px));
     }
 
+    /* ✅ 白天模式：Gmail/Google 发光“降噪”更柔和 */
+    body:not(.theme-night) .item.gmail:hover .icon::after,
+    body:not(.theme-night) .item.google:hover .icon::after{
+      filter: blur(22px);
+      opacity: 0.18;
+      background: radial-gradient(circle, var(--glow), transparent 78%);
+    }
+
     .label{
-      font-size:13px; color: var(--text-muted);
+      font-size:13px;
+      color: var(--text-muted);
       transition:.25s var(--easeWave);
       --lx:0px; --ly:0px;
       transform: translate3d(var(--lx), var(--ly), 0);
     }
     .item:hover .label{ color: var(--text); opacity:1; }
 
-    /* ✅ 修复 kbd 绝对定位 */
     .kbd{
-      position:absolute; top:-4px; right:4px; opacity:0;
-      font-family:"JetBrains Mono"; font-size:11px; color:#fff;
-      background:rgba(0,0,0,.35); backdrop-filter:blur(10px);
-      padding:3px 6px; border-radius:8px; border:1px solid rgba(255,255,255,.12);
+      position:absolute;
+      top:-4px; right:4px;
+      opacity:0;
+      font-family:"JetBrains Mono";
+      font-size:11px;
+      color:#fff;
+      background:rgba(0,0,0,.35);
+      backdrop-filter:blur(10px);
+      padding:3px 6px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,.12);
       transition:.18s var(--easeWave);
-      pointer-events:none; z-index:10;
+      pointer-events:none;
+      z-index:10;
     }
     .show-hotkeys .kbd{ opacity:1; transform:translateY(6px); }
 
-    /* ✅ Gemini 渐变：只做阴影，不在 CSS 写死某个 gradient id（避免多实例冲突） */
-    .item.gemini:hover .gemini-path{
-      filter: drop-shadow(0 0 10px rgba(155,114,243,.4));
-      transition: all .4s var(--easeWave);
+    .reveal{ animation: rise .72s var(--easeWave) both; animation-delay: var(--d, 0ms); }
+    @keyframes rise{
+      from{ opacity:0; transform:translateY(20px) scale(.98); filter:blur(5px); }
+      to{ opacity:1; transform:translateY(0) scale(1); filter:blur(0); }
     }
-
-    /* ✅ Copilot 品牌分层专供（hover 时两层不同色） */
-    .item.copilot:hover .cp-core{ color: #0078D4 !important; }
-    .item.copilot:hover .cp-bg{ color: #00A4EF !important; opacity: 0.45; }
 
     #moreArea[aria-hidden="true"]{ display:none; }
     .morebtn{
-      background: var(--search-bg); border:1px solid var(--hair); color:var(--text);
-      padding:8px 24px; border-radius:99px; cursor:pointer;
-      font-size:13px; opacity:.65; transition:.3s var(--easeWave);
-      margin: 40px auto; display:block;
-    }
-    .reveal{ animation: rise .72s var(--easeWave) both; animation-delay: var(--d, 0ms); }
-    @keyframes rise{ from{ opacity:0; transform:translateY(20px) scale(.98); filter:blur(5px); } to{ opacity:1; transform:translateY(0) scale(1); filter:blur(0); } }
-
-    /* Hover Colors */
-    .item.chatgpt:hover .icon{color:#10A37F}
-    .item.gemini:hover .icon{color:#4E85FF}
-    .item.claude:hover .icon{color:#D97757}
-    .item.netflix:hover .icon{color:#E50914}
-    .item.vultr:hover .icon{color:#007BFC}
-    .item.oracle:hover .icon{color:#FF3B30}
-    .item.racknerd:hover .icon{color:#7C5CFF}
-    .item.gmail:hover .icon{color:#EA4335}
-    .item.google:hover .icon{color:#4285F4}
-    .item.youtube:hover .icon{color:#FF0033}
-    .item.github:hover .icon{color:#333}
-    .theme-night .item.github:hover .icon{color:#FFF}
-    .item.reddit:hover .icon{color:#FF4500}
-    .item.telegram:hover .icon{color:#2AABEE}
-    .item.discord:hover .icon{color:#5865F2}
-    .item.wiki:hover .icon{color:#7C5CFF}
-    .item.dmit:hover .icon{color:#0052cc}
-    .item.bwg:hover .icon{color:#e67e22}
-    .item.cloudflare:hover .icon{color:#F48120}
-
-    /* ✅ 亮色模式降噪：Gmail / Google 更柔和（覆盖全局光晕） */
-    body.theme-day .item.gmail:hover .icon::after{
-      filter: blur(22px);
-      opacity: 0.18;
-      background: radial-gradient(circle, #EA4335, transparent 75%);
-    }
-    body.theme-day .item.google:hover .icon::after{
-      filter: blur(22px);
-      opacity: 0.16;
-      background: radial-gradient(circle, #4285F4, transparent 75%);
+      background: var(--search-bg);
+      border:1px solid var(--hair);
+      color:var(--text);
+      padding:8px 24px;
+      border-radius:99px;
+      cursor:pointer;
+      font-size:13px;
+      opacity:.65;
+      transition:.3s var(--easeWave);
+      margin: 40px auto;
+      display:block;
     }
   </style>
 </head>
-
 <body>
   <div class="bg-flow"><div class="blob"></div></div>
 
-  <div class="wrap"><div class="shell" id="app">
-    <div class="topbar">
-      <div class="greet" id="greet">Hello.</div>
-      <div class="clock" id="clock">00:00</div>
-    </div>
-
-    <form class="search" id="searchForm" autocomplete="off">
-      <input id="q" type="text" placeholder="Search..." autofocus />
-      <div class="hint">
-        <span>/g Google</span><span>/y YouTube</span><span>/c ChatGPT</span>
+  <div class="wrap">
+    <div class="shell" id="app">
+      <div class="topbar">
+        <div class="greet" id="greet">Hello.</div>
+        <div class="clock" id="clock">00:00</div>
       </div>
-    </form>
 
-    <div class="sectionbar"><span>Essentials</span><div class="dotline"></div></div>
-    <div class="grid" id="gridEssentials"></div>
+      <form class="search" id="searchForm" autocomplete="off">
+        <input id="q" type="text" placeholder="Search..." autofocus />
+      </form>
 
-    <div id="moreArea" aria-hidden="true">
-      <div class="sectionbar" style="margin-top:40px"><span>Extended</span><div class="dotline"></div></div>
-      <div class="grid" id="gridMore"></div>
+      <div class="sectionbar"><span>Essentials</span><div class="dotline"></div></div>
+      <div class="grid" id="gridEssentials"></div>
+
+      <div id="moreArea" aria-hidden="true">
+        <div class="sectionbar" style="margin-top:40px"><span>Extended</span><div class="dotline"></div></div>
+        <div class="grid" id="gridMore"></div>
+      </div>
+
+      <button class="morebtn" id="toggleBtn" type="button">More Icons</button>
     </div>
-
-    <button class="morebtn" id="toggleBtn" type="button">More Icons</button>
-  </div></div>
+  </div>
 
   <script>
-    const SVGS = {
-      // ✅ Copilot: 微软分层矢量标
-      copilot: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path class="cp-bg" d="M11.996 23.003c5.317 0 9.873-4.103 9.873-9.143 0-2.316-.925-4.57-2.613-6.257L11.996 0 4.74 7.603A8.83 8.83 0 0 0 2.126 13.86c0 5.04 4.555 9.143 9.87 9.143Z" opacity=".3"/>
-        <path class="cp-core" d="M12.001 19.336c3.178 0 5.908-2.455 5.908-5.472 0-1.386-.554-2.736-1.564-3.746L12 6.666l-4.344 4.552c-1.01 1.01-1.564 2.36-1.564 3.746 0 3.017 2.73 5.472 5.909 5.472Z"/>
-      </svg>`,
-
-      // ✅ ChatGPT: OpenAI 官方花瓣标
-      chatgpt: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path d="M22.28 9.82a5.98 5.98 0 0 0-.51-4.91 6.05 6.05 0 0 0-3.95-3.13 6.03 6.03 0 0 0-5.17 1.04 6.03 6.03 0 0 0-4.38-1.93 6.05 6.05 0 0 0-5.04 2.75 6 6 0 0 0-1.47 5.03c.12 1.83.68 3.51 1.55 4.91a6.05 6.05 0 0 0 3.95 3.13 6.03 6.03 0 0 0 5.17-1.04 6.03 6.03 0 0 0 4.38 1.93 6.05 6.05 0 0 0 5.04-2.75 6 6 0 0 0 1.47-5.03c-.12-1.83-.68-3.51-1.55-4.91zm-7.1 9.45a3.73 3.73 0 0 1-2.68-.31l.1-.06 5.28-3.05a.43.43 0 0 0 .21-.37v-7.37l2.12 1.22a3.74 3.74 0 0 1 1.63 3.56 3.75 3.75 0 0 1-2.48 3.49l-4.18 2.41z"/>
-      </svg>`,
-
-      // ✅ Gemini: 三色渐变（注意：gradient id 会在 makeItem 里动态替换成唯一值）
-      gemini: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="gemini-grad-unique" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#4E85FF"/>
-            <stop offset="50%" stop-color="#9B72F3"/>
-            <stop offset="100%" stop-color="#D96570"/>
-          </linearGradient>
-        </defs>
-        <path class="gemini-path" d="M12 2C12 2 14.5 9.5 22 12C14.5 14.5 12 22 12 22C12 22 9.5 14.5 2 12C9.5 9.5 12 2 12 2Z"
-          fill="url(#gemini-grad-unique)"/>
-      </svg>`,
-
-      claude: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12.016 1.815l-8.625 20.37h4.09l1.79-4.248h8.336l1.79 4.248h4.09L15.02 4.18c-.46-1.12-1.536-1.815-3.004-2.365zm2.146 12.875H9.838l2.178-5.185 2.146 5.185z"/>
-      </svg>`,
-
-      google: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
-        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-      </svg>`,
-
-      gmail: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L12 9.573l8.073-6.08c1.618-1.214 3.927-.059 3.927 1.964z"/>
-      </svg>`,
-
-      youtube: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-      </svg>`,
-
-      github: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 .297c-6.627 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
-      </svg>`,
-
-      cloudflare: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path d="M24 15.111c0 2.444-1.889 4.444-4.222 4.444H6.889C3.111 19.555 0 16.444 0 12.666c0-3.333 2.444-6.111 5.667-6.555.778-3.111 3.556-5.444 6.889-5.444 3 0 5.556 1.889 6.556 4.555 2.889.334 5.111 2.778 5.111 5.778 0 .333 0 .667-.111 1.111C23 12.333 24 13.555 24 15.111z"/>
-      </svg>`,
-
-      netflix: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path d="M6 3h3.1l5.8 13.2V3H18v18h-3.1L9 7.8V21H6V3z"/>
-      </svg>`,
-
-      reddit: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path d="M24 11.779c0-1.459-1.192-2.645-2.657-2.645-.71 0-1.348.273-1.823.717-1.624-1.137-3.844-1.87-6.303-1.957l1.085-5.11 3.554.757c.05.803.713 1.44 1.527 1.44 1.082 0 1.962-.884 1.962-1.964s-.88-1.964-1.962-1.964c-.754 0-1.41.428-1.743 1.056l-3.984-.85a.486.486 0 0 0-.573.344l-1.22 5.75c-2.525.04-4.814.786-6.48 1.948-.474-.438-1.103-.702-1.799-.702-1.465 0-2.656 1.187-2.656 2.646 0 .973.533 1.82 1.32 2.274-.053.34-.08.683-.08 1.03 0 3.536 4.102 6.413 9.143 6.413 5.042 0 9.143-2.877 9.143-6.413 0-.337-.026-.67-.076-1.002.822-.445 1.383-1.3 1.383-2.296zm-15.046 2.15c0-1.082.88-1.963 1.962-1.963s1.962.88 1.962 1.963-.88 1.963-1.962 1.963-1.962-.88-1.962-1.963zm9.23 4.417c-1.3 1.303-3.753 1.408-4.183 1.408-.432 0-2.884-.105-4.183-1.408a.486.486 0 1 1 .687-.687c.88.88 2.723 1.1 3.496 1.1.77 0 2.614-.22 3.496-1.1a.486.486 0 1 1 .687.687zm-1.144-2.454c-1.082 0-1.962-.88-1.962-1.963s.88-1.963 1.962-1.963 1.962.88 1.962 1.963-.88 1.963-1.962 1.963z"/>
-      </svg>`,
-
-      wiki: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 1a11 11 0 1 0 11 11A11.013 11.013 0 0 0 12 1Zm6.2 7.1-2.9 8.8h-1.7l-1.7-5.2-1.7 5.2H8.5L5.8 8.1h1.9l1.6 5.6 1.7-5.6h1.9l1.7 5.6 1.6-5.6h2Z"/>
-      </svg>`,
-
-      vultr: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 24L3.6 12h5.1L12 16.9 15.3 12h5.1L12 24zM24 0H0v2.4h24V0z"/>
-      </svg>`,
-
-      oracle: `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="32" cy="31.5" r="18" stroke="currentColor" stroke-width="6"/>
-        <path d="M44 31.5h8" stroke="currentColor" stroke-width="6" stroke-linecap="round" opacity=".65"/>
-      </svg>`,
-
-      racknerd: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path d="M21 16.5c0 .38-.21.71-.53.88l-7.97 4.44c-.31.17-.69.17-1 0l-7.97-4.44c-.32-.17-.53-.5-.53-.88v-9c0-.38.21-.71.53-.88l7.97-4.44c.31-.17.69-.17 1 0l7.97 4.44c.32.17.53.5.53.88v9z"/>
-        <rect x="6" y="10" width="12" height="2" fill="rgba(255,255,255,0.5)"/>
-        <rect x="6" y="14" width="12" height="2" fill="rgba(255,255,255,0.5)"/>
-      </svg>`,
-
-      discord: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.791 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.64 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
-      </svg>`,
-
-      telegram: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path d="M11.944 0C5.356 0 0 5.356 0 11.944s5.356 11.944 11.944 11.944 11.944-5.356 11.944-11.944S18.532 0 11.944 0zm5.83 8.04l-1.99 9.382c-.15.666-.543.83-1.1.52l-3.033-2.235-1.464 1.408c-.162.162-.3.298-.616.298l.218-3.09 5.625-5.082c.245-.218-.053-.34-.378-.122L8.046 13.43l-2.997-.937c-.652-.204-.666-.652.136-.966l11.714-4.514c.543-.204 1.018.12.875 1.028z"/>
-      </svg>`,
-
-      dmit: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path d="M17.5 19c-3.6 0-6.5-2.9-6.5-6.5S13.9 6 17.5 6c2.5 0 4.6 1.4 5.7 3.5.4-.1.8-.2 1.3-.2 2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5c-.3 0-.6 0-.8-.1-1.1 1.5-2.8 2.5-4.7 2.5zM7.5 17c-2.5 0-4.5-2-4.5-4.5S5 8 7.5 8c.3 0 .6 0 .8.1 1.1-1.5 2.8-2.5 4.7-2.5 3.6 0 6.5 2.9 6.5 6.5s-2.9 6.5-6.5 6.5c-2.5 0-4.6-1.4-5.7-3.5-.4.1-.8.2-1.3.2z" opacity=".8"/>
-      </svg>`,
-
-      bandwagon: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path d="M21 16H6.5c-1.4 0-2.5-1.1-2.5-2.5V4H2v2h2v7.5c0 2.5 2 4.5 4.5 4.5H21v-2zM19 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM9 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM22 6h-7V4h7v2zm0 4h-9V8h9v2zm0 4h-11v-2h11v2z"/>
-      </svg>`
-    };
+    /**
+     * ✅ IMG 方案说明（你不用改逻辑就能换图标）：
+     * - 每个站点给一个 icon 字段（URL 指向 PNG/ICO/SVG 都行）
+     * - 默认灰度，hover 还原原厂彩色（靠 CSS filter）
+     * - 你想“更原厂”：就把 icon 指向你自己保存的官方 SVG/PNG（建议放你自己的域名 /assets/icons/ 下）
+     */
 
     const ALL_SITES = [
-      { name:"ChatGPT",   url:"https://chatgpt.com/",                     key:"C", glow:"#10A37F", svg:SVGS.chatgpt,   rank:1,   scale:0.95, cls:"chatgpt" },
-      { name:"Gemini",    url:"https://gemini.google.com/",               key:"G", glow:"#4E85FF", svg:SVGS.gemini,    rank:1,   scale:1.10, cls:"gemini" },
-      { name:"Claude",    url:"https://claude.ai/",                       key:"L", glow:"#D97757", svg:SVGS.claude,    rank:1,   scale:0.88, cls:"claude" },
-      { name:"Copilot",   url:"https://copilot.microsoft.com/",           key:"P", glow:"#0078D4", svg:SVGS.copilot,   rank:1,   scale:1.02, cls:"copilot" },
-      { name:"Reddit",    url:"https://www.reddit.com/",                  key:"U", glow:"#FF4500", svg:SVGS.reddit,    rank:1.5, scale:1.00, cls:"reddit" },
-      { name:"Wikipedia", url:"https://www.wikipedia.org/",               key:"W", glow:"#888888", svg:SVGS.wiki,      rank:1.5, scale:1.00, cls:"wiki" },
-      { name:"Google",    url:"https://www.google.com/",                  key:"O", glow:"#4285F4", svg:SVGS.google,    rank:2,   scale:0.98, cls:"google" },
-      { name:"Gmail",     url:"https://mail.google.com/",                 key:"M", glow:"#EA4335", svg:SVGS.gmail,     rank:2,   scale:1.02, cls:"gmail" },
-      { name:"YouTube",   url:"https://www.youtube.com/",                 key:"Y", glow:"#FF0000", svg:SVGS.youtube,   rank:2,   scale:1.02, cls:"youtube" },
-      { name:"GitHub",    url:"https://github.com/",                      key:"H", glow:"#666666", svg:SVGS.github,    rank:2,   scale:0.90, cls:"github" },
-      { name:"Cloudflare",url:"https://dash.cloudflare.com/",             key:"F", glow:"#F48120", svg:SVGS.cloudflare,rank:2,   scale:1.06, cls:"cloudflare" },
-      { name:"Netflix",   url:"https://www.netflix.com/",                 key:"N", glow:"#E50914", svg:SVGS.netflix,   rank:3,   scale:1.10, cls:"netflix" },
-      { name:"Discord",   url:"https://discord.com/app",                  key:"I", glow:"#5865F2", svg:SVGS.discord,   rank:4,   scale:0.98, cls:"discord" },
-      { name:"Telegram",  url:"https://web.telegram.org/",                key:"T", glow:"#2AABEE", svg:SVGS.telegram,  rank:4,   scale:1.02, cls:"telegram" },
-      { name:"Vultr",     url:"https://my.vultr.com/",                    key:"V", glow:"#007BFC", svg:SVGS.vultr,     rank:9,   scale:0.96, cls:"vultr" },
-      { name:"Oracle",    url:"https://cloud.oracle.com/",                key:"J", glow:"#FF3B30", svg:SVGS.oracle,    rank:9,   scale:0.90, ty:-0.5, cls:"oracle" },
-      { name:"RackNerd",  url:"https://my.racknerd.com/",                 key:"R", glow:"#7C5CFF", svg:SVGS.racknerd,  rank:9,   scale:1.06, cls:"racknerd" },
-      { name:"DMIT",      url:"https://www.dmit.io/clientarea.php",       key:"D", glow:"#0052cc", svg:SVGS.dmit,      rank:9,   scale:1.05, cls:"dmit" },
-      { name:"BWG",       url:"https://bandwagonhost.com/clientarea.php", key:"B", glow:"#e67e22", svg:SVGS.bandwagon, rank:9,   scale:1.02, cls:"bwg" }
+      { name:"ChatGPT",   url:"https://chatgpt.com/",                     key:"C", glow:"#10A37F", icon:"https://chatgpt.com/favicon.ico",                     rank:1,   cls:"chatgpt" },
+      { name:"Gemini",    url:"https://gemini.google.com/",               key:"G", glow:"#9B72F3", icon:"https://gemini.google.com/favicon.ico",               rank:1,   cls:"gemini" },
+      { name:"Claude",    url:"https://claude.ai/",                       key:"L", glow:"#D97757", icon:"https://claude.ai/favicon.ico",                       rank:1,   cls:"claude" },
+      { name:"Copilot",   url:"https://copilot.microsoft.com/",           key:"P", glow:"#0078D4", icon:"https://copilot.microsoft.com/favicon.ico",           rank:1,   cls:"copilot" },
+
+      { name:"Reddit",    url:"https://www.reddit.com/",                  key:"U", glow:"#FF4500", icon:"https://www.reddit.com/favicon.ico",                 rank:1.5, cls:"reddit" },
+      { name:"Wikipedia", url:"https://www.wikipedia.org/",               key:"W", glow:"#888888", icon:"https://www.wikipedia.org/static/favicon/wikipedia.ico", rank:1.5, cls:"wiki" },
+
+      { name:"Google",    url:"https://www.google.com/",                  key:"O", glow:"#4285F4", icon:"https://www.google.com/favicon.ico",                 rank:2,   cls:"google" },
+      { name:"Gmail",     url:"https://mail.google.com/",                 key:"M", glow:"#EA4335", icon:"https://mail.google.com/favicon.ico",                rank:2,   cls:"gmail" },
+      { name:"YouTube",   url:"https://www.youtube.com/",                 key:"Y", glow:"#FF0000", icon:"https://www.youtube.com/favicon.ico",                rank:2,   cls:"youtube" },
+      { name:"GitHub",    url:"https://github.com/",                      key:"H", glow:"#666666", icon:"https://github.githubassets.com/favicons/favicon.png", rank:2,  cls:"github" },
+      { name:"Cloudflare",url:"https://dash.cloudflare.com/",             key:"F", glow:"#F48120", icon:"https://dash.cloudflare.com/favicon.ico",            rank:2,   cls:"cloudflare" },
+      { name:"Netflix",   url:"https://www.netflix.com/",                 key:"N", glow:"#E50914", icon:"https://www.netflix.com/favicon.ico",                rank:3,   cls:"netflix" },
+
+      { name:"Discord",   url:"https://discord.com/app",                  key:"I", glow:"#5865F2", icon:"https://discord.com/favicon.ico",                    rank:4,   cls:"discord" },
+      { name:"Telegram",  url:"https://web.telegram.org/",                key:"T", glow:"#2AABEE", icon:"https://telegram.org/favicon.ico",                   rank:4,   cls:"telegram" },
+
+      { name:"Vultr",     url:"https://my.vultr.com/",                    key:"V", glow:"#007BFC", icon:"https://www.vultr.com/favicon.ico",                  rank:9,   cls:"vultr" },
+      { name:"Oracle",    url:"https://cloud.oracle.com/",                key:"J", glow:"#FF3B30", icon:"https://www.oracle.com/favicon.ico",                 rank:9,   cls:"oracle" },
+      { name:"RackNerd",  url:"https://my.racknerd.com/",                 key:"R", glow:"#7C5CFF", icon:"https://my.racknerd.com/favicon.ico",                rank:9,   cls:"racknerd" },
+      { name:"DMIT",      url:"https://www.dmit.io/clientarea.php",       key:"D", glow:"#0052cc", icon:"https://www.dmit.io/favicon.ico",                    rank:9,   cls:"dmit" },
+      { name:"BWG",       url:"https://bandwagonhost.com/clientarea.php", key:"B", glow:"#e67e22", icon:"https://bandwagonhost.com/favicon.ico",              rank:9,   cls:"bwg" }
     ];
 
-    function applyVars(v){ const r=document.documentElement; for(const [k,val] of Object.entries(v)) r.style.setProperty(k,val); }
     function updateTheme(){
-      const h=new Date().getHours(), b=document.body, g=document.getElementById("greet");
-      b.classList.remove("theme-dawn","theme-day","theme-twilight","theme-night");
-      if(h>=5&&h<8){
-        b.classList.add("theme-dawn");
-        applyVars({"--bg-top":"#FDFCFB","--bg-bottom":"#E2D1C3","--text":"#1F2937","--text-muted":"rgba(31,41,55,0.55)","--hair":"rgba(31,41,55,0.1)","--search-bg":"rgba(255,255,255,0.62)","--icon-opacity":"0.52","--icon-color":"#2b2b2b","--accent":"#ff9a9e"});
-        g.textContent="Good morning, Dawn.";
-      } else if(h>=8&&h<17){
-        b.classList.add("theme-day");
-        applyVars({"--bg-top":"#FFFFFF","--bg-bottom":"#F5F5F7","--text":"#1D1D1F","--text-muted":"rgba(0,0,0,0.45)","--hair":"rgba(0,0,0,0.06)","--search-bg":"rgba(0,0,0,0.03)","--icon-opacity":"0.45","--icon-color":"#333","--accent":"#a1c4fd"});
-        g.textContent=(h<12)?"Good morning.":"Good afternoon.";
-      } else if(h>=17&&h<20){
-        b.classList.add("theme-twilight");
-        applyVars({"--bg-top":"#2D1B4D","--bg-bottom":"#1A0B2E","--text":"#FDEBD0","--text-muted":"rgba(253,235,208,0.58)","--hair":"rgba(253,235,208,0.16)","--search-bg":"rgba(253,235,208,0.08)","--icon-opacity":"0.55","--icon-color":"rgba(253,235,208,0.92)","--accent":"#fad0c4"});
-        g.textContent="Good evening, Twilight.";
-      } else {
+      const h = new Date().getHours();
+      const b = document.body;
+      const g = document.getElementById("greet");
+
+      b.classList.remove("theme-night");
+      if (h >= 20 || h < 8){
         b.classList.add("theme-night");
-        applyVars({"--bg-top":"#09112A","--bg-bottom":"#070A12","--text":"rgba(255,255,255,0.92)","--text-muted":"rgba(255,255,255,0.45)","--hair":"rgba(255,255,255,0.08)","--search-bg":"rgba(255,255,255,0.08)","--icon-opacity":"0.50","--icon-color":"rgba(255,255,255,0.90)","--accent":"rgba(90,80,255,0.55)"});
-        g.textContent="Good night.";
+        g.textContent = "Good night.";
+      } else {
+        g.textContent = (h < 12) ? "Good morning." : "Good afternoon.";
       }
     }
 
-    function getCols(){ const w=window.innerWidth; return w<=520?3:w<=860?4:6; }
-    function computeLayout(){
-      const cols=getCols(), maxEss=cols*2;
-      const sorted=[...ALL_SITES].sort((a,b)=>(a.rank-b.rank)||a.name.localeCompare(b.name));
-      return { essentials:sorted.slice(0,maxEss), more:sorted.slice(maxEss) };
+    function getCols(){
+      const w = window.innerWidth;
+      return w <= 520 ? 3 : w <= 860 ? 4 : 6;
     }
+
+    function computeLayout(){
+      const cols = getCols();
+      const maxEss = cols * 2;
+      const sorted = [...ALL_SITES].sort((a,b)=>(a.rank-b.rank)||a.name.localeCompare(b.name));
+      return { essentials: sorted.slice(0, maxEss), more: sorted.slice(maxEss) };
+    }
+
     function waveDelay(i,seed){
       const cols=getCols(), r=Math.floor(i/cols), c=i%cols;
       return Math.max(0,(i*22)+(r*18)+(c*8)+(((seed+i*7)%13)-6));
     }
 
-    // ✅ 修复：Gemini gradient id 唯一化（避免未来多 Gemini 冲突）
     function makeItem(s,i,seed){
-      const d = waveDelay(i,seed);
-      const gid = `grad-${s.cls||"x"}-${i}`;
-      const svg = (s.cls==="gemini")
-        ? s.svg.replaceAll("gemini-grad-unique", gid)
-        : s.svg;
+      const d = waveDelay(i, seed);
+      const key = s.key || "";
+      const iconHTML = `<img src="${s.icon}" alt="${s.name}" loading="lazy" decoding="async" referrerpolicy="no-referrer">`;
 
-      return `<a class="item reveal ${s.cls||""}" href="${s.url}" target="_blank" rel="noopener noreferrer" style="--glow:${s.glow};--d:${d}ms;">
-        <span class="kbd">${s.key||""}</span>
-        <div class="icon"><span class="glyph" style="--s:${s.scale??1};--ty:${s.ty??0}px">${svg}</span></div>
-        <div class="label">${s.name}</div>
-      </a>`;
+      return `
+        <a class="item reveal ${s.cls || ""}" href="${s.url}" target="_blank" rel="noopener noreferrer"
+           style="--glow:${s.glow}; --d:${d}ms;">
+          <span class="kbd">${key}</span>
+          <div class="icon">${iconHTML}</div>
+          <div class="label">${s.name}</div>
+        </a>`;
     }
 
-    let exp=false, _lastMin="";
+    let exp = false;
     function render(){
-      const {essentials,more}=computeLayout(), seed=(Date.now()/1000)|0;
-      document.getElementById("gridEssentials").innerHTML=essentials.map((s,i)=>makeItem(s,i,seed)).join("");
-      document.getElementById("gridMore").innerHTML=more.map((s,i)=>makeItem(s,i+essentials.length,seed)).join("");
-      const btn=document.getElementById("toggleBtn"); btn.style.display=more.length?"block":"none";
-      if(!more.length){
+      const { essentials, more } = computeLayout();
+      const seed = (Date.now()/1000)|0;
+
+      document.getElementById("gridEssentials").innerHTML =
+        essentials.map((s,i)=>makeItem(s,i,seed)).join("");
+
+      document.getElementById("gridMore").innerHTML =
+        more.map((s,i)=>makeItem(s,i+essentials.length,seed)).join("");
+
+      const btn = document.getElementById("toggleBtn");
+      btn.style.display = more.length ? "block" : "none";
+
+      if (!more.length){
         document.getElementById("moreArea").setAttribute("aria-hidden","true");
-        btn.textContent="More Icons"; exp=false;
+        btn.textContent = "More Icons";
+        exp = false;
       } else {
         document.getElementById("moreArea").setAttribute("aria-hidden",(!exp).toString());
-        btn.textContent=exp?"Less Icons":"More Icons";
+        btn.textContent = exp ? "Less Icons" : "More Icons";
       }
+
       bindMagnetic();
     }
 
     function bindMagnetic(){
-      // ✅ 修复：matchMedia 写法（无空格）
-      if(matchMedia("(pointer:coarse)").matches) return;
-
+      if (matchMedia("(pointer: coarse)").matches) return;
       document.querySelectorAll(".item").forEach(el=>{
         if(el.__magBound) return; el.__magBound=true;
-        let tx=0,ty=0,x=0,y=0,anim=0; const label=el.querySelector(".label");
+
+        let tx=0,ty=0,x=0,y=0,anim=0;
+        const label=el.querySelector(".label");
+
         const step=()=>{
           x+=(tx-x)*0.18; y+=(ty-y)*0.18;
           el.style.setProperty("--mx",x.toFixed(2)+"px");
@@ -420,50 +371,74 @@
           if(Math.abs(tx-x)+Math.abs(ty-y)<0.02){anim=0;return;}
           anim=requestAnimationFrame(step);
         };
+
         el.addEventListener("mousemove",e=>{
-          const r=el.getBoundingClientRect(), dx=e.clientX-(r.left+r.width/2), dy=e.clientY-(r.top+r.height/2);
+          const r=el.getBoundingClientRect();
+          const dx=e.clientX-(r.left+r.width/2);
+          const dy=e.clientY-(r.top+r.height/2);
           const dist=Math.hypot(dx,dy);
-          if(dist>Math.max(r.width,r.height)/2+20){tx=0;ty=0;}
-          else {tx=(dx/(r.width/2+20))*3;ty=(dy/(r.height/2+20))*3;}
-          if(!anim)anim=requestAnimationFrame(step);
+
+          if(dist>Math.max(r.width,r.height)/2+20){ tx=0; ty=0; }
+          else { tx=(dx/(r.width/2+20))*3; ty=(dy/(r.height/2+20))*3; }
+
+          if(!anim) anim=requestAnimationFrame(step);
         });
-        el.addEventListener("mouseleave",()=>{tx=0;ty=0;if(!anim)anim=requestAnimationFrame(step);});
+
+        el.addEventListener("mouseleave",()=>{
+          tx=0; ty=0;
+          if(!anim) anim=requestAnimationFrame(step);
+        });
       });
     }
 
-    window.addEventListener("resize",()=>{clearTimeout(window.rT);window.rT=setTimeout(render,90);});
-    document.getElementById("toggleBtn").onclick=()=>{exp=!exp;render();};
+    window.addEventListener("resize",()=>{ clearTimeout(window.__rt); window.__rt=setTimeout(render,90); });
+    document.getElementById("toggleBtn").onclick=()=>{ exp=!exp; render(); };
 
     window.addEventListener("keydown",e=>{
-      const active=document.activeElement, typing=active&&(active.tagName==="INPUT"||active.tagName==="TEXTAREA"||active.isContentEditable);
-      if(typing)return;
-      if(e.key==="/"){e.preventDefault();document.getElementById("q").focus({preventScroll:true});return;}
-      if(e.altKey){document.body.classList.add("show-hotkeys");}
+      const active=document.activeElement;
+      const typing=active&&(active.tagName==="INPUT"||active.tagName==="TEXTAREA"||active.isContentEditable);
+      if(typing) return;
+
+      if(e.key==="/"){ e.preventDefault(); document.getElementById("q").focus({preventScroll:true}); return; }
+      if(e.altKey){ document.body.classList.add("show-hotkeys"); }
+
       const k=e.key.toUpperCase();
       const s=ALL_SITES.find(x=>x.key===k);
-      if(s&&!e.altKey){e.preventDefault();window.open(s.url,"_blank");}
+      if(s && !e.altKey){ e.preventDefault(); window.open(s.url,"_blank"); }
     });
-    window.addEventListener("keyup",e=>{if(e.key==="Alt")document.body.classList.remove("show-hotkeys");});
+    window.addEventListener("keyup",e=>{ if(e.key==="Alt") document.body.classList.remove("show-hotkeys"); });
 
     document.getElementById("searchForm").onsubmit=e=>{
       e.preventDefault();
       const v=document.getElementById("q").value.trim();
-      if(!v)return;
-      const engines={"/g":"https://google.com/search?q=","/y":"https://www.youtube.com/results?search_query=","/c":"https://chatgpt.com/"};
+      if(!v) return;
+
+      const engines={
+        "/g":"https://www.google.com/search?q=",
+        "/y":"https://www.youtube.com/results?search_query=",
+        "/c":"https://chatgpt.com/?q="
+      };
       const prefix=v.slice(0,2);
-      if(engines[prefix])window.open(prefix==="/c"?engines["/c"]:engines[prefix]+encodeURIComponent(v.slice(3)),"_blank");
-      else window.open("https://google.com/search?q="+encodeURIComponent(v),"_blank");
+
+      if(engines[prefix]){
+        const q = v.slice(3);
+        window.open(engines[prefix] + encodeURIComponent(q), "_blank");
+      }else{
+        window.open("https://www.google.com/search?q=" + encodeURIComponent(v), "_blank");
+      }
     };
 
-    document.getElementById("q").onfocus=()=>document.getElementById("app").classList.add("dim-on-focus");
-    document.getElementById("q").onblur=()=>document.getElementById("app").classList.remove("dim-on-focus");
-
     function tick(){
-      const d=new Date(), h=d.getHours(), m=d.getMinutes(), k=`${h}:${m}`;
-      document.getElementById("clock").textContent=`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
-      if(k!==_lastMin){_lastMin=k;updateTheme();}
+      const d=new Date();
+      const h=d.getHours(), m=d.getMinutes();
+      document.getElementById("clock").textContent =
+        `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
     }
-    tick(); setInterval(tick, 1000); render();
+
+    updateTheme();
+    tick();
+    setInterval(()=>{ tick(); updateTheme(); }, 1000);
+    render();
   </script>
 </body>
 </html>
