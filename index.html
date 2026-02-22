@@ -14,325 +14,285 @@
       --bg0:#070A12;
       --bg1:#09112A;
       --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.62);
       --hair2: rgba(255,255,255,.08);
       --ease: cubic-bezier(.34,1.56,.64,1);
       --ease2: cubic-bezier(.22,.61,.36,1);
     }
 
     *{ box-sizing:border-box; }
-    html,body{ height:100%; }
+    html,body{ height:100%; margin:0; }
+
     body{
-      margin:0;
       color:var(--text);
       font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-
-      /* 基底更深，呼吸交给 bg-flow */
+      text-rendering: optimizeLegibility;
       background:
         radial-gradient(900px 700px at 16% 20%, rgba(90,80,255,.12), transparent 60%),
         radial-gradient(900px 700px at 78% 24%, rgba(0,210,255,.08), transparent 60%),
         linear-gradient(180deg, var(--bg1), var(--bg0));
-
       overflow-x:hidden;
     }
 
-    /* 轻微磨砂颗粒 */
     body::before{
       content:"";
       position:fixed; inset:0;
-      pointer-events:none;
       opacity:.08;
-      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
-      mix-blend-mode: overlay;
+      pointer-events:none;
       z-index:-1;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay;
     }
 
-    /* ========= Atmospheric Flow：动态流体背景（超克制） ========= */
+    /* 动态流体背景 */
     .bg-flow{
-      position: fixed;
-      inset: -20%;
-      pointer-events: none;
-      z-index: -3;
+      position:fixed; inset:-20%;
+      pointer-events:none;
+      z-index:-3;
       filter: blur(150px);
-      opacity: .55;
+      opacity:.55;
     }
     .bg-flow .blob{
       position:absolute;
-      width: 70vmax;
-      height: 70vmax;
-      border-radius: 999px;
+      width:70vmax; height:70vmax;
+      border-radius:999px;
       background: radial-gradient(circle at 30% 30%, rgba(90,80,255,.18), transparent 60%);
       animation: drift1 60s var(--ease2) infinite alternate;
-      transform: translate3d(0,0,0);
     }
     .bg-flow .blob.b2{
-      width: 64vmax;
-      height: 64vmax;
+      width:64vmax; height:64vmax;
       background: radial-gradient(circle at 30% 30%, rgba(0,210,255,.14), transparent 60%);
       animation: drift2 70s var(--ease2) infinite alternate;
     }
     .bg-flow .blob.b3{
-      width: 58vmax;
-      height: 58vmax;
+      width:58vmax; height:58vmax;
       background: radial-gradient(circle at 30% 30%, rgba(0,255,170,.08), transparent 60%);
       animation: drift3 80s var(--ease2) infinite alternate;
     }
-    @keyframes drift1{
-      from{ transform: translate(-10vmax, -6vmax) scale(1); }
-      to  { transform: translate(14vmax, 10vmax) scale(1.08); }
-    }
-    @keyframes drift2{
-      from{ transform: translate(18vmax, -12vmax) scale(1.02); }
-      to  { transform: translate(-8vmax, 12vmax) scale(1.10); }
-    }
-    @keyframes drift3{
-      from{ transform: translate(-14vmax, 18vmax) scale(1.00); }
-      to  { transform: translate(10vmax, -10vmax) scale(1.06); }
-    }
+    @keyframes drift1{ from{transform:translate(-10vmax,-6vmax) scale(1)} to{transform:translate(14vmax,10vmax) scale(1.08)} }
+    @keyframes drift2{ from{transform:translate(18vmax,-12vmax) scale(1.02)} to{transform:translate(-8vmax,12vmax) scale(1.1)} }
+    @keyframes drift3{ from{transform:translate(-14vmax,18vmax) scale(1)} to{transform:translate(10vmax,-10vmax) scale(1.06)} }
 
     .wrap{
       min-height:100%;
       display:flex;
-      align-items:flex-start;
       justify-content:center;
       padding: calc(18px + env(safe-area-inset-top)) 18px calc(18px + env(safe-area-inset-bottom));
     }
     .shell{
       width:min(980px, 100%);
-      padding: 18px 18px 22px;
+      padding:18px;
+      transition: .4s var(--ease2);
     }
 
     .topbar{
       display:flex;
-      align-items:center;
       justify-content:space-between;
+      align-items:center;
       gap:16px;
-      margin-top: 8px;
-      margin-bottom: 14px;
+      margin:8px 0 14px;
     }
     .greet{
-      font-size: 18px;
-      font-weight: 500;
-      color: rgba(255,255,255,.78);
-      letter-spacing: .01em;
+      font-size:18px;
+      font-weight:500;
+      color:rgba(255,255,255,.78);
+      letter-spacing:.01em;
     }
     .clock{
-      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 18px;
-      font-weight: 600;
-      color: rgba(255,255,255,.88);
-      letter-spacing: .02em;
-      font-variant-numeric: tabular-nums; /* 防抖 */
+      font-family:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size:18px;
+      font-weight:600;
+      font-variant-numeric: tabular-nums;
+      letter-spacing:.02em;
     }
 
-    /* 搜索 */
     .search{
       position:relative;
       display:flex;
       align-items:center;
       gap:10px;
-      padding: 14px 16px;
-      border-radius: 999px;
+      padding:14px 16px;
+      border-radius:999px;
       background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
-      border: 1px solid var(--hair2);
+      border:1px solid var(--hair2);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 18px 60px rgba(0,0,0,.30);
-      transition: border-color .25s var(--ease2), box-shadow .25s var(--ease2), transform .25s var(--ease2);
-      margin-bottom: 16px;
-
-      width: 100%;
+      box-shadow:0 18px 60px rgba(0,0,0,.30);
+      transition: .25s var(--ease2);
+      margin-bottom:16px;
       transform-origin: center;
     }
     .search:focus-within{
-      border-color: rgba(124,92,255,.45);
-      box-shadow: 0 22px 80px rgba(0,0,0,.35), 0 0 0 6px rgba(124,92,255,.12);
-      transform: translateY(-1px) scaleX(1.05); /* 宽度 +5% */
+      border-color:rgba(124,92,255,.45);
+      box-shadow:0 22px 80px rgba(0,0,0,.35), 0 0 0 6px rgba(124,92,255,.12);
+      transform: scaleX(1.05);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px); /* ✅ 修复：Safari */
     }
-    .search svg{ width:18px; height:18px; opacity:.75; flex:0 0 auto; }
+    .search > svg{
+      width:18px; height:18px;
+      opacity:.85;
+      flex:0 0 auto;
+      color: rgba(255,255,255,.85);
+    }
     .search input{
       width:100%;
       border:0;
       outline:none;
       background:transparent;
       color:var(--text);
-      font-size: 18px;
-      padding: 2px 2px;
+      font-size:18px;
+      padding:2px 2px;
     }
     .search input::placeholder{ color: rgba(255,255,255,.45); }
+
     .hint{
-      flex:0 0 auto;
       display:flex;
-      align-items:center;
       gap:8px;
-      color: rgba(255,255,255,.38);
-      font-size: 12px;
-      letter-spacing:.02em;
+      color:rgba(255,255,255,.38);
+      font-size:12px;
       user-select:none;
+      white-space:nowrap;
     }
     .hint .keycap{
       border:1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      padding: 4px 8px;
-      border-radius: 10px;
-      font-family: "JetBrains Mono", ui-monospace, monospace;
+      background:rgba(255,255,255,.06);
+      padding:4px 8px;
+      border-radius:10px;
+      font-family:"JetBrains Mono", ui-monospace, monospace;
     }
 
-    /* 搜索聚焦：舞台感（更强降噪） */
+    /* 搜索聚焦：舞台感 */
     .dim-on-focus .grid,
     .dim-on-focus .sectionbar{
       opacity:.42;
-      filter: blur(8px);
+      filter: blur(5px);
       transform: translateY(2px) scale(.98);
-      transition: opacity .25s var(--ease2), filter .25s var(--ease2), transform .25s var(--ease2);
+      transition: .25s var(--ease2);
     }
 
-    /* 分组条：目录式优雅 */
     .sectionbar{
       display:flex;
-      align-items:center;
       justify-content:space-between;
-      margin: 10px 2px 10px;
-      transition: opacity .25s var(--ease2), filter .25s var(--ease2), transform .25s var(--ease2);
+      align-items:center;
+      margin:10px 0;
+      transition: .25s var(--ease2);
     }
     .sectionbar .left{
       display:flex;
       align-items:center;
       gap:12px;
-      color: rgba(255,255,255,.55);
-      font-size: 11px;
-      letter-spacing: .15em;  /* 你要的 0.15em */
-      text-transform: uppercase;
+      color:rgba(255,255,255,.55);
+      font-size:11px;
+      letter-spacing:.15em;
+      text-transform:uppercase;
       user-select:none;
-      opacity: .92;
     }
     .dotline{
       height:1px;
-      width: 54px;
+      width:54px;
       background: linear-gradient(90deg, rgba(255,255,255,.22), transparent);
-      border-radius: 1px;
     }
     .morebtn{
       border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      color: rgba(255,255,255,.72);
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-size: 13px;
+      background:rgba(255,255,255,.06);
+      color:rgba(255,255,255,.72);
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:13px;
       cursor:pointer;
-      transition: transform .2s var(--ease), background .2s var(--ease2), border-color .2s var(--ease2);
+      transition: .2s var(--ease);
       user-select:none;
     }
-    .morebtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18); }
-    .morebtn:active{ transform: translateY(0px) scale(.98); }
+    .morebtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); }
+    .morebtn:active{ transform: translateY(0) scale(.98); }
 
-    /* 网格 */
     .grid{
       display:grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: 26px 34px;
-      padding: 16px 6px 8px; /* 下移一点，视觉重心更稳 */
-      transition: opacity .25s var(--ease2), filter .25s var(--ease2), transform .25s var(--ease2);
-    }
-    @media (max-width: 860px){
-      .grid{ grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px 26px; }
-    }
-    @media (max-width: 520px){
-      .grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px 22px; }
-      .hint{ display:none; }
-      .greet,.clock{ font-size: 16px; }
-      .search input{ font-size: 17px; }
+      grid-template-columns: repeat(6, 1fr);
+      gap:26px 34px;
+      padding:16px 6px;
+      transition: .25s var(--ease2);
     }
 
-    /* 去底座：只保留“足够大点击区域” */
+    @media (max-width: 860px){
+      .grid{ grid-template-columns:repeat(4,1fr); }
+    }
+    @media (max-width: 520px){
+      .grid{ grid-template-columns:repeat(3,1fr); }
+      .hint{ display:none; }
+      .greet,.clock{ font-size:16px; }
+      .search input{ font-size:17px; }
+    }
+
+    /* ✅ item 必须 relative：修复 kbd 乱飞 */
     .item{
-      position:relative;
+      position:relative; /* ✅ 修复点 1 */
       display:flex;
       flex-direction:column;
       align-items:center;
       gap:10px;
       text-decoration:none;
-      color: rgba(255,255,255,.70);
-      border-radius: 16px;
-      padding: 10px 8px;
-      outline: none;
+      outline:none;
       -webkit-tap-highlight-color: transparent;
-      transform: translateZ(0);
 
-      transition: transform .25s var(--ease2);
-      will-change: transform;
+      --mx:0px;
+      --my:0px;
+
+      transform: translate3d(var(--mx), var(--my), 0);
+      transition: transform .18s var(--ease2);
     }
 
-    /* 默认：降噪（灰度 + 半透明） */
     .icon{
-      width: 52px;
-      height: 52px;
+      width:52px; height:52px;
       display:grid;
       place-items:center;
-      transition: transform .32s var(--ease), filter .32s var(--ease2), opacity .32s var(--ease2), color .32s var(--ease2);
-      filter: grayscale(100%) opacity(.62);
-      opacity: .92;
       color: rgba(255,255,255,.92);
+      filter: grayscale(100%) opacity(.62);
+      transition: .32s var(--ease);
       position:relative;
-      will-change: transform, filter, opacity, color;
+      transform: translateZ(0);
     }
-    .icon svg{
-      width: 36px;
-      height: 36px;
-      display:block;
-    }
+    .icon svg{ width:36px; height:36px; }
 
-    /* 视觉等大校正：只缩放 glyph，不影响 hover 位移与 glow */
+    /* 视觉等大校正容器 */
     .icon .glyph{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      transform: scale(var(--s, 1));
-      transition: transform .28s var(--ease);
-      will-change: transform;
+      transform: scale(var(--s, 1)) translateY(var(--ty, 0px));
+      transition: .28s var(--ease);
+      display:grid;
+      place-items:center;
     }
 
-    /* Hover/Focus：唤醒（彩色 + 轻浮起） */
     .item:hover .icon,
     .item:focus-visible .icon{
-      filter: none;
+      filter:none;
       transform: translateY(-4px);
     }
 
-    /* Layered Shadows：品牌色外扩光晕（更大、更淡） */
+    /* ✅ Dynamic Shadow：跟随磁吸反向偏移 */
     .item:hover .icon::after,
     .item:focus-visible .icon::after{
       content:"";
       position:absolute;
-      width: 66px; height: 66px;
-      border-radius: 20px;
-      background: radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--glow) 70%, transparent), transparent 62%);
-      filter: blur(18px);
-      opacity: .28; /* 超克制的“投光” */
+      width:66px; height:66px;
+      border-radius:20px;
       z-index:-1;
-      transform: translateY(3px);
+      filter: blur(18px);
+      opacity:.28;
+      background: radial-gradient(circle at 30% 30%,
+        color-mix(in srgb, var(--glow) 70%, transparent),
+        transparent 62%);
+      transform: translate(calc(var(--mx) * -0.6), calc(var(--my) * -0.6 + 3px));
       pointer-events:none;
     }
 
-    /* 额外一层下投影（不抢戏） */
-    .item:hover{
-      filter: drop-shadow(0 18px 28px rgba(0,0,0,.22));
-    }
-
-    /* 无障碍 + 高级：Tab 聚焦 outline */
-    .item:focus-visible{
-      box-shadow: 0 0 0 1px rgba(255,255,255,.18), 0 0 0 6px rgba(124,92,255,.14);
-    }
-
-    /* 文字隐退：默认更淡，hover 才显露 */
     .label{
-      font-size: 13px;
-      letter-spacing: .01em;
+      font-size:13px;
       color: rgba(255,255,255,.58);
-      opacity: .40;
-      transition: color .22s var(--ease2), opacity .22s var(--ease2);
+      opacity:.4;
+      text-shadow: 0 1px 2px rgba(0,0,0,.12);
+      transition: .22s var(--ease2);
       user-select:none;
     }
     .item:hover .label,
@@ -341,46 +301,67 @@
       opacity: 1;
     }
 
-    /* 快捷键提示：默认隐藏，按住 Alt 才显示 */
+    /* Tab 聚焦高亮（高级+无障碍） */
+    .item:focus-visible{
+      border-radius: 14px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.18), 0 0 0 6px rgba(124,92,255,.14);
+    }
+
+    /* Alt 才显示快捷键提示 */
     .kbd{
       position:absolute;
-      top: -6px;
-      right: 2px;
-      transform: translateY(-6px) scale(.96);
-      opacity: 0;
-      pointer-events:none;
-      transition: opacity .18s var(--ease2), transform .18s var(--ease);
-      font-family: "JetBrains Mono", ui-monospace, monospace;
-      font-size: 11px;
+      top:-6px;
+      right:2px;
+      opacity:0;
+      transform: translateY(0); /* ✅ 更丝滑 */
+      font-family:"JetBrains Mono", ui-monospace, monospace;
+      font-size:11px;
       color: rgba(255,255,255,.80);
-      border:1px solid rgba(255,255,255,.14);
       background: rgba(0,0,0,.25);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      padding: 4px 7px;
-      border-radius: 10px;
+      padding:4px 7px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.14);
+      transition: .18s var(--ease);
+      pointer-events:none;
+      user-select:none;
     }
     .show-hotkeys .kbd{
-      opacity: 1;
-      transform: translateY(0) scale(1);
+      opacity:1;
+      transform: translateY(6px);
     }
 
-    /* More 区域 */
-    .more-area{ overflow:hidden; }
     .more-area[aria-hidden="true"]{ display:none; }
 
-    /* 入场交错动画 */
     .reveal{ animation: rise .7s var(--ease) both; }
     @keyframes rise{
       from{ opacity:0; transform: translateY(10px); filter: blur(2px); }
       to{ opacity:1; transform: translateY(0); filter: blur(0); }
     }
+
+    /* 品牌色 hover（只影响 SVG 的 currentColor） */
+    .item.chatgpt:hover .icon{ color:#10A37F; }
+    .item.gemini:hover  .icon{ color:#4E85FF; }
+    .item.claude:hover  .icon{ color:#D97757; }
+    .item.copilot:hover .icon{ color:#43E6F0; }
+    .item.netflix:hover .icon{ color:#E50914; }
+    .item.reddit:hover  .icon{ color:#FF4500; }
+    .item.telegram:hover .icon{ color:#2AABEE; }
+    .item.discord:hover  .icon{ color:#5865F2; }
+    .item.cloudflare:hover .icon{ color:#F48120; }
+    .item.vultr:hover .icon{ color:#007BFC; }
+    .item.oracle:hover .icon{ color:#FF3B30; }
+    .item.racknerd:hover .icon{ color:#7C5CFF; }
+    .item.youtube:hover .icon{ color:#FF0033; }
+    .item.gmail:hover .icon{ color:#EA4335; }
+    .item.google:hover .icon{ color:#4285F4; }
+    .item.github:hover .icon{ color:#FFFFFF; }
   </style>
 </head>
 
 <body>
-  <!-- 动态流体背景 -->
-  <div class="bg-flow" aria-hidden="true">
+  <div class="bg-flow">
     <div class="blob b1"></div>
     <div class="blob b2"></div>
     <div class="blob b3"></div>
@@ -395,34 +376,26 @@
 
       <form class="search" id="searchForm" autocomplete="off">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="rgba(255,255,255,.8)" stroke-width="1.6"/>
-          <path d="M16.5 16.5 21 21" stroke="rgba(255,255,255,.8)" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
         </svg>
         <input id="q" type="text" placeholder="Search..." />
         <div class="hint" aria-hidden="true">
           <span class="keycap">/g</span><span>Google</span>
           <span class="keycap">/y</span><span>YouTube</span>
-          <span class="keycap">/gh</span><span>GitHub</span>
           <span class="keycap">/c</span><span>ChatGPT</span>
         </div>
       </form>
 
       <div class="sectionbar">
-        <div class="left">
-          <span class="dotline"></span>
-          <span>Essentials</span>
-        </div>
+        <div class="left"><span class="dotline"></span><span>Essentials</span></div>
         <button class="morebtn" id="toggleMore" type="button">More</button>
       </div>
-
       <div class="grid" id="gridEssentials"></div>
 
       <div class="more-area" id="moreArea" aria-hidden="true">
-        <div class="sectionbar" style="margin-top:6px">
-          <div class="left">
-            <span class="dotline"></span>
-            <span>More</span>
-          </div>
+        <div class="sectionbar">
+          <div class="left"><span class="dotline"></span><span>More</span></div>
           <button class="morebtn" id="toggleLess" type="button">Less</button>
         </div>
         <div class="grid" id="gridMore"></div>
@@ -431,142 +404,59 @@
   </div>
 
   <script>
-    // ========= SVG 资产（内嵌真矢量） =========
-    const SVG_CHATGPT = `
-      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M22.28 9.82a5.98 5.98 0 0 0-.51-4.91 6.05 6.05 0 0 0-3.95-3.13 6.03 6.03 0 0 0-5.17 1.04 6.03 6.03 0 0 0-4.38-1.93 6.05 6.05 0 0 0-5.04 2.75 6 6 0 0 0-1.47 5.03c.12 1.83.68 3.51 1.55 4.91a6.05 6.05 0 0 0 3.95 3.13 6.03 6.03 0 0 0 5.17-1.04 6.03 6.03 0 0 0 4.38 1.93 6.05 6.05 0 0 0 5.04-2.75 6 6 0 0 0-1.47-5.03c-.12-1.83-.68-3.51-1.55-4.91zm-7.1 9.45a3.73 3.73 0 0 1-2.68-.31l.1-.06 5.28-3.05a.43.43 0 0 0 .21-.37v-7.37l2.12 1.22a3.74 3.74 0 0 1 1.63 3.56 3.75 3.75 0 0 1-2.48 3.49l-4.18 2.41z"/>
-      </svg>
-    `;
+    const SVGS = {
+      chatgpt: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.28 9.82a5.98 5.98 0 0 0-.51-4.91 6.05 6.05 0 0 0-3.95-3.13 6.03 6.03 0 0 0-5.17 1.04 6.03 6.03 0 0 0-4.38-1.93 6.05 6.05 0 0 0-5.04 2.75 6 6 0 0 0-1.47 5.03c.12 1.83.68 3.51 1.55 4.91a6.05 6.05 0 0 0 3.95 3.13 6.03 6.03 0 0 0 5.17-1.04 6.03 6.03 0 0 0 4.38 1.93 6.05 6.05 0 0 0 5.04-2.75 6 6 0 0 0-1.47-5.03c-.12-1.83-.68-3.51-1.55-4.91zm-7.1 9.45a3.73 3.73 0 0 1-2.68-.31l.1-.06 5.28-3.05a.43.43 0 0 0 .21-.37v-7.37l2.12 1.22a3.74 3.74 0 0 1 1.63 3.56 3.75 3.75 0 0 1-2.48 3.49l-4.18 2.41z"/></svg>`,
+      gemini: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>`,
+      claude: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4.5 20.5H19.5L12 2Z"/><circle cx="12" cy="13" r="3"/></svg>`,
+      copilot: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.996 23.003c5.317 0 9.873-4.103 9.873-9.143 0-2.316-.925-4.57-2.613-6.257L11.996 0 4.74 7.603A8.83 8.83 0 0 0 2.126 13.86c0 5.04 4.555 9.143 9.87 9.143Z" opacity=".25"/><path d="M12.001 19.336c3.178 0 5.908-2.455 5.908-5.472 0-1.386-.554-2.736-1.564-3.746L12 6.666l-4.344 4.552c-1.01 1.01-1.564 2.36-1.564 3.746 0 3.017 2.73 5.472 5.909 5.472Z"/></svg>`,
+      gmail: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L12 9.573l8.073-6.08c1.618-1.214 3.927-.059 3.927 1.964z"/></svg>`,
+      google: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.48 10.92v3.28h7.84c-.31 1.62-1.83 4.75-4.56 4.75-2.36 0-4.27-1.96-4.27-4.37s1.91-4.37 4.27-4.37c1.35 0 2.26.57 2.78 1.07l2.6-2.51c-1.67-1.56-3.82-2.52-5.38-2.52-5.1 0-9.24 4.14-9.24 9.24s4.14 9.24 9.24 9.24c5.33 0 8.87-3.75 8.87-9.02 0-.6-.06-1.06-.13-1.52h-8.73z"/></svg>`,
+      youtube: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`,
+      github: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>`,
+      cloudflare: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 15.111c0 2.444-1.889 4.444-4.222 4.444H6.889C3.111 19.555 0 16.444 0 12.666c0-3.333 2.444-6.111 5.667-6.555.778-3.111 3.556-5.444 6.889-5.444 3 0 5.556 1.889 6.556 4.555 2.889.334 5.111 2.778 5.111 5.778 0 .333 0 .667-.111 1.111C23 12.333 24 13.555 24 15.111z"/></svg>`,
+      netflix: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 3h3.1l5.8 13.2V3H18v18h-3.1L9 7.8V21H6V3z"/></svg>`,
+      vultr: `<svg viewBox="0 0 64 64" fill="currentColor"><path d="M10 14c0-2.2 1.8-4 4-4h10c2.2 0 4 1.8 4 4v2.8c0 1-.4 2-1.1 2.8L28 23 18.7 49.3c-.7 2-2.6 3.3-4.7 3.3H14c-2.8 0-4.9-2.7-4-5.4L20.2 22.2 11.1 19.6c-.7-.2-1.1-.8-1.1-1.5V14z" opacity=".95"/><path d="M36 10h14c2.2 0 4 1.8 4 4v8.2c0 1.1-.5 2.1-1.3 2.9L40.6 36.9c-2 1.9-5.3.5-5.3-2.2V14c0-2.2 1.8-4 4-4z" opacity=".55"/></svg>`,
+      oracle: `<svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="18" stroke="currentColor" stroke-width="6"/><path d="M44 32h8" stroke="currentColor" stroke-width="6" stroke-linecap="round" opacity=".65"/></svg>`,
+      racknerd: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.97 4.44c-.31.17-.69.17-1 0l-7.97-4.44c-.32-.17-.53-.5-.53-.88v-9c0-.38.21-.71.53-.88l7.97-4.44c.31-.17.69-.17 1 0l7.97 4.44c.32.17.53.5.53.88v9z"/><rect x="6" y="10" width="12" height="2" fill="rgba(255,255,255,0.55)"/><rect x="6" y="14" width="12" height="2" fill="rgba(255,255,255,0.55)"/></svg>`,
+      reddit: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 11.779c0-1.459-1.192-2.645-2.657-2.645-.71 0-1.348.273-1.823.717-1.624-1.137-3.844-1.87-6.303-1.957l1.085-5.11 3.554.757c.05.803.713 1.44 1.527 1.44 1.082 0 1.962-.884 1.962-1.964s-.88-1.964-1.962-1.964c-.754 0-1.41.428-1.743 1.056l-3.984-.85a.486.486 0 0 0-.573.344l-1.22 5.75c-2.525.04-4.814.786-6.48 1.948-.474-.438-1.103-.702-1.799-.702-1.465 0-2.656 1.187-2.656 2.646 0 .973.533 1.82 1.32 2.274-.053.34-.08.683-.08 1.03 0 3.536 4.102 6.413 9.143 6.413 5.042 0 9.143-2.877 9.143-6.413 0-.337-.026-.67-.076-1.002.822-.445 1.383-1.3 1.383-2.296zm-15.046 2.15c0-1.082.88-1.963 1.962-1.963s1.962.88 1.962 1.963-.88 1.963-1.962 1.963-1.962-.88-1.962-1.963zm9.23 4.417c-1.3 1.303-3.753 1.408-4.183 1.408-.432 0-2.884-.105-4.183-1.408a.486.486 0 1 1 .687-.687c.88.88 2.723 1.1 3.496 1.1.77 0 2.614-.22 3.496-1.1a.486.486 0 1 1 .687.687zm-1.144-2.454c-1.082 0-1.962-.88-1.962-1.963s.88-1.963 1.962-1.963 1.962.88 1.962 1.963-.88 1.963-1.962 1.963z"/></svg>`,
+      telegram: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0C5.356 0 0 5.356 0 11.944s5.356 11.944 11.944 11.944 11.944-5.356 11.944-11.944S18.532 0 11.944 0zm5.83 8.04l-1.99 9.382c-.15.666-.543.83-1.1.52l-3.033-2.235-1.464 1.408c-.162.162-.3.298-.616.298l.218-3.09 5.625-5.082c.245-.218-.053-.34-.378-.122L8.046 13.43l-2.997-.937c-.652-.204-.666-.652.136-.966l11.714-4.514c.543-.204 1.018.12.875 1.028z"/></svg>`,
+      discord: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>`,
+      wiki: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1a11 11 0 1 0 11 11A11.013 11.013 0 0 0 12 1Zm6.2 7.1-2.9 8.8h-1.7l-1.7-5.2-1.7 5.2H8.5L5.8 8.1h1.9l1.6 5.6 1.7-5.6h1.9l1.7 5.6 1.6-5.6h2Z"/></svg>`
+    };
 
-    const SVG_GEMINI = `
-      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/>
-      </svg>
-    `;
-
-    const SVG_CLAUDE = `
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-           stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M12 2L4.5 20.5H19.5L12 2Z" />
-        <circle cx="12" cy="13" r="3" />
-      </svg>
-    `;
-
-    const SVG_COPILOT = `
-      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M11.996 23.003c5.317 0 9.873-4.103 9.873-9.143 0-2.316-.925-4.57-2.613-6.257L11.996 0 4.74 7.603A8.83 8.83 0 0 0 2.126 13.86c0 5.04 4.555 9.143 9.87 9.143Z" opacity=".25"/>
-        <path d="M12.001 19.336c3.178 0 5.908-2.455 5.908-5.472 0-1.386-.554-2.736-1.564-3.746L12 6.666l-4.344 4.552c-1.01 1.01-1.564 2.36-1.564 3.746 0 3.017 2.73 5.472 5.909 5.472Z"/>
-      </svg>
-    `;
-
-    const SVG_VULTR = `
-      <svg viewBox="0 0 64 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M10 14c0-2.2 1.8-4 4-4h10c2.2 0 4 1.8 4 4v2.8c0 1-.4 2-1.1 2.8L28 23 18.7 49.3c-.7 2-2.6 3.3-4.7 3.3H14c-2.8 0-4.9-2.7-4-5.4L20.2 22.2 11.1 19.6c-.7-.2-1.1-.8-1.1-1.5V14z" opacity=".95"/>
-        <path d="M36 10h14c2.2 0 4 1.8 4 4v8.2c0 1.1-.5 2.1-1.3 2.9L40.6 36.9c-2 1.9-5.3.5-5.3-2.2V14c0-2.2 1.8-4 4-4z" opacity=".55"/>
-      </svg>
-    `;
-
-    const SVG_ORACLE = `
-      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <circle cx="32" cy="32" r="18" stroke="currentColor" stroke-width="6"/>
-        <path d="M44 32h8" stroke="currentColor" stroke-width="6" stroke-linecap="round" opacity=".65"/>
-      </svg>
-    `;
-
-    const SVG_RACKNERD = `
-      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M21 16.5c0 .38-.21.71-.53.88l-7.97 4.44c-.31.17-.69.17-1 0l-7.97-4.44c-.32-.17-.53-.5-.53-.88v-9c0-.38.21-.71.53-.88l7.97-4.44c.31-.17.69-.17 1 0l7.97 4.44c.32.17.53.5.53.88v9z"/>
-        <rect x="6" y="10" width="12" height="2" fill="rgba(255,255,255,0.55)"/>
-        <rect x="6" y="14" width="12" height="2" fill="rgba(255,255,255,0.55)"/>
-      </svg>
-    `;
-
-    const SVG_REDDIT = `
-      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M24 11.779c0-1.459-1.192-2.645-2.657-2.645-.71 0-1.348.273-1.823.717-1.624-1.137-3.844-1.87-6.303-1.957l1.085-5.11 3.554.757c.05.803.713 1.44 1.527 1.44 1.082 0 1.962-.884 1.962-1.964s-.88-1.964-1.962-1.964c-.754 0-1.41.428-1.743 1.056l-3.984-.85a.486.486 0 0 0-.573.344l-1.22 5.75c-2.525.04-4.814.786-6.48 1.948-.474-.438-1.103-.702-1.799-.702-1.465 0-2.656 1.187-2.656 2.646 0 .973.533 1.82 1.32 2.274-.053.34-.08.683-.08 1.03 0 3.536 4.102 6.413 9.143 6.413 5.042 0 9.143-2.877 9.143-6.413 0-.337-.026-.67-.076-1.002.822-.445 1.383-1.3 1.383-2.296zm-15.046 2.15c0-1.082.88-1.963 1.962-1.963s1.962.88 1.962 1.963-.88 1.963-1.962 1.963-1.962-.88-1.962-1.963zm9.23 4.417c-1.3 1.303-3.753 1.408-4.183 1.408-.432 0-2.884-.105-4.183-1.408a.486.486 0 1 1 .687-.687c.88.88 2.723 1.1 3.496 1.1.77 0 2.614-.22 3.496-1.1a.486.486 0 1 1 .687.687zm-1.144-2.454c-1.082 0-1.962-.88-1.962-1.963s.88-1.963 1.962-1.963 1.962.88 1.962 1.963-.88 1.963-1.962 1.963z"/>
-      </svg>
-    `;
-
-    const SVG_TELEGRAM = `
-      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M11.944 0C5.356 0 0 5.356 0 11.944s5.356 11.944 11.944 11.944 11.944-5.356 11.944-11.944S18.532 0 11.944 0zm5.83 8.04l-1.99 9.382c-.15.666-.543.83-1.1.52l-3.033-2.235-1.464 1.408c-.162.162-.3.298-.616.298l.218-3.09 5.625-5.082c.245-.218-.053-.34-.378-.122L8.046 13.43l-2.997-.937c-.652-.204-.666-.652.136-.966l11.714-4.514c.543-.204 1.018.12.875 1.028z"/>
-      </svg>
-    `;
-
-    const SVG_DISCORD = `
-      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
-      </svg>
-    `;
-
-    const SVG_WIKIPEDIA = `
-      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M12 1a11 11 0 1 0 11 11A11.013 11.013 0 0 0 12 1Zm6.2 7.1-2.9 8.8h-1.7l-1.7-5.2-1.7 5.2H8.5L5.8 8.1h1.9l1.6 5.6 1.7-5.6h1.9l1.7 5.6 1.6-5.6h2Z"/>
-      </svg>
-    `;
-
-    const SVG_NETFLIX = `
-      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M6 3h3.1l5.8 13.2V3H18v18h-3.1L9 7.8V21H6V3z"/>
-      </svg>
-    `;
-
-    // ========= 站点：Essentials（Netflix 已前移，云服务固定最后三位） =========
+    // ✅ 修复：Google 快捷键从 O 改成 K，避免与 Oracle 冲突
     const essentials = [
-      { name:"ChatGPT",  url:"https://chatgpt.com/",            key:"C", glow:"#10A37F", svg: SVG_CHATGPT, cls:"chatgpt",  scale:0.96 },
-      { name:"Gemini",   url:"https://gemini.google.com/",      key:"G", glow:"#4E85FF", svg: SVG_GEMINI,  cls:"gemini",   scale:1.08 },
-      { name:"Claude",   url:"https://claude.ai/",              key:"L", glow:"#D97757", svg: SVG_CLAUDE,  cls:"claude",   scale:1.04 },
-      { name:"Copilot",  url:"https://copilot.microsoft.com/",  key:"P", glow:"#43E6F0", svg: SVG_COPILOT, cls:"copilot",  scale:1.02 },
-
-      { name:"Gmail",    url:"https://mail.google.com/",        key:"M", glow:"#EA4335", svg: `
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-          <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L12 9.573l8.073-6.08c1.618-1.214 3.927-.059 3.927 1.964z"/>
-        </svg>`, scale:1.02 },
-
-      { name:"Google",   url:"https://www.google.com/",          key:"O", glow:"#4285F4", svg: `
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12.48 10.92v3.28h7.84c-.31 1.62-1.83 4.75-4.56 4.75-2.36 0-4.27-1.96-4.27-4.37s1.91-4.37 4.27-4.37c1.35 0 2.26.57 2.78 1.07l2.6-2.51c-1.67-1.56-3.82-2.52-5.38-2.52-5.1 0-9.24 4.14-9.24 9.24s4.14 9.24 9.24 9.24c5.33 0 8.87-3.75 8.87-9.02 0-.6-.06-1.06-.13-1.52h-8.73z"/>
-        </svg>`, scale:0.98 },
-
-      { name:"YouTube",  url:"https://www.youtube.com/",        key:"Y", glow:"#FF0033", svg: `
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-        </svg>`, scale:1.02 },
-
-      { name:"GitHub",   url:"https://github.com/",             key:"H", glow:"#FFFFFF", svg: `
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
-        </svg>`, scale:0.90 },
-
-      { name:"Cloudflare", url:"https://dash.cloudflare.com/",   key:"F", glow:"#F48120", svg: `
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-          <path d="M24 15.111c0 2.444-1.889 4.444-4.222 4.444H6.889C3.111 19.555 0 16.444 0 12.666c0-3.333 2.444-6.111 5.667-6.555.778-3.111 3.556-5.444 6.889-5.444 3 0 5.556 1.889 6.556 4.555 2.889.334 5.111 2.778 5.111 5.778 0 .333 0 .667-.111 1.111C23 12.333 24 13.555 24 15.111z"/>
-        </svg>`, scale:1.06 },
-
-      { name:"Netflix",  url:"https://www.netflix.com/",         key:"N", glow:"#E50914", svg: SVG_NETFLIX, cls:"netflix", scale:1.10 },
-
-      /* 固定最后三位：云服务器 */
-      { name:"Vultr",    url:"https://my.vultr.com/",            key:"V", glow:"#007BFC", svg: SVG_VULTR, cls:"vultr",     scale:0.96 },
-      { name:"Oracle",   url:"https://cloud.oracle.com/",        key:"O", glow:"#FF3B30", svg: SVG_ORACLE, cls:"oracle",   scale:0.90 },
-      { name:"RackNerd", url:"https://my.racknerd.com/",         key:"R", glow:"#7C5CFF", svg: SVG_RACKNERD, cls:"racknerd", scale:1.06 }
+      { name:"ChatGPT",    url:"https://chatgpt.com/",              key:"C", glow:"#10A37F", svg:SVGS.chatgpt,   cls:"chatgpt",   scale:0.96 },
+      { name:"Gemini",     url:"https://gemini.google.com/",        key:"G", glow:"#4E85FF", svg:SVGS.gemini,    cls:"gemini",    scale:1.08 },
+      { name:"Claude",     url:"https://claude.ai/",                key:"L", glow:"#D97757", svg:SVGS.claude,    cls:"claude",    scale:1.04 },
+      { name:"Copilot",    url:"https://copilot.microsoft.com/",    key:"P", glow:"#43E6F0", svg:SVGS.copilot,   cls:"copilot",   scale:1.02 },
+      { name:"Netflix",    url:"https://www.netflix.com/",          key:"N", glow:"#E50914", svg:SVGS.netflix,   cls:"netflix",   scale:1.10 },
+      { name:"Gmail",      url:"https://mail.google.com/",          key:"M", glow:"#EA4335", svg:SVGS.gmail,     cls:"gmail",     scale:1.02 },
+      { name:"Google",     url:"https://www.google.com/",           key:"K", glow:"#4285F4", svg:SVGS.google,    cls:"google",    scale:0.98 },
+      { name:"YouTube",    url:"https://www.youtube.com/",          key:"Y", glow:"#FF0033", svg:SVGS.youtube,   cls:"youtube",   scale:1.02 },
+      { name:"GitHub",     url:"https://github.com/",               key:"H", glow:"#FFFFFF", svg:SVGS.github,    cls:"github",    scale:0.90 },
+      { name:"Cloudflare", url:"https://dash.cloudflare.com/",      key:"F", glow:"#F48120", svg:SVGS.cloudflare,cls:"cloudflare",scale:1.06 }
     ];
 
+    // 三个云服务器放最后（More 的最后三位）
     const more = [
-      { name:"Reddit",    url:"https://www.reddit.com/",         key:"U", glow:"#FF4500", svg: SVG_REDDIT,    cls:"reddit",   scale:1.00 },
-      { name:"Telegram",  url:"https://web.telegram.org/",       key:"T", glow:"#2AABEE", svg: SVG_TELEGRAM,  cls:"telegram", scale:1.02 },
-      { name:"Discord",   url:"https://discord.com/app",         key:"I", glow:"#5865F2", svg: SVG_DISCORD,   cls:"discord",  scale:0.98 },
-      { name:"Wikipedia", url:"https://www.wikipedia.org/",      key:"W", glow:"#FFFFFF", svg: SVG_WIKIPEDIA, cls:"wiki",     scale:1.00 }
+      { name:"Reddit",     url:"https://www.reddit.com/",           key:"U", glow:"#FF4500", svg:SVGS.reddit,   cls:"reddit",   scale:1.00 },
+      { name:"Telegram",   url:"https://web.telegram.org/",         key:"T", glow:"#2AABEE", svg:SVGS.telegram, cls:"telegram", scale:1.02 },
+      { name:"Discord",    url:"https://discord.com/app",           key:"I", glow:"#5865F2", svg:SVGS.discord,  cls:"discord",  scale:0.98 },
+      { name:"Wikipedia",  url:"https://www.wikipedia.org/",        key:"W", glow:"#FFFFFF", svg:SVGS.wiki,     cls:"wiki",     scale:1.00 },
+
+      { name:"Vultr",      url:"https://my.vultr.com/",             key:"V", glow:"#007BFC", svg:SVGS.vultr,    cls:"vultr",    scale:0.96 },
+      { name:"Oracle",     url:"https://cloud.oracle.com/",         key:"O", glow:"#FF3B30", svg:SVGS.oracle,   cls:"oracle",   scale:0.90, ty:-0.5 },
+      { name:"RackNerd",   url:"https://my.racknerd.com/",          key:"R", glow:"#7C5CFF", svg:SVGS.racknerd, cls:"racknerd", scale:1.06 }
     ];
 
-    // ========= 2) 渲染 =========
     const gridEss = document.getElementById("gridEssentials");
     const gridMore = document.getElementById("gridMore");
     const app = document.getElementById("app");
 
     function makeItem(site, idx){
       const a = document.createElement("a");
-      a.className = "item";
-      if (site.cls) a.classList.add(site.cls);
+      a.className = "item " + (site.cls || "");
       a.href = site.url;
       a.target = "_blank";
       a.rel = "noopener noreferrer";
@@ -575,19 +465,18 @@
       a.classList.add("reveal");
       a.style.animationDelay = (idx * 28) + "ms";
 
-      const scale = (typeof site.scale === "number") ? site.scale : 1;
+      const scale = site.scale || 1;
+      const ty = site.ty || 0;
 
       a.innerHTML = `
         <span class="kbd">${site.key || ""}</span>
         <span class="icon">
-          <span class="glyph" style="--s:${scale}">${site.svg}</span>
+          <span class="glyph" style="--s:${scale};--ty:${ty}px">${site.svg}</span>
         </span>
         <span class="label">${site.name}</span>
       `;
 
-      if(!site.key){
-        a.querySelector(".kbd").style.display = "none";
-      }
+      if(!site.key) a.querySelector(".kbd").style.display = "none";
       return a;
     }
 
@@ -599,10 +488,9 @@
     }
     render();
 
-    // ========= 3) 时间 + 问候 =========
+    // 时间 + 问候 + 自适应背景
     const greetEl = document.getElementById("greet");
     const clockEl = document.getElementById("clock");
-
     function pad(n){ return String(n).padStart(2,"0"); }
     function updateTime(){
       const d = new Date();
@@ -617,7 +505,6 @@
       else g = "Good night.";
       greetEl.textContent = g;
 
-      // 环境光适配：深夜更冷、更沉；清晨稍亮
       const root = document.documentElement;
       if(h >= 2 && h <= 5){
         root.style.setProperty("--bg0", "#05070E");
@@ -631,12 +518,11 @@
       }
     }
     updateTime();
-    setInterval(updateTime, 1000 * 15);
+    setInterval(updateTime, 15000);
 
-    // ========= 4) 搜索：Bang 语法 =========
+    // 搜索（Bang）
     const q = document.getElementById("q");
     const searchForm = document.getElementById("searchForm");
-
     const engines = {
       "/g":  (t)=> `https://www.google.com/search?q=${encodeURIComponent(t)}`,
       "/y":  (t)=> `https://www.youtube.com/results?search_query=${encodeURIComponent(t)}`,
@@ -658,41 +544,27 @@
       const prefix = parts[0];
       const rest = raw.slice(prefix.length).trim();
 
-      let url;
-      if(engines[prefix]){
-        url = engines[prefix](rest || "");
-      }else{
-        url = engines["/g"](raw);
-      }
+      const url = engines[prefix] ? engines[prefix](rest || "") : engines["/g"](raw);
       window.open(url, "_blank", "noopener");
     });
 
-    // 打开即输入
     window.addEventListener("load", ()=> q.focus({preventScroll:true}));
-
-    // 搜索聚焦：舞台感
     q.addEventListener("focus", ()=> app.classList.add("dim-on-focus"));
-    q.addEventListener("blur", ()=> app.classList.remove("dim-on-focus"));
+    q.addEventListener("blur",  ()=> app.classList.remove("dim-on-focus"));
 
-    // ========= 5) Alt 才显示快捷键提示 =========
-    function setHotkeys(on){
-      document.body.classList.toggle("show-hotkeys", on);
-    }
+    // Alt 才显示热键提示
+    function setHotkeys(on){ document.body.classList.toggle("show-hotkeys", on); }
     window.addEventListener("keydown", (e)=>{ if(e.altKey) setHotkeys(true); });
     window.addEventListener("keyup",   (e)=>{ if(!e.altKey) setHotkeys(false); });
 
-    // ========= 6) 单键快捷跳转（不打扰输入框） =========
+    // 单键快捷跳转（不影响输入）
     const shortcutMap = new Map();
-    [...essentials, ...more].forEach(s=>{
-      if(s.key) shortcutMap.set(s.key.toUpperCase(), s.url);
-    });
+    [...essentials, ...more].forEach(s=>{ if(s.key) shortcutMap.set(s.key.toUpperCase(), s.url); });
 
     window.addEventListener("keydown", (e)=>{
       const active = document.activeElement;
       const typing = active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA" || active.isContentEditable);
-      if(typing) return;
-
-      if(e.altKey) return;
+      if(typing || e.altKey) return;
 
       const k = (e.key || "").toUpperCase();
       if(shortcutMap.has(k)){
@@ -706,7 +578,7 @@
       }
     });
 
-    // ========= 7) More 展开：FLIP 动画 =========
+    // More 展开：FLIP 动画
     const moreArea = document.getElementById("moreArea");
     const btnMore = document.getElementById("toggleMore");
     const btnLess = document.getElementById("toggleLess");
@@ -730,82 +602,59 @@
         const dw = f.width / last.width;
         const dh = f.height / last.height;
 
-        el.animate([
-          { transform: `translate(${dx}px, ${dy}px) scale(${dw}, ${dh})` },
-          { transform: "translate(0,0) scale(1,1)" }
-        ],{
-          duration: 520,
-          easing: "cubic-bezier(.22,.61,.36,1)",
-          fill: "both"
-        });
+        el.animate(
+          [
+            { transform: `translate(${dx}px, ${dy}px) scale(${dw}, ${dh})` },
+            { transform: `translate3d(var(--mx), var(--my), 0)` }
+          ],
+          { duration: 520, easing: "cubic-bezier(.22,.61,.36,1)", fill: "both" }
+        );
       });
 
       btnMore.style.visibility = show ? "hidden" : "visible";
     }
+
     btnMore.addEventListener("click", ()=> flipToggle(true));
     btnLess.addEventListener("click", ()=> flipToggle(false));
 
-    // ========= 8) Magnetic Hover：20px 感应，2~3px 偏移 =========
+    // 磁吸（桌面端）
     (function magnetic(){
       const items = Array.from(document.querySelectorAll(".item"));
       const MAX_DIST = 20;
       const MAX_MOVE = 3;
-      const SPRING_IN  = "cubic-bezier(.34,1.56,.64,1)";
-      const SPRING_OUT = "cubic-bezier(.22,.61,.36,1)";
 
-      const isTouch = matchMedia("(pointer: coarse)").matches;
-      if(isTouch) return;
+      if(matchMedia("(pointer: coarse)").matches) return;
 
       items.forEach(el=>{
-        el.style.willChange = "transform";
         el.addEventListener("mousemove", (e)=>{
           const r = el.getBoundingClientRect();
           const cx = r.left + r.width/2;
-          const cy = r.top + r.height/2;
-
+          const cy = r.top  + r.height/2;
           const dx = e.clientX - cx;
           const dy = e.clientY - cy;
-
           const dist = Math.sqrt(dx*dx + dy*dy);
+
           if(dist > Math.max(r.width, r.height)/2 + MAX_DIST){
-            el.style.transitionTimingFunction = SPRING_OUT;
-            el.style.transform = "";
+            el.style.setProperty("--mx", "0px");
+            el.style.setProperty("--my", "0px");
             return;
           }
 
           const nx = dx / (r.width/2 + MAX_DIST);
           const ny = dy / (r.height/2 + MAX_DIST);
-
           const mx = Math.max(-1, Math.min(1, nx)) * MAX_MOVE;
           const my = Math.max(-1, Math.min(1, ny)) * MAX_MOVE;
 
-          el.style.transitionTimingFunction = SPRING_IN;
-          el.style.transform = `translate3d(${mx}px, ${my}px, 0)`;
+          el.style.setProperty("--mx", mx.toFixed(2) + "px");
+          el.style.setProperty("--my", my.toFixed(2) + "px");
         });
 
         el.addEventListener("mouseleave", ()=>{
-          el.style.transitionTimingFunction = SPRING_OUT;
-          el.style.transform = "";
+          el.style.setProperty("--mx", "0px");
+          el.style.setProperty("--my", "0px");
         });
       });
     })();
   </script>
-
-  <!-- 品牌色 Hover：只改 icon 的“currentColor” -->
-  <style>
-    .item.chatgpt:hover .icon,  .item.chatgpt:focus-visible .icon{ color:#10a37f; }
-    .item.gemini:hover  .icon,  .item.gemini:focus-visible  .icon{ color:#4e85ff; }
-    .item.claude:hover  .icon,  .item.claude:focus-visible  .icon{ color:#d97757; }
-    .item.copilot:hover .icon,  .item.copilot:focus-visible .icon{ color:#43e6f0; }
-
-    .item.vultr:hover   .icon,  .item.vultr:focus-visible   .icon{ color:#007BFC; }
-    .item.oracle:hover  .icon,  .item.oracle:focus-visible  .icon{ color:#FF3B30; }
-    .item.racknerd:hover .icon, .item.racknerd:focus-visible .icon{ color:#7C5CFF; }
-
-    .item.reddit:hover  .icon,  .item.reddit:focus-visible  .icon{ color:#FF4500; }
-    .item.telegram:hover .icon, .item.telegram:focus-visible .icon{ color:#2AABEE; }
-    .item.discord:hover .icon,  .item.discord:focus-visible .icon{ color:#5865F2; }
-    .item.netflix:hover .icon,  .item.netflix:focus-visible .icon{ color:#E50914; }
-  </style>
 </body>
 </html>
