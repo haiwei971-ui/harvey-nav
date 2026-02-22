@@ -15,163 +15,162 @@
 
   <style>
     :root{
-      --bg0:#070A12; --bg1:#09112A; --text: rgba(255,255,255,.92);
-      --hair2: rgba(255,255,255,.08);
-      --ease: cubic-bezier(.34,1.56,.64,1);
-      --ease2: cubic-bezier(.22,.61,.36,1);
       --easeWave: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease2: cubic-bezier(.22,.61,.36,1);
+
+      /* ✅ 主题变量：默认 day */
+      --bg-top:#FFFFFF;
+      --bg-bottom:#F5F5F7;
+
+      --text:#1D1D1F;
+      --text-muted:rgba(0,0,0,0.45);
+
+      --hair:rgba(0,0,0,0.06);
+      --search-bg:rgba(0,0,0,0.03);
+
+      --icon-opacity:0.45;
+      --icon-color:#333;
+
+      /* 背景流体强调色（会被 JS 动态改） */
+      --accent:#a1c4fd;
     }
+
     *{ box-sizing:border-box; }
     html,body{ height:100%; margin:0; }
+
     body{
       color:var(--text);
       font-family: Inter, -apple-system, sans-serif;
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
-      background: linear-gradient(180deg, var(--bg1), var(--bg0));
+      background: linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
       overflow-x:hidden;
-    }
-    body::before{
-      content:"";
-      position:fixed; inset:0;
-      opacity:.06; pointer-events:none; z-index:-1;
-      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
-      mix-blend-mode: overlay;
+      transition: background 1.8s var(--easeWave), color 1.8s var(--easeWave);
     }
 
-    /* 呼吸感背景色块 */
-    .bg-flow{
-      position:fixed; inset:-20%;
-      pointer-events:none; z-index:-3;
-      filter:blur(120px); opacity:.55;
-    }
+    /* 动态流体背景 */
+    .bg-flow{ position:fixed; inset:-20%; pointer-events:none; z-index:-3; filter:blur(120px); opacity:.38; }
     .bg-flow .blob{
-      position:absolute;
-      width:70vmax; height:70vmax;
-      border-radius:999px;
-      background:radial-gradient(circle at 30% 30%, rgba(90,80,255,.15), transparent 60%);
-      animation: drift1 60s var(--ease2) infinite alternate;
+      position:absolute; width:70vmax; height:70vmax; border-radius:999px;
+      background: radial-gradient(circle, var(--accent), transparent 60%);
+      animation: drift 60s var(--ease2) infinite alternate;
     }
-    .bg-flow .blob.b2{
-      width:60vmax; height:60vmax;
-      background:radial-gradient(circle at 30% 30%, rgba(0,210,255,.12), transparent 60%);
-      animation: drift2 70s var(--ease2) infinite alternate;
-    }
-    @keyframes drift1{ from{transform:translate(-5%,-5%)} to{transform:translate(10%,10%)} }
-    @keyframes drift2{ from{transform:translate(10%,-10%)} to{transform:translate(-5%,5%)} }
+    @keyframes drift{ from{transform:translate(-5%,-5%)} to{transform:translate(10%,10%)} }
 
-    .wrap{
-      min-height:100%;
-      display:flex;
-      justify-content:center;
-      padding:calc(40px + env(safe-area-inset-top)) 18px;
-    }
+    .wrap{ min-height:100%; display:flex; justify-content:center; padding:calc(60px + env(safe-area-inset-top)) 18px; }
     .shell{ width:min(980px, 100%); transition: .4s var(--ease2); }
 
     .topbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
-    .greet{ font-size:18px; font-weight:500; color:rgba(255,255,255,.75); letter-spacing:.02em; }
-    .clock{ font-family:"JetBrains Mono"; font-size:18px; font-weight:600; font-variant-numeric:tabular-nums; }
+    .greet{ font-size:18px; font-weight:500; opacity:.85; letter-spacing:.02em; color:var(--text); transition: color 1.2s var(--easeWave); }
+    .clock{ font-family:"JetBrains Mono"; font-size:18px; font-weight:600; font-variant-numeric:tabular-nums; color:var(--text); transition: color 1.2s var(--easeWave); }
 
     .search{
-      display:flex; align-items:center; gap:12px;
-      padding:15px 20px;
-      border-radius:999px;
-      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
-      border:1px solid var(--hair2);
-      backdrop-filter:blur(15px);
-      -webkit-backdrop-filter:blur(15px);
-      box-shadow:0 15px 45px rgba(0,0,0,.2);
+      display:flex; align-items:center; gap:12px; padding:15px 22px; border-radius:999px;
+      background: var(--search-bg);
+      border:1px solid var(--hair);
+      backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+      box-shadow:0 10px 30px rgba(0,0,0,0.05);
       transition:.3s var(--easeWave);
-      margin-bottom:32px;
+      margin-bottom:48px;
     }
     .search:focus-within{
       transform:scaleX(1.03);
-      border-color:rgba(124,92,255,.4);
-      backdrop-filter:blur(25px);
-      -webkit-backdrop-filter:blur(25px);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.1);
+      border-color: rgba(124,92,255,0.55);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.12), inset 0 0 0 1px rgba(124,92,255,0.22);
     }
-    .search input{
-      width:100%; border:0; outline:none;
-      background:transparent; color:var(--text); font-size:18px;
-    }
-    .hint{
-      display:flex; gap:10px; color:rgba(255,255,255,.3);
-      font-size:12px; font-family:"JetBrains Mono"; white-space:nowrap;
-    }
+    .search input{ width:100%; border:0; outline:none; background:transparent; color:var(--text); font-size:18px; }
 
-    .dim-on-focus .grid, .dim-on-focus .sectionbar, .dim-on-focus .more-btn-wrap{
-      opacity:0.3; filter:blur(4px); transform:scale(0.98); transition:.25s var(--easeWave);
+    .hint{ display:flex; gap:10px; color:var(--text-muted); font-size:12px; font-family:"JetBrains Mono"; white-space:nowrap; }
+    @media (max-width: 520px){ .hint{display:none} }
+
+    .dim-on-focus .grid,
+    .dim-on-focus .sectionbar,
+    .dim-on-focus .morebtn{
+      opacity:0.28;
+      filter:blur(4px);
+      transform:scale(0.985);
+      transition:.22s var(--easeWave);
     }
 
     .sectionbar{
-      display:flex; align-items:center; gap:15px; margin:20px 0 15px;
-      color:rgba(255,255,255,.45); font-size:11px; letter-spacing:.2em;
-      text-transform:uppercase; font-weight:600; transition:.25s var(--ease2);
+      display:flex; align-items:center; gap:15px; margin:20px 0;
+      color: var(--text-muted); font-size:11px; letter-spacing:.2em;
+      text-transform:uppercase; font-weight:600;
     }
-    .dotline{ height:1px; flex:1; background:linear-gradient(90deg, rgba(255,255,255,.15), transparent); }
+    .dotline{ height:1px; flex:1; background: var(--hair); }
 
-    .grid{ display:grid; grid-template-columns:repeat(6, 1fr); gap:28px 20px; transition:.4s var(--ease2); }
+    .grid{ display:grid; grid-template-columns:repeat(6, 1fr); gap:32px 20px; transition:.4s var(--ease2); }
     @media (max-width: 860px){ .grid{grid-template-columns:repeat(4,1fr)} }
-    @media (max-width: 520px){ .grid{grid-template-columns:repeat(3,1fr)} .hint{display:none} }
+    @media (max-width: 520px){ .grid{grid-template-columns:repeat(3,1fr)} .greet,.clock{font-size:16px} }
 
     .item{
-      position:relative; display:flex; flex-direction:column; align-items:center; gap:12px;
+      position:relative; display:flex; flex-direction:column; align-items:center; gap:14px;
       text-decoration:none; outline:none;
-      --mx:0px; --my:0px; transform:translate3d(var(--mx), var(--my), 0);
+      --mx:0px; --my:0px;
+      transform:translate3d(var(--mx), var(--my), 0);
       transition:transform .22s var(--easeWave);
     }
+
     .icon{
-      width:54px; height:54px; display:grid; place-items:center; color:rgba(255,255,255,.9);
-      filter:grayscale(100%) opacity(.5); transition:.35s var(--ease); position:relative;
+      width:54px; height:54px; display:grid; place-items:center;
+      color: var(--icon-color);
+      filter:grayscale(100%) opacity(var(--icon-opacity));
+      transition:.35s var(--easeWave);
+      position:relative;
     }
     .icon svg{ width:36px; height:36px; display:block; }
-    .glyph{
-      transform: scale(var(--s, 1)) translateY(var(--ty, 0px));
-      transition: transform .28s var(--ease); display:grid; place-items:center;
-    }
-    .item:hover .icon{ filter:none; transform:translateY(-5px); }
+
+    .glyph{ transform: scale(var(--s, 1)) translateY(var(--ty, 0px)); transition: .28s var(--easeWave); display:grid; place-items:center; }
+
+    .item:hover .icon{ filter:none; transform:translateY(-6px); }
     .item:hover .icon::after{
-      content:""; position:absolute; inset:-10px; border-radius:50%; z-index:-1; filter:blur(15px); opacity:.25;
+      content:""; position:absolute; inset:-12px; border-radius:50%;
+      z-index:-1; filter:blur(18px); opacity:.3;
       background:radial-gradient(circle, var(--glow), transparent 70%);
       transform: translate(calc(var(--mx) * -0.8), calc(var(--my) * -0.8 + 4px));
     }
+
     .label{
-      font-size:13px; color:rgba(255,255,255,.5); opacity:.4; text-shadow:0 1px 2px rgba(0,0,0,0.12);
-      transition:.25s var(--easeWave); --lx:0px; --ly:0px;
+      font-size:13px; color: var(--text-muted);
+      text-shadow:0 1px 2px rgba(0,0,0,0.05);
+      transition:.25s var(--easeWave);
+      --lx:0px; --ly:0px;
       transform: translate3d(var(--lx), var(--ly), 0);
     }
-    .item:hover .label{ color:#fff; opacity:1; }
+    .item:hover .label{ color: var(--text); opacity:1; }
 
     .kbd{
       position:absolute; top:-6px; right:2px; opacity:0;
       font-family:"JetBrains Mono"; font-size:11px;
       background:rgba(0,0,0,.25); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
       padding:4px 7px; border-radius:10px; border:1px solid rgba(255,255,255,.14);
-      transition:.18s var(--ease); pointer-events:none;
+      transition:.18s var(--easeWave); pointer-events:none;
     }
     .show-hotkeys .kbd{ opacity:1; transform:translateY(6px); }
 
     #moreArea[aria-hidden="true"]{ display:none; }
-    .more-btn-wrap{ display:flex; justify-content:center; margin-top:40px; transition:.25s var(--ease2); }
-    .morebtn{
-      background:rgba(255,255,255,.05); border:1px solid var(--hair2); color:white;
-      padding:8px 24px; border-radius:99px; cursor:pointer; font-size:13px; opacity:.6;
-      transition:.3s var(--easeWave);
-    }
-    .morebtn:hover{ opacity:.9; transform:translateY(-1px); }
 
-    .reveal{
-      animation: rise .72s var(--easeWave) both;
-      animation-delay: var(--d, 0ms);
-      will-change: transform, opacity, filter;
+    .morebtn{
+      background: var(--search-bg);
+      border:1px solid var(--hair);
+      color:var(--text);
+      padding:8px 24px; border-radius:99px;
+      cursor:pointer; font-size:13px; opacity:.65;
+      transition:.3s var(--easeWave);
+      margin: 40px auto; display:block;
     }
+    .morebtn:hover{ opacity:1; transform:translateY(-1px); background:#7C5CFF; color:#fff; }
+
+    .reveal{ animation: rise .72s var(--easeWave) both; animation-delay: var(--d, 0ms); will-change: transform, opacity, filter; }
     @keyframes rise{
-      from{ opacity:0; transform:translateY(18px) scale(.985); filter:blur(4px); }
+      from{ opacity:0; transform:translateY(20px) scale(.98); filter:blur(5px); }
       to{ opacity:1; transform:translateY(0) scale(1); filter:blur(0); }
     }
 
-    /* ✅ 品牌颜色 Hover（现在会生效：因为 item 会带 cls class） */
+    /* ✅ 夜晚：专门照顾 GitHub hover 颜色 */
+    body.theme-night .item.github:hover .icon{ color:#fff; }
+
+    /* 品牌 Hover 颜色 */
     .item.chatgpt:hover .icon{color:#10A37F}
     .item.gemini:hover .icon{color:#4E85FF}
     .item.claude:hover .icon{color:#D97757}
@@ -183,43 +182,44 @@
     .item.gmail:hover .icon{color:#EA4335}
     .item.google:hover .icon{color:#4285F4}
     .item.youtube:hover .icon{color:#FF0033}
-    .item.github:hover .icon{color:#FFFFFF}
+    .item.github:hover .icon{color:#333}
     .item.reddit:hover .icon{color:#FF4500}
     .item.telegram:hover .icon{color:#2AABEE}
     .item.discord:hover .icon{color:#5865F2}
+    .item.wiki:hover .icon{color:#7C5CFF}
   </style>
 </head>
 
 <body>
-  <div class="bg-flow"><div class="blob b1"></div><div class="blob b2"></div></div>
+  <div class="bg-flow"><div class="blob"></div></div>
 
-  <div class="wrap"><div class="shell" id="app">
-    <div class="topbar">
-      <div class="greet" id="greet">Hello.</div>
-      <div class="clock" id="clock">00:00</div>
+  <div class="wrap">
+    <div class="shell" id="app">
+      <div class="topbar">
+        <div class="greet" id="greet">Hello.</div>
+        <div class="clock" id="clock">00:00</div>
+      </div>
+
+      <form class="search" id="searchForm" autocomplete="off">
+        <input id="q" type="text" placeholder="Search..." autofocus />
+        <div class="hint"><span>/g</span><span>/y</span><span>/c</span></div>
+      </form>
+
+      <div class="sectionbar"><span>Essentials</span><div class="dotline"></div></div>
+      <div class="grid" id="gridEssentials"></div>
+
+      <div id="moreArea" aria-hidden="true">
+        <div class="sectionbar" style="margin-top:40px"><span>Extended</span><div class="dotline"></div></div>
+        <div class="grid" id="gridMore"></div>
+      </div>
+
+      <button class="morebtn" id="toggleBtn" type="button">More Icons</button>
     </div>
-
-    <form class="search" id="searchForm" autocomplete="off">
-      <input id="q" type="text" placeholder="Search..." autofocus />
-      <div class="hint"><span>/g</span><span>/y</span><span>/c</span></div>
-    </form>
-
-    <div class="sectionbar"><span>Essentials</span><div class="dotline"></div></div>
-    <div class="grid" id="gridEssentials"></div>
-
-    <div id="moreArea" aria-hidden="true">
-      <div class="sectionbar" style="margin-top:40px"><span>Extended</span><div class="dotline"></div></div>
-      <div class="grid" id="gridMore"></div>
-    </div>
-
-    <div class="more-btn-wrap">
-      <button class="morebtn" id="toggleBtn" type="button">More</button>
-    </div>
-  </div></div>
+  </div>
 
   <script>
     const SVGS = {
-      chatgpt: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.28 9.82a5.98 5.98 0 0 0-.51-4.91 6.05 6.05 0 0 0-3.95-3.13 6.03 6.03 0 0 0-5.17 1.04 6.03 6.03 0 0 0-4.38-1.93 6.05 6.05 0 0 0-5.04 2.75 6 6 0 0 0-1.47 5.03c.12 1.83.68 3.51 1.55 4.91a6.05 6.05 0 0 0 3.95 3.13 6.03 6.03 0 0 0 5.17-1.04 6.03 6.03 0 0 0 4.38 1.93 6.05 6.05 0 0 0 5.04-2.75 6 6 0 0 0-1.47-5.03c-.12-1.83-.68-3.51-1.55-4.91zm-7.1 9.45a3.73 3.73 0 0 1-2.68-.31l.1-.06 5.28-3.05a.43.43 0 0 0 .21-.37v-7.37l2.12 1.22a3.74 3.74 0 0 1 1.63 3.56 3.75 3.75 0 0 1-2.48 3.49l-4.18 2.41z"/></svg>`,
+      chatgpt: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.28 9.82a5.98 5.98 0 0 0-.51-4.91 6.05 6.05 0 0 0-3.95-3.13 6.03 6.03 0 0 0-5.17 1.04 6.03 6.03 0 0 0-4.38-1.93 6.05 6.05 0 0 0-5.04 2.75 6 6 0 0 0-1.47 5.03c.12 1.83.68 3.51 1.55 4.91a6.05 6.05 0 0 0 3.95 3.13 6.03 6.03 0 0 0 5.17-1.04 6.03 6.03 0 0 0 4.38 1.93 6.05 6.05 0 0 0 5.04-2.75 6 6 0 0 0 1.47-5.03c-.12-1.83-.68-3.51-1.55-4.91zm-7.1 9.45a3.73 3.73 0 0 1-2.68-.31l.1-.06 5.28-3.05a.43.43 0 0 0 .21-.37v-7.37l2.12 1.22a3.74 3.74 0 0 1 1.63 3.56 3.75 3.75 0 0 1-2.48 3.49l-4.18 2.41z"/></svg>`,
       gemini: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>`,
       claude: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4.5 20.5H19.5L12 2Z"/><circle cx="12" cy="13" r="3"/></svg>`,
       copilot: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.996 23.003c5.317 0 9.873-4.103 9.873-9.143 0-2.316-.925-4.57-2.613-6.257L11.996 0 4.74 7.603A8.83 8.83 0 0 0 2.126 13.86c0 5.04 4.555 9.143 9.87 9.143Z" opacity=".25"/><path d="M12.001 19.336c3.178 0 5.908-2.455 5.908-5.472 0-1.386-.554-2.736-1.564-3.746L12 6.666l-4.344 4.552c-1.01 1.01-1.564 2.36-1.564 3.746 0 3.017 2.73 5.472 5.909 5.472Z"/></svg>`,
@@ -238,8 +238,6 @@
       telegram: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0C5.356 0 0 5.356 0 11.944s5.356 11.944 11.944 11.944 11.944-5.356 11.944-11.944S18.532 0 11.944 0zm5.83 8.04l-1.99 9.382c-.15.666-.543.83-1.1.52l-3.033-2.235-1.464 1.408c-.162.162-.3.298-.616.298l.218-3.09 5.625-5.082c.245-.218-.053-.34-.378-.122L8.046 13.43l-2.997-.937c-.652-.204-.666-.652.136-.966l11.714-4.514c.543-.204 1.018.12.875 1.028z"/></svg>`
     };
 
-    // ✅ 关键：加 cls，用于品牌色 hover
-    // ✅ 关键：修复快捷键冲突：Oracle 改成 J（你可换别的）
     const ALL_SITES = [
       { name:"ChatGPT", url:"https://chatgpt.com/", key:"C", glow:"#10A37F", svg:SVGS.chatgpt, rank:1, scale:0.96, cls:"chatgpt" },
       { name:"Gemini", url:"https://gemini.google.com/", key:"G", glow:"#4E85FF", svg:SVGS.gemini, rank:1, scale:1.08, cls:"gemini" },
@@ -247,12 +245,12 @@
       { name:"Copilot", url:"https://copilot.microsoft.com/", key:"P", glow:"#43E6F0", svg:SVGS.copilot, rank:1, scale:1.02, cls:"copilot" },
 
       { name:"Reddit", url:"https://www.reddit.com/", key:"U", glow:"#FF4500", svg:SVGS.reddit, rank:1.5, scale:1.00, cls:"reddit" },
-      { name:"Wikipedia", url:"https://www.wikipedia.org/", key:"W", glow:"#FFFFFF", svg:SVGS.wiki, rank:1.5, scale:1.00, cls:"wiki" },
+      { name:"Wikipedia", url:"https://www.wikipedia.org/", key:"W", glow:"#888888", svg:SVGS.wiki, rank:1.5, scale:1.00, cls:"wiki" },
 
       { name:"Google", url:"https://www.google.com/", key:"O", glow:"#4285F4", svg:SVGS.google, rank:2, scale:0.98, cls:"google" },
       { name:"Gmail", url:"https://mail.google.com/", key:"M", glow:"#EA4335", svg:SVGS.gmail, rank:2, scale:1.02, cls:"gmail" },
       { name:"YouTube", url:"https://www.youtube.com/", key:"Y", glow:"#FF0000", svg:SVGS.youtube, rank:2, scale:1.02, cls:"youtube" },
-      { name:"GitHub", url:"https://github.com/", key:"H", glow:"#FFFFFF", svg:SVGS.github, rank:2, scale:0.90, cls:"github" },
+      { name:"GitHub", url:"https://github.com/", key:"H", glow:"#666666", svg:SVGS.github, rank:2, scale:0.90, cls:"github" },
       { name:"Cloudflare", url:"https://dash.cloudflare.com/", key:"F", glow:"#F48120", svg:SVGS.cloudflare, rank:2, scale:1.06, cls:"cloudflare" },
 
       { name:"Netflix", url:"https://www.netflix.com/", key:"N", glow:"#E50914", svg:SVGS.netflix, rank:3, scale:1.10, cls:"netflix" },
@@ -272,7 +270,7 @@
 
     function computeLayout() {
       const cols = getCols();
-      const maxEss = cols * 2;
+      const maxEss = cols * 2; // ✅ 两行
       const sorted = [...ALL_SITES].sort((a,b) => (a.rank - b.rank) || a.name.localeCompare(b.name));
       return { essentials: sorted.slice(0, maxEss), more: sorted.slice(maxEss) };
     }
@@ -286,12 +284,10 @@
 
     function makeItem(s, i, waveSeed) {
       const delay = waveDelay(i, waveSeed);
-      const k = (s.key || "");
       return `
-        <a class="item reveal ${s.cls || ""}"
-           href="${s.url}" target="_blank" rel="noopener noreferrer"
+        <a class="item reveal ${s.cls || ""}" href="${s.url}" target="_blank" rel="noopener noreferrer"
            style="--glow:${s.glow}; --d:${delay}ms;">
-          <span class="kbd">${k}</span>
+          <span class="kbd">${s.key || ""}</span>
           <div class="icon">
             <span class="glyph" style="--s:${s.scale ?? 1}; --ty:${(s.ty ?? 0)}px">${s.svg}</span>
           </div>
@@ -300,6 +296,7 @@
     }
 
     let exp = false;
+
     function render() {
       const { essentials, more } = computeLayout();
       const waveSeed = (Date.now() / 1000) | 0;
@@ -310,43 +307,36 @@
       document.getElementById("gridMore").innerHTML =
         more.map((s,i) => makeItem(s, i + essentials.length, waveSeed)).join("");
 
+      const moreArea = document.getElementById("moreArea");
       const btn = document.getElementById("toggleBtn");
+
       btn.style.display = more.length ? "block" : "none";
 
-      // More 区是否展示：跟随 exp；如果没有 more，则强制收起
-      const moreArea = document.getElementById("moreArea");
       if (!more.length) {
-        moreArea.setAttribute("aria-hidden", "true");
-        btn.textContent = "More";
         exp = false;
+        moreArea.setAttribute("aria-hidden", "true");
+        btn.textContent = "More Icons";
       } else {
         moreArea.setAttribute("aria-hidden", (!exp).toString());
+        btn.textContent = exp ? "Less Icons" : "More Icons";
       }
 
       bindMagnetic();
     }
 
+    let rTimer = 0;
     window.addEventListener("resize", () => {
-      clearTimeout(window.rT);
-      window.rT = setTimeout(render, 80);
+      clearTimeout(rTimer);
+      rTimer = setTimeout(render, 90);
     });
 
-    document.getElementById("toggleBtn").onclick = (e) => {
+    document.getElementById("toggleBtn").onclick = () => {
       exp = !exp;
-      document.getElementById("moreArea").setAttribute("aria-hidden", (!exp).toString());
-      e.target.textContent = exp ? "Less" : "More";
-      // 保留你原来的“展开也刷新一波波浪入场”
-      requestAnimationFrame(() => render());
+      render();
     };
-
-    // ✅ clamp 工具：防止磁吸飘飞
-    function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
 
     function bindMagnetic() {
       if (matchMedia("(pointer: coarse)").matches) return;
-
-      const MAX_DIST = 20;
-      const MAX_MOVE = 3;
 
       document.querySelectorAll(".item").forEach(el => {
         if (el.__magBound) return;
@@ -356,14 +346,14 @@
         const label = el.querySelector(".label");
 
         const step = () => {
-          // friction / damping
+          // ✅ “摩擦力”缓动
           x += (tx - x) * 0.18;
           y += (ty - y) * 0.18;
 
           el.style.setProperty("--mx", x.toFixed(2) + "px");
           el.style.setProperty("--my", y.toFixed(2) + "px");
 
-          // label 景深：更小位移
+          // ✅ label 偏移更小，产生景深
           if (label) {
             label.style.setProperty("--lx", (x * 0.45).toFixed(2) + "px");
             label.style.setProperty("--ly", (y * 0.45).toFixed(2) + "px");
@@ -375,21 +365,18 @@
 
         el.addEventListener("mousemove", (e) => {
           const r = el.getBoundingClientRect();
-          const cx = r.left + r.width/2;
-          const cy = r.top + r.height/2;
-          const dx = e.clientX - cx;
-          const dy = e.clientY - cy;
+          const dx = e.clientX - (r.left + r.width/2);
+          const dy = e.clientY - (r.top + r.height/2);
           const dist = Math.hypot(dx, dy);
+
+          const MAX_DIST = 20, MAX_MOVE = 3;
 
           if (dist > Math.max(r.width, r.height)/2 + MAX_DIST) {
             tx = 0; ty = 0;
           } else {
-            const nx = dx / (r.width/2 + MAX_DIST);
-            const ny = dy / (r.height/2 + MAX_DIST);
-            tx = clamp(nx * MAX_MOVE, -MAX_MOVE, MAX_MOVE);
-            ty = clamp(ny * MAX_MOVE, -MAX_MOVE, MAX_MOVE);
+            tx = (dx / (r.width/2 + MAX_DIST)) * MAX_MOVE;
+            ty = (dy / (r.height/2 + MAX_DIST)) * MAX_MOVE;
           }
-
           if (!anim) anim = requestAnimationFrame(step);
         });
 
@@ -400,31 +387,35 @@
       });
     }
 
-    // 快捷键逻辑
-    function setHotkeys(on){ document.body.classList.toggle("show-hotkeys", on); }
-    window.addEventListener("keydown", (e)=>{ if(e.altKey) setHotkeys(true); });
-    window.addEventListener("keyup", (e)=>{ if(!e.altKey) setHotkeys(false); });
+    // ✅ 热键提示：按住 Alt 显示
+    window.addEventListener("keydown", (e)=>{ if (e.altKey) document.body.classList.add("show-hotkeys"); });
+    window.addEventListener("keyup",   (e)=>{ if (!e.altKey) document.body.classList.remove("show-hotkeys"); });
 
+    // ✅ 快捷键：用 Map，O(1)
     const shortcutMap = new Map();
-    ALL_SITES.forEach(s => { if (s.key) shortcutMap.set(String(s.key).toUpperCase(), s.url); });
+    ALL_SITES.forEach(s => { if (s.key) shortcutMap.set(s.key.toUpperCase(), s.url); });
 
     window.addEventListener("keydown", (e) => {
       const active = document.activeElement;
       const typing = active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA" || active.isContentEditable);
-      if (typing || e.altKey) return;
+      if (typing) return;
+
+      if (e.key === "/") {
+        e.preventDefault();
+        document.getElementById("q").focus({preventScroll:true});
+        return;
+      }
+
+      if (e.altKey) return;
 
       const k = (e.key || "").toUpperCase();
       if (shortcutMap.has(k)) {
         e.preventDefault();
         window.open(shortcutMap.get(k), "_blank", "noopener");
       }
-      if (e.key === "/") {
-        e.preventDefault();
-        document.getElementById("q").focus({preventScroll:true});
-      }
     });
 
-    // 搜索逻辑
+    // ✅ 搜索 Bangs：稳定解析
     const engines = {
       "/g": (t)=> `https://www.google.com/search?q=${encodeURIComponent(t)}`,
       "/y": (t)=> `https://www.youtube.com/results?search_query=${encodeURIComponent(t)}`,
@@ -434,7 +425,7 @@
     document.getElementById("searchForm").onsubmit = (e) => {
       e.preventDefault();
       const raw = document.getElementById("q").value.trim();
-      if(!raw) return;
+      if (!raw) return;
 
       const parts = raw.split(/\s+/);
       const prefix = parts[0];
@@ -448,24 +439,108 @@
       }
     };
 
+    // 搜索聚焦时 dim 背景
     const q = document.getElementById("q");
-    q.onfocus = () => document.getElementById("app").classList.add("dim-on-focus");
-    q.onblur  = () => document.getElementById("app").classList.remove("dim-on-focus");
+    q.addEventListener("focus", ()=> document.getElementById("app").classList.add("dim-on-focus"));
+    q.addEventListener("blur",  ()=> document.getElementById("app").classList.remove("dim-on-focus"));
+
+    // ✅ 4 时段主题（只在分钟变化时更新）
+    let _lastMinuteKey = "";
+
+    function applyVars(vars){
+      const root = document.documentElement;
+      for (const [k,v] of Object.entries(vars)) root.style.setProperty(k, v);
+    }
+
+    function updateTheme(){
+      const d = new Date();
+      const h = d.getHours();
+      const body = document.body;
+      const greet = document.getElementById("greet");
+
+      body.classList.remove("theme-dawn","theme-day","theme-twilight","theme-night");
+
+      if (h >= 5 && h < 8){
+        body.classList.add("theme-dawn");
+        applyVars({
+          "--bg-top":"#FDFCFB",
+          "--bg-bottom":"#E2D1C3",
+          "--text":"#1F2937",
+          "--text-muted":"rgba(31,41,55,0.55)",
+          "--hair":"rgba(31,41,55,0.10)",
+          "--search-bg":"rgba(255,255,255,0.62)",
+          "--icon-opacity":"0.52",
+          "--icon-color":"#2b2b2b",
+          "--accent":"#ff9a9e"
+        });
+        greet.textContent = "Good morning, Dawn.";
+      }
+      else if (h >= 8 && h < 17){
+        body.classList.add("theme-day");
+        applyVars({
+          "--bg-top":"#FFFFFF",
+          "--bg-bottom":"#F5F5F7",
+          "--text":"#1D1D1F",
+          "--text-muted":"rgba(0,0,0,0.45)",
+          "--hair":"rgba(0,0,0,0.06)",
+          "--search-bg":"rgba(0,0,0,0.03)",
+          "--icon-opacity":"0.45",
+          "--icon-color":"#333",
+          "--accent":"#a1c4fd"
+        });
+        greet.textContent = (h < 12) ? "Good morning." : "Good afternoon.";
+      }
+      else if (h >= 17 && h < 20){
+        body.classList.add("theme-twilight");
+        applyVars({
+          "--bg-top":"#2D1B4D",
+          "--bg-bottom":"#1A0B2E",
+          "--text":"#FDEBD0",
+          "--text-muted":"rgba(253,235,208,0.58)",
+          "--hair":"rgba(253,235,208,0.16)",
+          "--search-bg":"rgba(253,235,208,0.08)",
+          "--icon-opacity":"0.55",
+          "--icon-color":"rgba(253,235,208,0.92)",
+          "--accent":"#fad0c4"
+        });
+        greet.textContent = "Good evening, Twilight.";
+      }
+      else{
+        body.classList.add("theme-night");
+        applyVars({
+          "--bg-top":"#09112A",
+          "--bg-bottom":"#070A12",
+          "--text":"rgba(255,255,255,0.92)",
+          "--text-muted":"rgba(255,255,255,0.45)",
+          "--hair":"rgba(255,255,255,0.08)",
+          "--search-bg":"rgba(255,255,255,0.08)",
+          "--icon-opacity":"0.50",
+          "--icon-color":"rgba(255,255,255,0.90)",
+          "--accent":"rgba(90,80,255,0.55)"
+        });
+        greet.textContent = "Good night.";
+      }
+    }
 
     function tick(){
       const d = new Date();
-      const h = d.getHours();
-      const m = d.getMinutes();
-      document.getElementById("clock").textContent = `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
-      document.getElementById("greet").textContent =
-        (h>=5&&h<12)?"Good morning.":
-        (h>=12&&h<18)?"Good afternoon.":
-        (h>=18&&h<22)?"Good evening.":"Good night.";
+      const h = d.getHours(), m = d.getMinutes();
+
+      document.getElementById("clock").textContent =
+        `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
+
+      const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()} ${h}:${m}`;
+      if (key !== _lastMinuteKey){
+        _lastMinuteKey = key;
+        updateTheme();
+      }
     }
 
-    tick();
-    setInterval(tick, 15000);
+    // init
+    updateTheme();
     render();
+    tick();
+    setInterval(tick, 1000);
   </script>
 </body>
 </html>
