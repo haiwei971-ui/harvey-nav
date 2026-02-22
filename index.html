@@ -171,33 +171,50 @@
       to{ opacity:1; transform:translateY(0) scale(1); filter:blur(0); }
     }
 
-    /* 品牌颜色 Hover 列表 */
-    .item.chatgpt:hover .icon{color:#10A37F} .item.gemini:hover .icon{color:#4E85FF} .item.claude:hover .icon{color:#D97757}
-    .item.copilot:hover .icon{color:#43E6F0} .item.netflix:hover .icon{color:#E50914} .item.vultr:hover .icon{color:#007BFC}
-    .item.oracle:hover .icon{color:#FF3B30} .item.racknerd:hover .icon{color:#7C5CFF} .item.gmail:hover .icon{color:#EA4335}
-    .item.google:hover .icon{color:#4285F4} .item.youtube:hover .icon{color:#FF0033} .item.github:hover .icon{color:#FFFFFF}
-    .item.reddit:hover .icon{color:#FF4500} .item.telegram:hover .icon{color:#2AABEE} .item.discord:hover .icon{color:#5865F2}
+    /* ✅ 品牌颜色 Hover（现在会生效：因为 item 会带 cls class） */
+    .item.chatgpt:hover .icon{color:#10A37F}
+    .item.gemini:hover .icon{color:#4E85FF}
+    .item.claude:hover .icon{color:#D97757}
+    .item.copilot:hover .icon{color:#43E6F0}
+    .item.netflix:hover .icon{color:#E50914}
+    .item.vultr:hover .icon{color:#007BFC}
+    .item.oracle:hover .icon{color:#FF3B30}
+    .item.racknerd:hover .icon{color:#7C5CFF}
+    .item.gmail:hover .icon{color:#EA4335}
+    .item.google:hover .icon{color:#4285F4}
+    .item.youtube:hover .icon{color:#FF0033}
+    .item.github:hover .icon{color:#FFFFFF}
+    .item.reddit:hover .icon{color:#FF4500}
+    .item.telegram:hover .icon{color:#2AABEE}
+    .item.discord:hover .icon{color:#5865F2}
   </style>
 </head>
 
 <body>
   <div class="bg-flow"><div class="blob b1"></div><div class="blob b2"></div></div>
+
   <div class="wrap"><div class="shell" id="app">
     <div class="topbar">
       <div class="greet" id="greet">Hello.</div>
       <div class="clock" id="clock">00:00</div>
     </div>
+
     <form class="search" id="searchForm" autocomplete="off">
       <input id="q" type="text" placeholder="Search..." autofocus />
       <div class="hint"><span>/g</span><span>/y</span><span>/c</span></div>
     </form>
+
     <div class="sectionbar"><span>Essentials</span><div class="dotline"></div></div>
     <div class="grid" id="gridEssentials"></div>
+
     <div id="moreArea" aria-hidden="true">
       <div class="sectionbar" style="margin-top:40px"><span>Extended</span><div class="dotline"></div></div>
       <div class="grid" id="gridMore"></div>
     </div>
-    <div class="more-btn-wrap"><button class="morebtn" id="toggleBtn" type="button">More</button></div>
+
+    <div class="more-btn-wrap">
+      <button class="morebtn" id="toggleBtn" type="button">More</button>
+    </div>
   </div></div>
 
   <script>
@@ -221,24 +238,31 @@
       telegram: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0C5.356 0 0 5.356 0 11.944s5.356 11.944 11.944 11.944 11.944-5.356 11.944-11.944S18.532 0 11.944 0zm5.83 8.04l-1.99 9.382c-.15.666-.543.83-1.1.52l-3.033-2.235-1.464 1.408c-.162.162-.3.298-.616.298l.218-3.09 5.625-5.082c.245-.218-.053-.34-.378-.122L8.046 13.43l-2.997-.937c-.652-.204-.666-.652.136-.966l11.714-4.514c.543-.204 1.018.12.875 1.028z"/></svg>`
     };
 
+    // ✅ 关键：加 cls，用于品牌色 hover
+    // ✅ 关键：修复快捷键冲突：Oracle 改成 J（你可换别的）
     const ALL_SITES = [
-      { name:"ChatGPT", url:"https://chatgpt.com/", key:"C", glow:"#10A37F", svg:SVGS.chatgpt, rank:1, scale:0.96 },
-      { name:"Gemini", url:"https://gemini.google.com/", key:"G", glow:"#4E85FF", svg:SVGS.gemini, rank:1, scale:1.08 },
-      { name:"Claude", url:"https://claude.ai/", key:"L", glow:"#D97757", svg:SVGS.claude, rank:1, scale:1.04 },
-      { name:"Copilot", url:"https://copilot.microsoft.com/", key:"P", glow:"#43E6F0", svg:SVGS.copilot, rank:1, scale:1.02 },
-      { name:"Reddit", url:"https://www.reddit.com/", key:"U", glow:"#FF4500", svg:SVGS.reddit, rank:1.5, scale:1.00 },
-      { name:"Wikipedia", url:"https://www.wikipedia.org/", key:"W", glow:"#FFFFFF", svg:SVGS.wiki, rank:1.5, scale:1.00 },
-      { name:"Google", url:"https://www.google.com/", key:"O", glow:"#4285F4", svg:SVGS.google, rank:2, scale:0.98 },
-      { name:"Gmail", url:"https://mail.google.com/", key:"M", glow:"#EA4335", svg:SVGS.gmail, rank:2, scale:1.02 },
-      { name:"YouTube", url:"https://www.youtube.com/", key:"Y", glow:"#FF0000", svg:SVGS.youtube, rank:2, scale:1.02 },
-      { name:"GitHub", url:"https://github.com/", key:"H", glow:"#FFFFFF", svg:SVGS.github, rank:2, scale:0.90 },
-      { name:"Cloudflare", url:"https://dash.cloudflare.com/", key:"F", glow:"#F48120", svg:SVGS.cloudflare, rank:2, scale:1.06 },
-      { name:"Netflix", url:"https://www.netflix.com/", key:"N", glow:"#E50914", svg:SVGS.netflix, rank:3, scale:1.10 },
-      { name:"Discord", url:"https://discord.com/app", key:"I", glow:"#5865F2", svg:SVGS.discord, rank:4, scale:0.98 },
-      { name:"Telegram", url:"https://web.telegram.org/", key:"T", glow:"#2AABEE", svg:SVGS.telegram, rank:4, scale:1.02 },
-      { name:"Vultr", url:"https://my.vultr.com/", key:"V", glow:"#007BFC", svg:SVGS.vultr, rank:9, scale:0.96 },
-      { name:"Oracle", url:"https://cloud.oracle.com/", key:"O", glow:"#FF3B30", svg:SVGS.oracle, rank:9, scale:0.90, ty:-0.5 },
-      { name:"RackNerd", url:"https://my.racknerd.com/", key:"R", glow:"#7C5CFF", svg:SVGS.racknerd, rank:9, scale:1.06 }
+      { name:"ChatGPT", url:"https://chatgpt.com/", key:"C", glow:"#10A37F", svg:SVGS.chatgpt, rank:1, scale:0.96, cls:"chatgpt" },
+      { name:"Gemini", url:"https://gemini.google.com/", key:"G", glow:"#4E85FF", svg:SVGS.gemini, rank:1, scale:1.08, cls:"gemini" },
+      { name:"Claude", url:"https://claude.ai/", key:"L", glow:"#D97757", svg:SVGS.claude, rank:1, scale:1.04, cls:"claude" },
+      { name:"Copilot", url:"https://copilot.microsoft.com/", key:"P", glow:"#43E6F0", svg:SVGS.copilot, rank:1, scale:1.02, cls:"copilot" },
+
+      { name:"Reddit", url:"https://www.reddit.com/", key:"U", glow:"#FF4500", svg:SVGS.reddit, rank:1.5, scale:1.00, cls:"reddit" },
+      { name:"Wikipedia", url:"https://www.wikipedia.org/", key:"W", glow:"#FFFFFF", svg:SVGS.wiki, rank:1.5, scale:1.00, cls:"wiki" },
+
+      { name:"Google", url:"https://www.google.com/", key:"O", glow:"#4285F4", svg:SVGS.google, rank:2, scale:0.98, cls:"google" },
+      { name:"Gmail", url:"https://mail.google.com/", key:"M", glow:"#EA4335", svg:SVGS.gmail, rank:2, scale:1.02, cls:"gmail" },
+      { name:"YouTube", url:"https://www.youtube.com/", key:"Y", glow:"#FF0000", svg:SVGS.youtube, rank:2, scale:1.02, cls:"youtube" },
+      { name:"GitHub", url:"https://github.com/", key:"H", glow:"#FFFFFF", svg:SVGS.github, rank:2, scale:0.90, cls:"github" },
+      { name:"Cloudflare", url:"https://dash.cloudflare.com/", key:"F", glow:"#F48120", svg:SVGS.cloudflare, rank:2, scale:1.06, cls:"cloudflare" },
+
+      { name:"Netflix", url:"https://www.netflix.com/", key:"N", glow:"#E50914", svg:SVGS.netflix, rank:3, scale:1.10, cls:"netflix" },
+
+      { name:"Discord", url:"https://discord.com/app", key:"I", glow:"#5865F2", svg:SVGS.discord, rank:4, scale:0.98, cls:"discord" },
+      { name:"Telegram", url:"https://web.telegram.org/", key:"T", glow:"#2AABEE", svg:SVGS.telegram, rank:4, scale:1.02, cls:"telegram" },
+
+      { name:"Vultr", url:"https://my.vultr.com/", key:"V", glow:"#007BFC", svg:SVGS.vultr, rank:9, scale:0.96, cls:"vultr" },
+      { name:"Oracle", url:"https://cloud.oracle.com/", key:"J", glow:"#FF3B30", svg:SVGS.oracle, rank:9, scale:0.90, ty:-0.5, cls:"oracle" },
+      { name:"RackNerd", url:"https://my.racknerd.com/", key:"R", glow:"#7C5CFF", svg:SVGS.racknerd, rank:9, scale:1.06, cls:"racknerd" }
     ];
 
     function getCols() {
@@ -262,10 +286,15 @@
 
     function makeItem(s, i, waveSeed) {
       const delay = waveDelay(i, waveSeed);
+      const k = (s.key || "");
       return `
-        <a class="item reveal" href="${s.url}" target="_blank" rel="noopener noreferrer" style="--glow:${s.glow}; --d:${delay}ms;">
-          <span class="kbd">${s.key || ""}</span>
-          <div class="icon"><span class="glyph" style="--s:${s.scale ?? 1}; --ty:${(s.ty ?? 0)}px">${s.svg}</span></div>
+        <a class="item reveal ${s.cls || ""}"
+           href="${s.url}" target="_blank" rel="noopener noreferrer"
+           style="--glow:${s.glow}; --d:${delay}ms;">
+          <span class="kbd">${k}</span>
+          <div class="icon">
+            <span class="glyph" style="--s:${s.scale ?? 1}; --ty:${(s.ty ?? 0)}px">${s.svg}</span>
+          </div>
           <div class="label">${s.name}</div>
         </a>`;
     }
@@ -274,45 +303,100 @@
     function render() {
       const { essentials, more } = computeLayout();
       const waveSeed = (Date.now() / 1000) | 0;
-      document.getElementById("gridEssentials").innerHTML = essentials.map((s,i) => makeItem(s,i,waveSeed)).join("");
-      document.getElementById("gridMore").innerHTML = more.map((s,i) => makeItem(s, i + essentials.length, waveSeed)).join("");
+
+      document.getElementById("gridEssentials").innerHTML =
+        essentials.map((s,i) => makeItem(s,i,waveSeed)).join("");
+
+      document.getElementById("gridMore").innerHTML =
+        more.map((s,i) => makeItem(s, i + essentials.length, waveSeed)).join("");
+
       const btn = document.getElementById("toggleBtn");
       btn.style.display = more.length ? "block" : "none";
-      if (!more.length) { document.getElementById("moreArea").setAttribute("aria-hidden", "true"); btn.textContent = "More"; exp = false; }
+
+      // More 区是否展示：跟随 exp；如果没有 more，则强制收起
+      const moreArea = document.getElementById("moreArea");
+      if (!more.length) {
+        moreArea.setAttribute("aria-hidden", "true");
+        btn.textContent = "More";
+        exp = false;
+      } else {
+        moreArea.setAttribute("aria-hidden", (!exp).toString());
+      }
+
       bindMagnetic();
     }
 
-    window.addEventListener("resize", () => { clearTimeout(window.rT); window.rT = setTimeout(render, 80); });
+    window.addEventListener("resize", () => {
+      clearTimeout(window.rT);
+      window.rT = setTimeout(render, 80);
+    });
 
     document.getElementById("toggleBtn").onclick = (e) => {
       exp = !exp;
       document.getElementById("moreArea").setAttribute("aria-hidden", (!exp).toString());
       e.target.textContent = exp ? "Less" : "More";
+      // 保留你原来的“展开也刷新一波波浪入场”
       requestAnimationFrame(() => render());
     };
 
+    // ✅ clamp 工具：防止磁吸飘飞
+    function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+
     function bindMagnetic() {
       if (matchMedia("(pointer: coarse)").matches) return;
+
+      const MAX_DIST = 20;
+      const MAX_MOVE = 3;
+
       document.querySelectorAll(".item").forEach(el => {
-        if (el.__magBound) return; el.__magBound = true;
+        if (el.__magBound) return;
+        el.__magBound = true;
+
         let tx = 0, ty = 0, x = 0, y = 0, anim = 0;
         const label = el.querySelector(".label");
+
         const step = () => {
-          x += (tx - x) * 0.18; y += (ty - y) * 0.18;
-          el.style.setProperty("--mx", x.toFixed(2) + "px"); el.style.setProperty("--my", y.toFixed(2) + "px");
-          if (label) { label.style.setProperty("--lx", (x * 0.45).toFixed(2) + "px"); label.style.setProperty("--ly", (y * 0.45).toFixed(2) + "px"); }
+          // friction / damping
+          x += (tx - x) * 0.18;
+          y += (ty - y) * 0.18;
+
+          el.style.setProperty("--mx", x.toFixed(2) + "px");
+          el.style.setProperty("--my", y.toFixed(2) + "px");
+
+          // label 景深：更小位移
+          if (label) {
+            label.style.setProperty("--lx", (x * 0.45).toFixed(2) + "px");
+            label.style.setProperty("--ly", (y * 0.45).toFixed(2) + "px");
+          }
+
           if (Math.abs(tx - x) + Math.abs(ty - y) < 0.02) { anim = 0; return; }
           anim = requestAnimationFrame(step);
         };
+
         el.addEventListener("mousemove", (e) => {
           const r = el.getBoundingClientRect();
-          const dx = e.clientX - (r.left + r.width/2), dy = e.clientY - (r.top + r.height/2);
+          const cx = r.left + r.width/2;
+          const cy = r.top + r.height/2;
+          const dx = e.clientX - cx;
+          const dy = e.clientY - cy;
           const dist = Math.hypot(dx, dy);
-          if (dist > Math.max(r.width, r.height)/2 + 20) { tx = 0; ty = 0; }
-          else { tx = (dx / (r.width/2 + 20)) * 3; ty = (dy / (r.height/2 + 20)) * 3; }
+
+          if (dist > Math.max(r.width, r.height)/2 + MAX_DIST) {
+            tx = 0; ty = 0;
+          } else {
+            const nx = dx / (r.width/2 + MAX_DIST);
+            const ny = dy / (r.height/2 + MAX_DIST);
+            tx = clamp(nx * MAX_MOVE, -MAX_MOVE, MAX_MOVE);
+            ty = clamp(ny * MAX_MOVE, -MAX_MOVE, MAX_MOVE);
+          }
+
           if (!anim) anim = requestAnimationFrame(step);
         });
-        el.addEventListener("mouseleave", () => { tx = 0; ty = 0; if (!anim) anim = requestAnimationFrame(step); });
+
+        el.addEventListener("mouseleave", () => {
+          tx = 0; ty = 0;
+          if (!anim) anim = requestAnimationFrame(step);
+        });
       });
     }
 
@@ -320,35 +404,67 @@
     function setHotkeys(on){ document.body.classList.toggle("show-hotkeys", on); }
     window.addEventListener("keydown", (e)=>{ if(e.altKey) setHotkeys(true); });
     window.addEventListener("keyup", (e)=>{ if(!e.altKey) setHotkeys(false); });
+
     const shortcutMap = new Map();
-    ALL_SITES.forEach(s => { if (s.key) shortcutMap.set(s.key.toUpperCase(), s.url); });
+    ALL_SITES.forEach(s => { if (s.key) shortcutMap.set(String(s.key).toUpperCase(), s.url); });
+
     window.addEventListener("keydown", (e) => {
-      const typing = document.activeElement && (document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA" || document.activeElement.isContentEditable);
+      const active = document.activeElement;
+      const typing = active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA" || active.isContentEditable);
       if (typing || e.altKey) return;
+
       const k = (e.key || "").toUpperCase();
-      if (shortcutMap.has(k)) { e.preventDefault(); window.open(shortcutMap.get(k), "_blank", "noopener"); }
-      if (e.key === "/") { e.preventDefault(); document.getElementById("q").focus({preventScroll:true}); }
+      if (shortcutMap.has(k)) {
+        e.preventDefault();
+        window.open(shortcutMap.get(k), "_blank", "noopener");
+      }
+      if (e.key === "/") {
+        e.preventDefault();
+        document.getElementById("q").focus({preventScroll:true});
+      }
     });
 
     // 搜索逻辑
-    const engines = { "/g": (t)=> `https://www.google.com/search?q=${encodeURIComponent(t)}`, "/y": (t)=> `https://www.youtube.com/results?search_query=${encodeURIComponent(t)}`, "/c": ()=> `https://chatgpt.com/` };
+    const engines = {
+      "/g": (t)=> `https://www.google.com/search?q=${encodeURIComponent(t)}`,
+      "/y": (t)=> `https://www.youtube.com/results?search_query=${encodeURIComponent(t)}`,
+      "/c": ()=> `https://chatgpt.com/`
+    };
+
     document.getElementById("searchForm").onsubmit = (e) => {
-      e.preventDefault(); const raw = document.getElementById("q").value.trim(); if(!raw) return;
-      const parts = raw.split(/\s+/), prefix = parts[0], rest = raw.slice(prefix.length).trim();
-      if (engines[prefix]) { window.open(prefix === "/c" ? engines["/c"]() : engines[prefix](rest || ""), "_blank", "noopener"); }
-      else { window.open(engines["/g"](raw), "_blank", "noopener"); }
+      e.preventDefault();
+      const raw = document.getElementById("q").value.trim();
+      if(!raw) return;
+
+      const parts = raw.split(/\s+/);
+      const prefix = parts[0];
+      const rest = raw.slice(prefix.length).trim();
+
+      if (engines[prefix]) {
+        const url = (prefix === "/c") ? engines["/c"]() : engines[prefix](rest || "");
+        window.open(url, "_blank", "noopener");
+      } else {
+        window.open(engines["/g"](raw), "_blank", "noopener");
+      }
     };
 
     const q = document.getElementById("q");
     q.onfocus = () => document.getElementById("app").classList.add("dim-on-focus");
-    q.onblur = () => document.getElementById("app").classList.remove("dim-on-focus");
+    q.onblur  = () => document.getElementById("app").classList.remove("dim-on-focus");
 
     function tick(){
-      const d = new Date(), h = d.getHours(), m = d.getMinutes();
+      const d = new Date();
+      const h = d.getHours();
+      const m = d.getMinutes();
       document.getElementById("clock").textContent = `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
-      document.getElementById("greet").textContent = (h>=5&&h<12)?"Good morning.":(h>=12&&h<18)?"Good afternoon.":(h>=18&&h<22)?"Good evening.":"Good night.";
+      document.getElementById("greet").textContent =
+        (h>=5&&h<12)?"Good morning.":
+        (h>=12&&h<18)?"Good afternoon.":
+        (h>=18&&h<22)?"Good evening.":"Good night.";
     }
-    tick(); setInterval(tick, 15000);
+
+    tick();
+    setInterval(tick, 15000);
     render();
   </script>
 </body>
