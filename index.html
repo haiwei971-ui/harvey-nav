@@ -11,6 +11,7 @@
   <style>
     :root{
       --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      /* 亮色模式：回归自然，不做任何多余反转 */
       --bg-top:#FFFFFF; --bg-bottom:#F5F5F7;
       --text:#1D1D1F; --muted:rgba(0,0,0,0.45);
       --hair:rgba(0,0,0,0.06); --search:rgba(0,0,0,0.03);
@@ -21,13 +22,14 @@
     }
 
     body.theme-night{
+      /* 深色模式：开启极致补光保护 */
       --bg-top:#09112A; --bg-bottom:#070A12;
       --text:rgba(255,255,255,0.92); --muted:rgba(255,255,255,0.55);
       --hair:rgba(255,255,255,0.08); --search:rgba(255,255,255,0.08);
       --glow-opacity:0.35;
       --icon-default-opacity: 0.90;
       --icon-brightness: 1.5;
-      --icon-shadow: rgba(255,255,255,0.12); /* ✅ 增强深色模式图标边缘微光 */
+      --icon-shadow: rgba(255,255,255,0.12);
     }
 
     *{box-sizing:border-box}
@@ -78,7 +80,7 @@
       transition: .35s var(--ease);
     }
 
-    /* ✅ 核心修正：深色模式下的自动补光（Invert） */
+    /* ✅ 深色模式反转保护：黑夜里自动补光变白，白天由于没有 theme-night 类，会保持原色 */
     body.theme-night .white-invert img {
       filter: grayscale(100%) invert(1) brightness(1.8) opacity(var(--icon-default-opacity)) !important;
     }
@@ -88,9 +90,7 @@
       transform: translateY(-6px) scale(var(--s, 1));
     }
 
-    /* Gemini 特效优化 */
     .icon.gemini img{ position:absolute; width:36px; height:36px; object-fit:contain; transform: scale(var(--s, 1)); transition:.38s var(--ease); }
-    /* ✅ Gemini 灰度态也支持 whiteInvert 逻辑 */
     body.theme-night .icon.gemini img.g0 { filter: grayscale(100%) invert(1) brightness(1.8) opacity(var(--icon-default-opacity)); }
     .icon.gemini img.g0{ filter: grayscale(100%) brightness(var(--icon-brightness)) opacity(var(--icon-default-opacity)) drop-shadow(0 2px 4px var(--icon-shadow)); }
     .icon.gemini img.g1{ opacity:0; filter:none; }
@@ -143,7 +143,6 @@
     }
 
     const SITES = [
-      // ✅ Essentials: 全部适配补光逻辑
       { n:"ChatGPT",      u:"https://chatgpt.com/",                  icons:["openai.svg"],                 c:"#10a37f", r:1, whiteInvert: true },
       { n:"Claude",       u:"https://claude.ai/",                    icons:["claude-color.svg"],           c:"#d97757", r:1 },
       { n:"Copilot",      u:"https://copilot.microsoft.com/",        icons:["copilot-color.svg"],          c:"#0078d4", r:1 },
@@ -155,15 +154,15 @@
       { n:"Google",       u:"https://www.google.com/",               icons:["google-color.svg"],           c:"#4285f4", r:2 },
       { n:"Google Cloud", u:"https://console.cloud.google.com/",     icons:["googlecloud-color.svg"],      c:"#4285f4", r:2 },
       { n:"Google Drive", u:"https://drive.google.com/",             icons:["google-drive.svg"],           c:"#34a853", r:2 },
-      { n:"Google Maps",  u:"http://googleusercontent.com/maps.google.com/11",              icons:["google-maps.svg"],            c:"#4285f4", r:2 },
-      { n:"YouTube",      u:"https://www.youtube.com/",                  icons:["youtube_red.svg"],            c:"#ff0000", r:2 },
+      { n:"Google Maps",  u:"https://maps.google.com/",              icons:["google-maps.svg"],            c:"#4285f4", r:2 },
+      { n:"YouTube",      u:"https://youtube.com/",                  icons:["youtube_red.svg"],            c:"#ff0000", r:2 },
 
-      // ✅ Extended: 加入 Reddit 和 Telegram 的补光
       { n:"AWS",          u:"https://aws.amazon.com/",               icons:["aws.svg"],                    c:"#ff9900", r:3, whiteInvert: true },
-      { n:"Azure",        u:"https://portal.azure.com/",             icons:["azure.svg"],                  c:"#0078d4", r:3 },
-      { n:"Bing",         u:"https://www.bing.com/",                 icons:["bing.svg"],                   c:"#008373", r:3 },
+      // ✅ Azure, Bing, Netflix 全部加入深夜补光阵营
+      { n:"Azure",        u:"https://portal.azure.com/",             icons:["azure.svg"],                  c:"#0078d4", r:3, whiteInvert: true },
+      { n:"Bing",         u:"https://www.bing.com/",                 icons:["bing.svg"],                   c:"#008373", r:3, whiteInvert: true },
       { n:"Microsoft",    u:"https://www.microsoft.com/",            icons:["microsoft.svg"],              c:"#ffffff", r:3, whiteInvert: true },
-      { n:"Netflix",      u:"https://www.netflix.com/",              icons:["netflix-icon.svg"],           c:"#e50914", r:3 },
+      { n:"Netflix",      u:"https://www.netflix.com/",              icons:["netflix-icon.svg"],           c:"#e50914", r:3, whiteInvert: true },
       { n:"Spotify",      u:"https://spotify.com/",                  icons:["spotify-icon.svg"],           c:"#1db954", r:3 },
       { n:"X",            u:"https://x.com/",                        icons:["x.svg"],                      c:"#ffffff", r:3, whiteInvert: true },
       { n:"Reddit",       u:"https://www.reddit.com/",               icons:["reddit.svg"],                 c:"#ff4500", r:3, whiteInvert: true },
@@ -182,11 +181,9 @@
         a.href = s.u; a.target = "_blank"; a.rel = "noopener noreferrer";
         a.style.setProperty("--brand-color", s.c);
         if (s.s) a.style.setProperty("--s", String(s.s));
-
         const iconHTML = s.gemini 
           ? `<div class="icon gemini">${imgTag("gemini.svg", "g0")}${imgTag("gemini-color.svg", "g1")}</div>`
           : `<div class="icon">${imgTag(s.icons[0], "single")}</div>`;
-
         a.innerHTML = `${iconHTML}<div class="label">${s.n}</div>`;
         (s.r <= 2 ? ess : ext).appendChild(a);
       });
