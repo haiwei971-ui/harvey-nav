@@ -9,227 +9,242 @@
 
 <style>
 :root{
---ease:cubic-bezier(0.16,1,0.3,1);
---bg1:#09112A;
---bg2:#070A12;
---text:rgba(255,255,255,.92);
---muted:rgba(255,255,255,.45);
---hair:rgba(255,255,255,.08);
---search:rgba(255,255,255,.08);
---icon:rgba(255,255,255,.85);
+  --ease:cubic-bezier(0.16,1,0.3,1);
+  --bg1:#09112A;
+  --bg2:#070A12;
+  --text:rgba(255,255,255,.92);
+  --muted:rgba(255,255,255,.45);
+  --hair:rgba(255,255,255,.08);
+  --search:rgba(255,255,255,.08);
 }
 
 *{box-sizing:border-box}
 body{
-margin:0;
-font-family:Inter,-apple-system;
-background:linear-gradient(180deg,var(--bg1),var(--bg2));
-color:var(--text);
--webkit-font-smoothing:antialiased;
+  margin:0;
+  font-family:Inter,-apple-system,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  background:linear-gradient(180deg,var(--bg1),var(--bg2));
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
 }
 
 .wrap{
-max-width:1000px;
-margin:auto;
-padding:36px 20px 60px;
+  max-width:1000px;
+  margin:auto;
+  padding:34px 20px 60px;
 }
 
 .top{
-display:flex;
-justify-content:space-between;
-margin-bottom:14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
 }
 
 .clock{
-font-family:"JetBrains Mono";
+  font-family:"JetBrains Mono";
+  font-weight:600;
 }
 
 .search{
-display:flex;
-align-items:center;
-gap:12px;
-background:var(--search);
-border:1px solid var(--hair);
-padding:12px 18px;
-border-radius:999px;
-margin-bottom:30px;
-transition:.3s var(--ease);
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:var(--search);
+  border:1px solid var(--hair);
+  padding:12px 18px;
+  border-radius:999px;
+  margin-bottom:26px; /* ✅ 比你之前更紧凑 */
+  transition:.3s var(--ease);
 }
 
 .search:focus-within{
-box-shadow:0 0 0 1px rgba(124,92,255,.4);
+  box-shadow:0 0 0 1px rgba(124,92,255,.42);
 }
 
 .search input{
-flex:1;
-background:transparent;
-border:0;
-outline:none;
-color:var(--text);
-font-size:16px;
+  flex:1;
+  background:transparent;
+  border:0;
+  outline:none;
+  color:var(--text);
+  font-size:16px;
 }
 
 .section{
-margin:22px 0 12px;
-display:flex;
-align-items:center;
-gap:12px;
-color:var(--muted);
-font-size:12px;
-letter-spacing:.2em;
-text-transform:uppercase;
+  margin:18px 0 12px;  /* ✅ 更紧凑 */
+  display:flex;
+  align-items:center;
+  gap:12px;
+  color:var(--muted);
+  font-size:12px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
 }
 
-.section div{
-flex:1;
-height:1px;
-background:var(--hair);
+.section .line{
+  flex:1;
+  height:1px;
+  background:var(--hair);
 }
 
 .grid{
-display:grid;
-grid-template-columns:repeat(6,1fr);
-gap:26px 18px;
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:26px 18px;
 }
 
 @media(max-width:900px){.grid{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:600px){.grid{grid-template-columns:repeat(3,1fr)}}
 
 .item{
-display:flex;
-flex-direction:column;
-align-items:center;
-gap:10px;
-text-decoration:none;
-color:var(--muted);
-transition:.25s var(--ease);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  text-decoration:none;
+  color:var(--muted);
+  transition:.25s var(--ease);
+  min-height:86px;
 }
 
 .icon{
-width:54px;
-height:54px;
-display:grid;
-place-items:center;
-transition:.3s var(--ease);
+  width:54px;
+  height:54px;
+  display:grid;
+  place-items:center;
+  transition:.3s var(--ease);
 }
 
 .icon img{
-width:36px;
-height:36px;
-filter:grayscale(100%) opacity(.6);
-transition:.3s var(--ease);
+  width:36px;
+  height:36px;
+  filter:grayscale(100%) opacity(.62);
+  transition:.3s var(--ease);
 }
 
 .item:hover img{
-filter:none;
-transform:translateY(-4px);
+  filter:none;
+  transform:translateY(-4px);
 }
 
 .label{
-font-size:13px;
+  font-size:13px;
 }
-
-.morebtn{
-margin:32px auto 0;
-display:block;
-background:var(--search);
-border:1px solid var(--hair);
-color:var(--text);
-padding:8px 24px;
-border-radius:999px;
-cursor:pointer;
-}
-
 </style>
 </head>
 
 <body>
 <div class="wrap">
 
-<div class="top">
-<div>Good night.</div>
-<div class="clock" id="clock"></div>
-</div>
+  <div class="top">
+    <div id="greet">Good night.</div>
+    <div class="clock" id="clock"></div>
+  </div>
 
-<form class="search" id="searchForm">
-<input id="q" placeholder="Search...">
-</form>
+  <form class="search" id="searchForm" autocomplete="off">
+    <input id="q" placeholder="Search...">
+  </form>
 
-<div class="section">ESSENTIALS<div></div></div>
-<div class="grid" id="ess"></div>
+  <div class="section">ESSENTIALS<div class="line"></div></div>
+  <div class="grid" id="ess"></div>
 
-<div class="section">EXTENDED<div></div></div>
-<div class="grid" id="ext"></div>
+  <div class="section">EXTENDED<div class="line"></div></div>
+  <div class="grid" id="ext"></div>
 
 </div>
 
 <script>
+const ICON_BASE = "icons/";
+const FALLBACK  = "openai.svg";
 
-const ICON_BASE="icons/";
-const FALLBACK="openai.svg";
-
+/** ✅ 终极修正：自动对文件名做 URL 编码（解决 telegram 2.svg 这种带空格的文件名） */
 function icon(name){
-return `<img src="${ICON_BASE+name}" onerror="this.src='${ICON_BASE+FALLBACK}'">`;
+  const src = ICON_BASE + encodeURIComponent(name);
+  const fb  = ICON_BASE + encodeURIComponent(FALLBACK);
+  return `<img src="${src}" onerror="this.onerror=null;this.src='${fb}'">`;
 }
 
-const SITES=[
+/** ✅ 图标清单（已删除：WhatsApp / Discord / Anthropic / Mastercard；Telegram 改成 telegram 2.svg） */
+const SITES = [
+  // Essentials
+  {n:"ChatGPT",      u:"https://chatgpt.com/",                i:"openai.svg",             r:1},
+  {n:"Claude",       u:"https://claude.ai/",                  i:"claude-color.svg",       r:1},
+  {n:"Copilot",      u:"https://copilot.microsoft.com/",      i:"copilot-color.svg",      r:1},
+  {n:"Gemini",       u:"https://gemini.google.com/",          i:"gemini-color.svg",       r:1},
+  {n:"Cloudflare",   u:"https://dash.cloudflare.com/",        i:"cloudflare-color.svg",   r:1},
+  {n:"GitHub",       u:"https://github.com/",                 i:"github.svg",             r:1},
 
-{n:"ChatGPT",u:"https://chatgpt.com/",i:"openai.svg",r:1},
-{n:"Claude",u:"https://claude.ai/",i:"claude-color.svg",r:1},
-{n:"Copilot",u:"https://copilot.microsoft.com/",i:"copilot-color.svg",r:1},
-{n:"Gemini",u:"https://gemini.google.com/",i:"gemini-color.svg",r:1},
-{n:"Cloudflare",u:"https://dash.cloudflare.com/",i:"cloudflare-color.svg",r:1},
-{n:"GitHub",u:"https://github.com/",i:"github.svg",r:1},
+  {n:"Gmail",        u:"https://mail.google.com/",            i:"google-gmail.svg",       r:2},
+  {n:"Google",       u:"https://google.com",                  i:"google-color.svg",       r:2},
+  {n:"Google Cloud", u:"https://console.cloud.google.com/",   i:"googlecloud-color.svg",  r:2},
+  {n:"Google Drive", u:"https://drive.google.com/",           i:"google-drive.svg",       r:2},
+  {n:"Google Maps",  u:"https://maps.google.com/",            i:"google-maps.svg",        r:2},
+  {n:"YouTube",      u:"https://youtube.com/",                i:"youtube_red.svg",        r:2},
 
-{n:"Gmail",u:"https://mail.google.com/",i:"google-gmail.svg",r:2},
-{n:"Google",u:"https://google.com",i:"google-color.svg",r:2},
-{n:"Google Cloud",u:"https://console.cloud.google.com/",i:"googlecloud-color.svg",r:2},
-{n:"Google Drive",u:"https://drive.google.com/",i:"google-drive.svg",r:2},
-{n:"Google Maps",u:"https://maps.google.com/",i:"google-maps.svg",r:2},
-{n:"YouTube",u:"https://youtube.com/",i:"youtube_red.svg",r:2},
+  // Extended
+  {n:"AWS",          u:"https://console.aws.amazon.com/",     i:"aws.svg",                r:3},
+  {n:"Azure",        u:"https://portal.azure.com/",           i:"azure.svg",              r:3},
+  {n:"Bing",         u:"https://bing.com/",                   i:"bing.svg",               r:3},
+  {n:"Microsoft",    u:"https://microsoft.com/",              i:"microsoft.svg",          r:3},
+  {n:"Netflix",      u:"https://netflix.com/",                i:"netflix-icon.svg",       r:3},
+  {n:"Spotify",      u:"https://spotify.com/",                i:"spotify-icon.svg",       r:3},
 
-{n:"AWS",u:"https://console.aws.amazon.com/",i:"aws.svg",r:3},
-{n:"Azure",u:"https://portal.azure.com/",i:"azure.svg",r:3},
-{n:"Bing",u:"https://bing.com/",i:"bing.svg",r:3},
-{n:"Microsoft",u:"https://microsoft.com/",i:"microsoft.svg",r:3},
-{n:"Netflix",u:"https://netflix.com/",i:"netflix-icon.svg",r:3},
-{n:"Spotify",u:"https://spotify.com/",i:"spotify-icon.svg",r:3},
+  {n:"X",            u:"https://x.com/",                      i:"x.svg",                  r:4},
+  {n:"Facebook",     u:"https://facebook.com/",               i:"facebook.svg",           r:4},
+  {n:"Reddit",       u:"https://reddit.com/",                 i:"reddit-color.svg",       r:4},
 
-{n:"X",u:"https://x.com/",i:"x.svg",r:4},
-{n:"Facebook",u:"https://facebook.com/",i:"facebook.svg",r:4},
-{n:"Reddit",u:"https://reddit.com/",i:"reddit-color.svg",r:4},
-{n:"Telegram",u:"https://web.telegram.org/",i:"telegram.svg",r:4},
-{n:"Apple",u:"https://apple.com/",i:"apple.svg",r:4}
+  /** ✅ 这里就是你要改的：使用 telegram 2.svg（带空格也没问题） */
+  {n:"Telegram",     u:"https://web.telegram.org/",           i:"telegram 2.svg",         r:4},
 
+  {n:"Apple",        u:"https://apple.com/",                  i:"apple.svg",              r:4},
 ];
 
 function render(){
-const ess=document.getElementById("ess");
-const ext=document.getElementById("ext");
+  const ess = document.getElementById("ess");
+  const ext = document.getElementById("ext");
+  ess.innerHTML = "";
+  ext.innerHTML = "";
 
-ess.innerHTML="";
-ext.innerHTML="";
-
-SITES.forEach(s=>{
-const el=document.createElement("a");
-el.className="item";
-el.href=s.u;
-el.target="_blank";
-el.innerHTML=`<div class="icon">${icon(s.i)}</div><div class="label">${s.n}</div>`;
-(s.r<=2?ess:ext).appendChild(el);
-});
+  SITES.forEach(s=>{
+    const a = document.createElement("a");
+    a.className = "item";
+    a.href = s.u;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    a.innerHTML = `<div class="icon">${icon(s.i)}</div><div class="label">${s.n}</div>`;
+    (s.r<=2 ? ess : ext).appendChild(a);
+  });
 }
 
-function clock(){
-const d=new Date();
-document.getElementById("clock").textContent=
-String(d.getHours()).padStart(2,"0")+":"+
-String(d.getMinutes()).padStart(2,"0");
+function setGreet(){
+  const h = new Date().getHours();
+  const g = document.getElementById("greet");
+  if(h>=5 && h<12) g.textContent = "Good morning.";
+  else if(h>=12 && h<17) g.textContent = "Good afternoon.";
+  else if(h>=17 && h<21) g.textContent = "Good evening.";
+  else g.textContent = "Good night.";
 }
-setInterval(clock,1000);
-clock();
+
+function tick(){
+  const d = new Date();
+  document.getElementById("clock").textContent =
+    String(d.getHours()).padStart(2,"0") + ":" +
+    String(d.getMinutes()).padStart(2,"0");
+}
+
+document.getElementById("searchForm").onsubmit = (e)=>{
+  e.preventDefault();
+  const v = document.getElementById("q").value.trim();
+  if(!v) return;
+  window.open("https://google.com/search?q="+encodeURIComponent(v), "_blank");
+};
+
+setGreet();
+tick();
+setInterval(tick, 1000);
 render();
-
 </script>
+
 </body>
 </html>
