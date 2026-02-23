@@ -11,7 +11,7 @@ export const QUOTES = [
 
 export const SITES = [
   { n:"ChatGPT",      u:"https://chatgpt.com/",           icons:["openai.svg"],           c:"#10a37f", r:1, whiteInvert:true },
-  { n:"Claude",       u:"https://claude.ai/",             icons:["claude-color.svg"],     c:"#d97757", r:1, whiteInvert:true },
+  { n:"Claude", u:"https://claude.ai/", icons:["claude.svg","claude-color.svg"], c:"#d97757",   c:"#d97757", r:1, whiteInvert:true },
   { n:"Copilot",      u:"https://copilot.microsoft.com/", icons:["copilot-color.svg"],    c:"#0078d4", r:1 },
   // ✅ 专用 Gemini 配置
   { n:"Gemini",       u:"https://gemini.google.com/",     icons:["gemini-color.svg"],     c:"#4e85ff", r:1, whiteInvert:true },
