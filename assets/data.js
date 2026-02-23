@@ -4,31 +4,26 @@ export const FALLBACK_ICON = "openai.svg";
 export const QUOTES = [
   { t: "Stay hungry, stay foolish.", a: "Steve Jobs" },
   { t: "Simplicity is the ultimate sophistication.", a: "Leonardo da Vinci" },
-  { t: "Design is not just what it looks like and feels like. Design is how it works.", a: "Steve Jobs" },
-  { t: "The best way to predict the future is to invent it.", a: "Alan Kay" },
-  { t: "Everything is designed. Few things are designed well.", a: "Brian Reed" }
+  { t: "Design is not just what it looks like and feels like. Design is how it works.", a: "Steve Jobs" }
 ];
 
 export const SITES = [
-  // ESSENTIALS - Line 1
   { n:"ChatGPT", u:"https://chatgpt.com/", icons:["openai.svg"], c:"#10a37f", r:1, whiteInvert:true },
   // ✅ 修正：使用彩色资产
   { n:"Claude", u:"https://claude.ai/", icons:["claude-color.svg"], c:"#d97757", r:1, whiteInvert:true },
   { n:"Copilot", u:"https://copilot.microsoft.com/", icons:["copilot-color.svg"], c:"#0078d4", r:1 },
-  // ✅ 修正：icons 保持空，使用 app.js 专用渲染
+  // ✅ 修正：Gemini 配置，icons 设为空，使用 app.js 渲染逻辑
   { n:"Gemini", u:"https://gemini.google.com/", icons:[], c:"#4e85ff", r:1, whiteInvert:true, gemini:true, s:1.14 },
   { n:"Cloudflare", u:"https://dash.cloudflare.com/", icons:["cloudflare-color.svg"], c:"#f48120", r:1, whiteInvert:true },
   { n:"GitHub", u:"https://github.com/", icons:["github.svg"], c:"#ffffff", r:1, whiteInvert:true },
 
-  // ESSENTIALS - Line 2
   { n:"Gmail", u:"https://mail.google.com/", icons:["google-gmail.svg"], c:"#ea4335", r:2 },
-  { n:"Google", u:"https://www.google.com/", icons:["google-color.svg"], c:"#4285f4", r:2 },
+  { n:"Google", u:"https://google.com/", icons:["google-color.svg"], c:"#4285f4", r:2 },
   { n:"Google Cloud", u:"https://console.cloud.google.com/", icons:["googlecloud-color.svg"], c:"#4285f4", r:2 },
   { n:"Google Drive", u:"https://drive.google.com/", icons:["google-drive.svg"], c:"#34a853", r:2 },
   { n:"Google Maps", u:"https://maps.google.com", icons:["google-maps.svg"], c:"#4285f4", r:2 },
   { n:"YouTube", u:"https://youtube.com", icons:["youtube_red.svg"], c:"#ff0000", r:2 },
 
-  // EXTENDED
   { n:"AWS", u:"https://aws.amazon.com/", icons:["aws.svg"], c:"#ff9900", r:3, whiteInvert:true },
   { n:"Azure", u:"https://portal.azure.com/", icons:["azure.svg"], c:"#0078d4", r:3, whiteInvert:true },
   { n:"Bing", u:"https://www.bing.com/", icons:["bing.svg"], c:"#008373", r:3, whiteInvert:true },
