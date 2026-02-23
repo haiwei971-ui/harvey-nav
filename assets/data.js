@@ -3,7 +3,7 @@
 export const ICON_BASE = "icons/";
 export const FALLBACK_ICON = "openai.svg";
 
-// Quotes
+// Quotes: Curated English wisdom for high-end design feel
 export const QUOTES = [
   { t: "Stay hungry, stay foolish.", a: "Steve Jobs" },
   { t: "Simplicity is the ultimate sophistication.", a: "Leonardo da Vinci" },
@@ -21,21 +21,21 @@ r:
 export const SITES = [
 
   // =========================
-  // ESSENTIALS
+  // ESSENTIALS - Line 1
   // =========================
 
   { n:"ChatGPT",
     u:"https://chatgpt.com/",
     r:1,
     icons:["openai.svg"],
-    whiteInvert:true
+    whiteInvert:true // ✅ Ensure high contrast in night mode
   },
 
   { n:"Claude",
     u:"https://claude.ai/",
     r:1,
     icons:["claude-color.svg"],
-    whiteInvert:true
+    whiteInvert:true // ✅ Fixed: Claude silhouette is too dark in night mode
   },
 
   { n:"Copilot",
@@ -48,13 +48,14 @@ export const SITES = [
     u:"https://gemini.google.com/",
     r:1,
     icons:["gemini-color.svg"],
-    gemini:true
+    gemini:true,
+    whiteInvert:true // ✅ Fixed: Gemini star needs to shine in the dark
   },
 
   { n:"Cloudflare",
     u:"https://dash.cloudflare.com/",
     r:1,
-    icons:["cloudflare.svg"],
+    icons:["cloudflare-color.svg"], // Suggesting color version for hover consistency
     whiteInvert:true
   },
 
@@ -65,7 +66,9 @@ export const SITES = [
     whiteInvert:true
   },
 
-  // 第二行 Essentials
+  // =========================
+  // ESSENTIALS - Line 2
+  // =========================
   { n:"Gmail",
     u:"https://mail.google.com/",
     r:2,
@@ -91,13 +94,13 @@ export const SITES = [
   },
 
   { n:"Google Maps",
-    u:"https://maps.google.com/",
+    u:"https://maps.google.com", // ✅ Fixed: Returning to stable official entry
     r:2,
     icons:["google-maps.svg"]
   },
 
   { n:"YouTube",
-    u:"https://www.youtube.com/",
+    u:"https://youtube.com", // ✅ Fixed: Returning to stable official entry
     r:2,
     icons:["youtube_red.svg"]
   },
@@ -110,13 +113,14 @@ export const SITES = [
     u:"https://aws.amazon.com/",
     r:3,
     icons:["aws.svg"],
-    whiteInvert:true
+    whiteInvert:true // ✅ Fixed: AWS dark swoosh is invisible at night
   },
 
   { n:"Azure",
     u:"https://portal.azure.com/",
     r:3,
-    icons:["azure-color.svg"]
+    icons:["azure-color.svg"],
+    whiteInvert:true // ✅ Fixed: Azure blue blends into deep blue background
   },
 
   { n:"Bing",
@@ -129,17 +133,19 @@ export const SITES = [
   { n:"Microsoft",
     u:"https://www.microsoft.com/",
     r:3,
-    icons:["microsoft-color.svg"]
+    icons:["microsoft-color.svg"],
+    whiteInvert:true // ✅ Fixed: Microsoft gray is too low-contrast
   },
 
   { n:"Netflix",
     u:"https://www.netflix.com/",
     r:3,
-    icons:["netflix-icon.svg"]
+    icons:["netflix-icon.svg"],
+    whiteInvert:true // ✅ Added for high-end glowing white effect
   },
 
   { n:"Spotify",
-    u:"https://open.spotify.com/",
+    u:"https://spotify.com", // ✅ Fixed: Returning to stable official entry
     r:3,
     icons:["spotify-icon.svg"]
   },
@@ -164,5 +170,4 @@ export const SITES = [
     icons:["telegram2.svg"],
     whiteInvert:true
   }
-
 ];
