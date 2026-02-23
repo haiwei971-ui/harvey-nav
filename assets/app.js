@@ -1,5 +1,7 @@
 // assets/app.js
-import { ICON_BASE, FALLBACK_ICON, QUOTES, SITES, WEATHER } from "./data.js";
+import { ICON_BASE, FALLBACK_ICON, QUOTES, SITES } from "./data.js";
+
+function $(id){ return document.getElementById(id); }
 
 function $(id){ return document.getElementById(id); }
 
