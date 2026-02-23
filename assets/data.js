@@ -14,7 +14,7 @@ export const SITES = [
   { n:"Claude",       u:"https://claude.ai/",             icons:["claude-color.svg"],     c:"#d97757", r:1, whiteInvert:true },
   { n:"Copilot",      u:"https://copilot.microsoft.com/", icons:["copilot-color.svg"],    c:"#0078d4", r:1 },
   // ✅ 专用 Gemini 配置
-  { n:"Gemini",       u:"https://gemini.google.com/",     icons:[],                       c:"#4e85ff", r:1, whiteInvert:true, gemini:true, s:1.14 },
+  { n:"Gemini",       u:"https://gemini.google.com/",     icons:["gemini-color.svg"],     c:"#4e85ff", r:1, whiteInvert:true },
   { n:"Cloudflare",   u:"https://dash.cloudflare.com/",   icons:["cloudflare-color.svg"], c:"#f48120", r:1, whiteInvert:true },
   { n:"GitHub",       u:"https://github.com/",            icons:["github.svg"],           c:"#ffffff", r:1, whiteInvert:true },
 
