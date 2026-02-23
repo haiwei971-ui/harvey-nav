@@ -8,378 +8,77 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 
-  <style>
-    :root{
-      --ease: cubic-bezier(0.16, 1, 0.3, 1);
-      --bg-top:#FFFFFF; --bg-bottom:#F5F5F7;
-      --text:#1D1D1F; --muted:rgba(0,0,0,0.45);
-      --hair:rgba(0,0,0,0.06); --search:rgba(0,0,0,0.03);
-      --glow-opacity:0.06; --icon-default-opacity: 0.65;
-      --icon-brightness: 1.0; --icon-shadow: rgba(0,0,0,0);
-    }
-
-    body.theme-night{
-      --bg-top:#09112A; --bg-bottom:#070A12;
-      --text:rgba(255,255,255,0.92); --muted:rgba(255,255,255,0.55);
-      --hair:rgba(255,255,255,0.08); --search:rgba(255,255,255,0.08);
-      --glow-opacity:0.35; --icon-default-opacity: 0.90;
-      --icon-brightness: 1.5; --icon-shadow: rgba(255,255,255,0.12);
-    }
-
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; font-family:Inter,-apple-system,sans-serif; color:var(--text);
-      background:linear-gradient(180deg,var(--bg-top),var(--bg-bottom));
-      min-height:100vh; transition:background 1.5s var(--ease), color 1.5s var(--ease);
-      overflow-x:hidden;
-    }
-
-    .bg-flow{ position:fixed; inset:-20%; pointer-events:none; z-index:-3; filter:blur(120px); opacity:.32; }
-    .bg-flow .blob{
-      position:absolute; width:70vmax; height:70vmax; border-radius:999px;
-      background: radial-gradient(circle, var(--brand-color, #a1c4fd), transparent 60%);
-      animation: drift 60s cubic-bezier(.45, 0, .55, 1) infinite alternate;
-    }
-    @keyframes drift{ from{transform:translate(-5%,-5%)} to{transform:translate(10%,10%)} }
-
-    .wrap{ max-width:1000px; margin:auto; padding:calc(26px + env(safe-area-inset-top)) 20px 54px; }
-
-    .top{ display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:10px; opacity:.86; }
-    .top-left .greet{ font-size:22px; font-weight:600; margin-bottom: 2px; }
-    .top-left .weather{ font-size:13px; color:var(--muted); display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-    .clock{ font-family:"JetBrains Mono"; font-weight:600; font-size:24px; letter-spacing:-1px; }
-
-    .quote-area{
-      margin: 20px 0 22px;
-      padding: 0 10px;
-      border-left: 2px solid var(--hair);
-      animation: fadeIn 0.9s var(--ease);
-    }
-    .quote-text{ font-size: 15px; font-style: italic; color: var(--muted); line-height: 1.5; max-width: 680px; }
-    .quote-author{ font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 6px; opacity: 0.6; }
-
-    .search{
-      display:flex; align-items:center; gap:12px; background:var(--search); border:1px solid var(--hair);
-      padding:13px 18px; border-radius:999px; margin-bottom:18px;
-      backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); transition:.3s var(--ease);
-    }
-    .search:focus-within{ transform:scaleX(1.018); border-color:rgba(124,92,255,0.4); background: var(--search); }
-    .search input{ flex:1; width:100%; background:transparent; border:0; outline:none; color:var(--text); font-size:18px; }
-
-    .section{ margin:16px 0 10px; display:flex; align-items:center; gap:12px; color:var(--muted); font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:600; }
-    .section .line{ flex:1; height:1px; background:var(--hair); }
-
-    .grid{ display:grid; grid-template-columns:repeat(6,1fr); gap:26px 18px; }
-    @media (max-width:900px){ .grid{ grid-template-columns:repeat(4,1fr);} }
-    @media (max-width:600px){ .grid{ grid-template-columns:repeat(3,1fr);} }
-
-    .item{ position:relative; display:flex; flex-direction:column; align-items:center; gap:12px; text-decoration:none; color:var(--muted); transition:.25s var(--ease); min-height:86px; isolation:isolate; }
-    .item:active{ transform:scale(0.95); transition:0.1s; }
-    .icon{ width:54px; height:54px; display:grid; place-items:center; position:relative; }
-    .icon img.single{
-      width:36px; height:36px; object-fit:contain; transform: scale(var(--s, 1));
-      filter: grayscale(100%) brightness(var(--icon-brightness)) opacity(var(--icon-default-opacity)) drop-shadow(0 2px 4px var(--icon-shadow));
-      transition: .35s var(--ease);
-    }
-
-    body.theme-night .white-invert .icon img.single,
-    body.theme-night .white-invert .icon.gemini img.g0{
-      filter: grayscale(100%) invert(1) brightness(1.8) opacity(var(--icon-default-opacity))
-              drop-shadow(0 2px 4px var(--icon-shadow)) !important;
-    }
-
-    .item:hover .icon img.single{
-      filter: grayscale(0%) brightness(1) opacity(1) !important;
-      transform: translateY(-6px) scale(var(--s, 1));
-    }
-
-    .icon.gemini img{
-      position:absolute; width:36px; height:36px; object-fit:contain;
-      transform: scale(var(--s, 1)); transition:.38s var(--ease);
-    }
-    .icon.gemini img.g0{ filter: grayscale(100%) brightness(var(--icon-brightness)) opacity(var(--icon-default-opacity)) drop-shadow(0 2px 4px var(--icon-shadow)); }
-    .icon.gemini img.g1{ opacity:0; filter:none; }
-    .item:hover .icon.gemini img{ transform: translateY(-6px) scale(var(--s, 1)); }
-    .item:hover .icon.gemini img.g0{ opacity:0; }
-    .item:hover .icon.gemini img.g1{ opacity:1; }
-
-    .item:hover .icon::after{
-      content:""; position:absolute; inset:-10px; border-radius:50%; z-index:-1;
-      filter:blur(35px); opacity:var(--glow-opacity);
-      background:radial-gradient(circle, var(--brand-color, #7C5CFF), transparent 75%);
-    }
-
-    .label{ font-size:13px; transition:.25s var(--ease); text-align:center; white-space:nowrap; }
-    .item:hover .label{ color:var(--text); }
-
-    #moreArea[aria-hidden="true"] { display: none; }
-    .morebtn{
-      background: var(--search); border:1px solid var(--hair); color:var(--text);
-      padding:8px 24px; border-radius:999px; cursor:pointer; font-size:13px;
-      opacity:.65; transition:.3s var(--ease); margin:28px auto 0; display:block;
-    }
-    .morebtn:hover{ opacity:1; transform:scale(1.05); }
-
-    @keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: translateY(0); } }
-  </style>
+  <!-- 外部样式 -->
+  <link rel="stylesheet" href="assets/style.css">
 </head>
 
 <body>
-  <div class="bg-flow"><div class="blob"></div></div>
+
+  <div class="bg-flow">
+    <div class="blob"></div>
+  </div>
 
   <div class="wrap">
+
+    <!-- Header -->
     <div class="top">
       <div class="top-left">
         <div id="greet" class="greet">Hello.</div>
         <div class="weather">
-          <span id="temp">…</span>
-          <span id="city">Locating…</span>
-          <span id="condition">—</span>
+          <span id="temp">--</span>
+          <span id="city">Loading...</span>
+          <span id="condition"></span>
         </div>
       </div>
       <div class="clock" id="clock">00:00</div>
     </div>
 
+    <!-- Quote -->
     <div class="quote-area">
-      <div id="quote" class="quote-text">"Stay hungry, stay foolish."</div>
-      <div id="author" class="quote-author">Steve Jobs</div>
+      <div id="quote" class="quote-text">
+        "Stay hungry, stay foolish."
+      </div>
+      <div id="author" class="quote-author">
+        Steve Jobs
+      </div>
     </div>
 
+    <!-- Search -->
     <form class="search" id="searchForm" autocomplete="off">
       <input id="q" placeholder="Search..." autofocus />
     </form>
 
-    <div class="section">ESSENTIALS<div class="line"></div></div>
+    <!-- Essentials -->
+    <div class="section">
+      ESSENTIALS
+      <div class="line"></div>
+    </div>
+
     <div id="ess" class="grid"></div>
 
+    <!-- Extended -->
     <div id="moreArea" aria-hidden="true">
-      <div class="section" style="margin-top:18px;">EXTENDED<div class="line"></div></div>
+      <div class="section" style="margin-top:18px;">
+        EXTENDED
+        <div class="line"></div>
+      </div>
+
       <div id="ext" class="grid"></div>
     </div>
 
-    <button class="morebtn" id="toggleBtn" type="button">More Icons</button>
+    <button class="morebtn" id="toggleBtn">
+      More Icons
+    </button>
+
   </div>
 
-  <script>
-    const ICON_BASE = "icons/";
-    const FALLBACK  = "openai.svg";
+  <!-- 数据必须在 app.js 前 -->
+  <script src="assets/data.js"></script>
+  <script src="assets/app.js"></script>
 
-    // Quotes (English)
-    const QUOTES = [
-      { t: "Stay hungry, stay foolish.", a: "Steve Jobs" },
-      { t: "Simplicity is the ultimate sophistication.", a: "Leonardo da Vinci" },
-      { t: "The best way to predict the future is to invent it.", a: "Alan Kay" },
-      { t: "Design is not just what it looks like and feels like. Design is how it works.", a: "Steve Jobs" },
-      { t: "Everything is designed. Few things are designed well.", a: "Brian Reed" },
-      { t: "Code is like humor. When you have to explain it, it’s bad.", a: "Cory House" },
-      { t: "Innovation distinguishes between a leader and a follower.", a: "Steve Jobs" }
-    ];
-
-    function imgTag(src, cls){
-      const safe = ICON_BASE + encodeURIComponent(src);
-      return `<img class="${cls}" src="${safe}" loading="lazy" decoding="async"
-        onerror="this.onerror=null;this.src='${ICON_BASE}${FALLBACK}'">`;
-    }
-
-    const SITES = [
-      { n:"ChatGPT", u:"https://chatgpt.com/", icons:["openai.svg"], c:"#10a37f", r:1, whiteInvert:true },
-      { n:"Claude", u:"https://claude.ai/", icons:["claude-color.svg"], c:"#d97757", r:1 },
-      { n:"Copilot", u:"https://copilot.microsoft.com/", icons:["copilot-color.svg"], c:"#0078d4", r:1 },
-      { n:"Gemini", u:"https://gemini.google.com/", gemini:true, s:1.14, c:"#4e85ff", r:1, whiteInvert:true },
-      { n:"Cloudflare", u:"https://dash.cloudflare.com/", icons:["cloudflare-color.svg"], c:"#f48120", r:1 },
-      { n:"GitHub", u:"https://github.com/", icons:["github.svg"], c:"#ffffff", r:1, whiteInvert:true },
-
-      { n:"Gmail", u:"https://mail.google.com/", icons:["google-gmail.svg"], c:"#ea4335", r:2 },
-      { n:"Google", u:"https://www.google.com/", icons:["google-color.svg"], c:"#4285f4", r:2 },
-      { n:"Google Cloud", u:"https://console.cloud.google.com/", icons:["googlecloud-color.svg"],c:"#4285f4", r:2 },
-      { n:"Google Drive", u:"https://drive.google.com/", icons:["google-drive.svg"], c:"#34a853", r:2 },
-      { n:"Google Maps", u:"https://www.google.com/maps", icons:["google-maps.svg"], c:"#4285f4", r:2 },
-      { n:"YouTube", u:"https://www.youtube.com", icons:["youtube_red.svg"], c:"#ff0000", r:2 },
-
-      { n:"AWS", u:"https://aws.amazon.com/", icons:["aws.svg"], c:"#ff9900", r:3, whiteInvert:true },
-      { n:"Azure", u:"https://portal.azure.com/", icons:["azure.svg"], c:"#0078d4", r:3, whiteInvert:true },
-      { n:"Bing", u:"https://www.bing.com/", icons:["bing.svg"], c:"#008373", r:3, whiteInvert:true },
-      { n:"Microsoft", u:"https://www.microsoft.com/", icons:["microsoft.svg"], c:"#ffffff", r:3, whiteInvert:true },
-      { n:"Netflix", u:"https://www.netflix.com/", icons:["netflix-icon.svg"], c:"#e50914", r:3, whiteInvert:true },
-      { n:"Spotify", u:"https://open.spotify.com", icons:["spotify-icon.svg"], c:"#1db954", r:3 },
-      { n:"X", u:"https://x.com/", icons:["x.svg"], c:"#ffffff", r:3, whiteInvert:true },
-      { n:"Reddit", u:"https://www.reddit.com/", icons:["reddit.svg"], c:"#ff4500", r:3, whiteInvert:true },
-      { n:"Telegram", u:"https://web.telegram.org/", icons:["telegram.svg"], c:"#2aabee", r:3, whiteInvert:true },
-      { n:"Apple", u:"https://www.apple.com/", icons:["apple.svg"], c:"#ffffff", r:3, whiteInvert:true }
-    ];
-
-    function render(){
-      const ess = document.getElementById("ess");
-      const ext = document.getElementById("ext");
-      ess.innerHTML = ext.innerHTML = "";
-
-      SITES.forEach(s=>{
-        const a = document.createElement("a");
-        a.className = `item ${s.whiteInvert ? "white-invert" : ""}`;
-        a.href = s.u;
-        a.target = "_blank";
-        a.rel = "noopener noreferrer";
-        a.style.setProperty("--brand-color", s.c || "#7C5CFF");
-        if (s.s) a.style.setProperty("--s", String(s.s));
-
-        const iconHTML = s.gemini
-          ? `<div class="icon gemini">${imgTag("gemini.svg", "g0")}${imgTag("gemini-color.svg", "g1")}</div>`
-          : `<div class="icon">${imgTag(s.icons[0], "single")}</div>`;
-
-        a.innerHTML = `${iconHTML}<div class="label">${s.n}</div>`;
-        (s.r <= 2 ? ess : ext).appendChild(a);
-      });
-    }
-
-    // ✅ fixed toggle logic
-    function toggleMore(){
-      const area = document.getElementById("moreArea");
-      const btn  = document.getElementById("toggleBtn");
-      const isHidden = area.getAttribute("aria-hidden") === "true";
-      area.setAttribute("aria-hidden", String(!isHidden));
-      btn.textContent = isHidden ? "Less Icons" : "More Icons";
-    }
-
-    function updateQuote(){
-      const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
-      document.getElementById("quote").textContent = `"${q.t}"`;
-      document.getElementById("author").textContent = q.a;
-    }
-
-    function updateTheme(){
-      const h = new Date().getHours();
-      const night = h >= 17 || h < 8;
-      document.body.classList.toggle("theme-night", night);
-      document.getElementById("greet").textContent =
-        night ? "Good night." : (h < 12 ? "Good morning." : "Good afternoon.");
-    }
-
-    function tick(){
-      const d = new Date();
-      document.getElementById("clock").textContent =
-        `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
-    }
-
-    // ---------------- Weather (no key) ----------------
-    const prefersF = navigator.language?.toLowerCase().startsWith("en-us");
-    function setWeatherUI({ tempC, tempF, city, desc }){
-      document.getElementById("temp").textContent = prefersF ? `${Math.round(tempF)}°F` : `${Math.round(tempC)}°C`;
-      document.getElementById("city").textContent = city || "—";
-      document.getElementById("condition").textContent = desc || "—";
-    }
-
-    // 1) Try wttr.in (simple)
-    async function tryWttr(){
-      const res = await fetch("https://wttr.in/?format=j1", { cache: "no-store" });
-      if(!res.ok) throw new Error("wttr failed");
-      const data = await res.json();
-      const current = data.current_condition?.[0];
-      const area = data.nearest_area?.[0];
-      const city = area?.areaName?.[0]?.value || area?.region?.[0]?.value || area?.country?.[0]?.value || "";
-      const tempC = Number(current?.temp_C);
-      const tempF = Number(current?.temp_F);
-      const desc  = current?.weatherDesc?.[0]?.value || "";
-      if(!Number.isFinite(tempC)) throw new Error("wttr invalid payload");
-      setWeatherUI({ tempC, tempF: Number.isFinite(tempF) ? tempF : (tempC*9/5+32), city, desc });
-      return true;
-    }
-
-    // 2) Fallback: open-meteo (needs lat/lon) + reverse-geocode via open-meteo
-    async function openMeteo(lat, lon){
-      const w = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&temperature_unit=celsius`, { cache:"no-store" });
-      if(!w.ok) throw new Error("open-meteo weather failed");
-      const wd = await w.json();
-      const tempC = wd.current?.temperature_2m;
-
-      const g = await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&count=1`, { cache:"no-store" });
-      let city = "";
-      if(g.ok){
-        const gd = await g.json();
-        const r = gd.results?.[0];
-        city = [r?.name, r?.admin1].filter(Boolean).join(", ");
-      }
-
-      // simple weather code map (minimal)
-      const code = wd.current?.weather_code;
-      const desc = (code === 0) ? "Clear" :
-                   (code >= 1 && code <= 3) ? "Cloudy" :
-                   (code >= 45 && code <= 48) ? "Fog" :
-                   (code >= 51 && code <= 67) ? "Drizzle/Rain" :
-                   (code >= 71 && code <= 77) ? "Snow" :
-                   (code >= 80 && code <= 82) ? "Rain showers" :
-                   (code >= 95) ? "Thunderstorm" : "Weather";
-
-      setWeatherUI({ tempC, tempF: (tempC*9/5+32), city, desc });
-      return true;
-    }
-
-    async function getLatLon(){
-      // try navigator geolocation first (more accurate)
-      const geo = await new Promise((resolve) => {
-        if(!navigator.geolocation) return resolve(null);
-        navigator.geolocation.getCurrentPosition(
-          (pos)=> resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-          ()=> resolve(null),
-          { enableHighAccuracy:false, timeout:2500, maximumAge: 60*60*1000 }
-        );
-      });
-      if(geo) return geo;
-
-      // fallback to ipapi (no key)
-      const res = await fetch("https://ipapi.co/json/", { cache:"no-store" });
-      if(!res.ok) return null;
-      const d = await res.json();
-      if(typeof d.latitude === "number" && typeof d.longitude === "number") return { lat:d.latitude, lon:d.longitude };
-      return null;
-    }
-
-    async function updateWeather(){
-      try{
-        // show loading state
-        document.getElementById("temp").textContent = prefersF ? "…°F" : "…°C";
-        document.getElementById("city").textContent = "Locating…";
-        document.getElementById("condition").textContent = "—";
-
-        // 1) try wttr
-        try{
-          const ok = await tryWttr();
-          if(ok) return;
-        }catch{}
-
-        // 2) fallback open-meteo
-        const ll = await getLatLon();
-        if(!ll) throw new Error("no location");
-        await openMeteo(ll.lat, ll.lon);
-      }catch(e){
-        document.getElementById("city").textContent = "OFFLINE";
-        document.getElementById("condition").textContent = "—";
-      }
-    }
-
-    // Search
-    document.getElementById("searchForm").onsubmit = (e)=>{
-      e.preventDefault();
-      const v = document.getElementById("q").value.trim();
-      if(!v) return;
-      window.open("https://www.google.com/search?q=" + encodeURIComponent(v), "_blank");
-    };
-
-    document.getElementById("toggleBtn").onclick = toggleMore;
-
-    // Boot
-    updateTheme();
-    tick();
-    render();
-    updateWeather();
-    updateQuote();
-
-    setInterval(tick, 1000);
-    setInterval(updateTheme, 60000);
-    setInterval(updateWeather, 10 * 60 * 1000);  // 10 min
-    setInterval(updateQuote, 60 * 60 * 1000);    // 1 hour
-  </script>
 </body>
 </html>
