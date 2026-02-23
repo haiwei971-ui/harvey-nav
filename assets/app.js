@@ -1,3 +1,4 @@
+// assets/app.js
 import { SITES, QUOTES, ICON_BASE, FALLBACK_ICON } from './data.js';
 
 function imgTag(src, cls) {
@@ -7,7 +8,9 @@ function imgTag(src, cls) {
 
 function render() {
   const ess = document.getElementById("ess"), ext = document.getElementById("ext");
+  if (!ess || !ext) return;
   ess.innerHTML = ext.innerHTML = "";
+
   SITES.forEach(s => {
     const a = document.createElement("a");
     a.className = `item ${s.whiteInvert ? "white-invert" : ""}`;
@@ -15,7 +18,7 @@ function render() {
     a.style.setProperty("--brand-color", s.c || "#7C5CFF");
     if (s.s) a.style.setProperty("--s", String(s.s));
     
-    // ✅ Use separate logic for Gemini layering
+    // ✅ 专用 Gemini 生成逻辑
     const iconHTML = s.gemini 
       ? `<div class="icon gemini">${imgTag("gemini.svg", "g0")}${imgTag("gemini-color.svg", "g1")}</div>`
       : `<div class="icon">${imgTag(s.icons[0], "single")}</div>`;
@@ -37,30 +40,38 @@ async function updateWeather() {
     const res = await fetch('https://wttr.in/?format=j1');
     const data = await res.json();
     const current = data.current_condition[0];
-    document.getElementById("temp").textContent = current.temp_C + "°C";
-    document.getElementById("city").textContent = data.nearest_area[0].areaName[0].value.toUpperCase();
-    document.getElementById("condition").textContent = current.weatherDesc[0].value;
-  } catch (e) { if (document.getElementById("city")) document.getElementById("city").textContent = "OFFLINE"; }
+    const tempEl = document.getElementById("temp");
+    const cityEl = document.getElementById("city");
+    const condEl = document.getElementById("condition");
+    if (tempEl) tempEl.textContent = current.temp_C + "°C";
+    if (cityEl) cityEl.textContent = data.nearest_area[0].areaName[0].value.toUpperCase();
+    if (condEl) condEl.textContent = current.weatherDesc[0].value;
+  } catch (e) { console.warn("Weather fetch failed."); }
 }
 
 function toggleMore() {
   const area = document.getElementById("moreArea"), btn = document.getElementById("toggleBtn");
+  if (!area || !btn) return;
   const isHidden = area.getAttribute("aria-hidden") === "true";
   area.setAttribute("aria-hidden", String(!isHidden));
   btn.textContent = isHidden ? "Less Icons" : "More Icons";
 }
 
-// Init
+// 初始化
 updateTheme(); render(); updateWeather();
 const btn = document.getElementById("toggleBtn");
 if (btn) btn.onclick = toggleMore;
 
+const qEl = document.getElementById("quote"), aEl = document.getElementById("author");
 const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
-document.getElementById("quote").textContent = `"${q.t}"`;
-document.getElementById("author").textContent = q.a;
+if (qEl) qEl.textContent = `"${q.t}"`;
+if (aEl) aEl.textContent = q.a;
 
 function tick() {
-  const d = new Date();
-  document.getElementById("clock").textContent = `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+  const clockEl = document.getElementById("clock");
+  if (clockEl) {
+    const d = new Date();
+    clockEl.textContent = `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+  }
 }
 tick(); setInterval(tick, 1000); setInterval(updateTheme, 60000);
