@@ -47,7 +47,7 @@ export const SITES = [
   { n:"Gemini",
     u:"https://gemini.google.com/",
     r:1,
-    icons:["gemini.svg","gemini-color.svg"],
+    icons:["gemini-color.svg"],
     gemini:true
   },
 
