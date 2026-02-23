@@ -1,173 +1,36 @@
-// assets/data.js
-
 export const ICON_BASE = "icons/";
 export const FALLBACK_ICON = "openai.svg";
 
-// Quotes: Curated English wisdom for high-end design feel
 export const QUOTES = [
   { t: "Stay hungry, stay foolish.", a: "Steve Jobs" },
   { t: "Simplicity is the ultimate sophistication.", a: "Leonardo da Vinci" },
-  { t: "Design is not just what it looks like and feels like. Design is how it works.", a: "Steve Jobs" },
-  { t: "Innovation distinguishes between a leader and a follower.", a: "Steve Jobs" },
+  { t: "The best way to predict the future is to invent it.", a: "Alan Kay" },
   { t: "Everything is designed. Few things are designed well.", a: "Brian Reed" }
 ];
 
-/*
-r:
-1,2 = ESSENTIALS
-3   = EXTENDED
-*/
-
 export const SITES = [
+  { n:"ChatGPT", u:"https://chatgpt.com/", icons:["openai.svg"], c:"#10a37f", r:1, whiteInvert:true },
+  { n:"Claude", u:"https://claude.ai/", icons:["claude-color.svg"], c:"#d97757", r:1, whiteInvert:true },
+  { n:"Copilot", u:"https://copilot.microsoft.com/", icons:["copilot-color.svg"], c:"#0078d4", r:1 },
+  { n:"Gemini", u:"https://gemini.google.com/", gemini:true, s:1.14, c:"#4e85ff", r:1, whiteInvert:true },
+  { n:"Cloudflare", u:"https://dash.cloudflare.com/", icons:["cloudflare-color.svg"], c:"#f48120", r:1, whiteInvert:true },
+  { n:"GitHub", u:"https://github.com/", icons:["github.svg"], c:"#ffffff", r:1, whiteInvert:true },
 
-  // =========================
-  // ESSENTIALS - Line 1
-  // =========================
+  { n:"Gmail", u:"https://mail.google.com/", icons:["google-gmail.svg"], c:"#ea4335", r:2 },
+  { n:"Google", u:"https://google.com/", icons:["google-color.svg"], c:"#4285f4", r:2 },
+  { n:"Google Cloud", u:"https://console.cloud.google.com/", icons:["googlecloud-color.svg"], c:"#4285f4", r:2 },
+  { n:"Google Drive", u:"https://drive.google.com/", icons:["google-drive.svg"], c:"#34a853", r:2 },
+  { n:"Google Maps", u:"https://maps.google.com", icons:["google-maps.svg"], c:"#4285f4", r:2 },
+  { n:"YouTube", u:"https://youtube.com", icons:["youtube_red.svg"], c:"#ff0000", r:2 },
 
-  { n:"ChatGPT",
-    u:"https://chatgpt.com/",
-    r:1,
-    icons:["openai.svg"],
-    whiteInvert:true // ✅ Ensure high contrast in night mode
-  },
-
-  { n:"Claude",
-    u:"https://claude.ai/",
-    r:1,
-    icons:["claude-color.svg"],
-    whiteInvert:true // ✅ Fixed: Claude silhouette is too dark in night mode
-  },
-
-  { n:"Copilot",
-    u:"https://copilot.microsoft.com/",
-    r:1,
-    icons:["copilot-color.svg"]
-  },
-
-  { n:"Gemini",
-    u:"https://gemini.google.com/",
-    r:1,
-    icons:["gemini-color.svg"],
-    gemini:true,
-    whiteInvert:true // ✅ Fixed: Gemini star needs to shine in the dark
-  },
-
-  { n:"Cloudflare",
-    u:"https://dash.cloudflare.com/",
-    r:1,
-    icons:["cloudflare-color.svg"], // Suggesting color version for hover consistency
-    whiteInvert:true
-  },
-
-  { n:"GitHub",
-    u:"https://github.com/",
-    r:1,
-    icons:["github.svg"],
-    whiteInvert:true
-  },
-
-  // =========================
-  // ESSENTIALS - Line 2
-  // =========================
-  { n:"Gmail",
-    u:"https://mail.google.com/",
-    r:2,
-    icons:["google-gmail.svg"]
-  },
-
-  { n:"Google",
-    u:"https://www.google.com/",
-    r:2,
-    icons:["google-color.svg"]
-  },
-
-  { n:"Google Cloud",
-    u:"https://console.cloud.google.com/",
-    r:2,
-    icons:["googlecloud-color.svg"]
-  },
-
-  { n:"Google Drive",
-    u:"https://drive.google.com/",
-    r:2,
-    icons:["google-drive.svg"]
-  },
-
-  { n:"Google Maps",
-    u:"https://maps.google.com", // ✅ Fixed: Returning to stable official entry
-    r:2,
-    icons:["google-maps.svg"]
-  },
-
-  { n:"YouTube",
-    u:"https://youtube.com", // ✅ Fixed: Returning to stable official entry
-    r:2,
-    icons:["youtube_red.svg"]
-  },
-
-  // =========================
-  // EXTENDED
-  // =========================
-
-  { n:"AWS",
-    u:"https://aws.amazon.com/",
-    r:3,
-    icons:["aws.svg"],
-    whiteInvert:true // ✅ Fixed: AWS dark swoosh is invisible at night
-  },
-
-  { n:"Azure",
-    u:"https://portal.azure.com/",
-    r:3,
-    icons:["azure-color.svg"],
-    whiteInvert:true // ✅ Fixed: Azure blue blends into deep blue background
-  },
-
-  { n:"Bing",
-    u:"https://www.bing.com/",
-    r:3,
-    icons:["bing.svg"],
-    whiteInvert:true
-  },
-
-  { n:"Microsoft",
-    u:"https://www.microsoft.com/",
-    r:3,
-    icons:["microsoft-color.svg"],
-    whiteInvert:true // ✅ Fixed: Microsoft gray is too low-contrast
-  },
-
-  { n:"Netflix",
-    u:"https://www.netflix.com/",
-    r:3,
-    icons:["netflix-icon.svg"],
-    whiteInvert:true // ✅ Added for high-end glowing white effect
-  },
-
-  { n:"Spotify",
-    u:"https://spotify.com", // ✅ Fixed: Returning to stable official entry
-    r:3,
-    icons:["spotify-icon.svg"]
-  },
-
-  { n:"X",
-    u:"https://x.com/",
-    r:3,
-    icons:["x.svg"],
-    whiteInvert:true
-  },
-
-  { n:"Reddit",
-    u:"https://www.reddit.com/",
-    r:3,
-    icons:["reddit.svg"],
-    whiteInvert:true
-  },
-
-  { n:"Telegram",
-    u:"https://web.telegram.org/",
-    r:3,
-    icons:["telegram2.svg"],
-    whiteInvert:true
-  }
+  { n:"AWS", u:"https://aws.amazon.com/", icons:["aws.svg"], c:"#ff9900", r:3, whiteInvert:true },
+  { n:"Azure", u:"https://portal.azure.com/", icons:["azure.svg"], c:"#0078d4", r:3, whiteInvert:true },
+  { n:"Bing", u:"https://www.bing.com/", icons:["bing.svg"], c:"#008373", r:3, whiteInvert:true },
+  { n:"Microsoft", u:"https://www.microsoft.com/", icons:["microsoft.svg"], c:"#ffffff", r:3, whiteInvert:true },
+  { n:"Netflix", u:"https://www.netflix.com/", icons:["netflix-icon.svg"], c:"#e50914", r:3, whiteInvert:true },
+  { n:"Spotify", u:"https://spotify.com", icons:["spotify-icon.svg"], c:"#1db954", r:3 },
+  { n:"X", u:"https://x.com/", icons:["x.svg"], c:"#ffffff", r:3, whiteInvert:true },
+  { n:"Reddit", u:"https://www.reddit.com/", icons:["reddit.svg"], c:"#ff4500", r:3, whiteInvert:true },
+  { n:"Telegram", u:"https://web.telegram.org/", icons:["telegram.svg"], c:"#2aabee", r:3, whiteInvert:true },
+  { n:"Apple", u:"https://www.apple.com/", icons:["apple.svg"], c:"#ffffff", r:3, whiteInvert:true }
 ];
