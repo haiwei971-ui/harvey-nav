@@ -1,8 +1,8 @@
-/* assets/style.css */
-:root {
+/* ================= ROOT ================= */
+
+:root{
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* Day */
   --bg-top:#FFFFFF;
   --bg-bottom:#F5F5F7;
   --text:#1D1D1F;
@@ -17,7 +17,6 @@
 }
 
 body.theme-night{
-  /* Night */
   --bg-top:#09112A;
   --bg-bottom:#070A12;
   --text:rgba(255,255,255,0.92);
@@ -31,33 +30,26 @@ body.theme-night{
   --icon-shadow:rgba(255,255,255,0.12);
 }
 
+/* ================= BASE ================= */
+
 *{ box-sizing:border-box; }
+
 body{
   margin:0;
   font-family: Inter, -apple-system, sans-serif;
-  color: var(--text);
-  background: linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+  color:var(--text);
+  background:linear-gradient(180deg,var(--bg-top),var(--bg-bottom));
   min-height:100vh;
-  transition: background 1.5s var(--ease), color 1.5s var(--ease);
+  transition:background 1.5s var(--ease), color 1.5s var(--ease);
   overflow-x:hidden;
 }
 
-.bg-flow{ position:fixed; inset:0; pointer-events:none; z-index:-1; }
-.blob{
-  position:absolute;
-  width: 680px; height: 680px;
-  left: 50%; top: -160px;
-  transform: translateX(-50%);
-  background: radial-gradient(circle at 30% 30%, rgba(124,92,255,0.22), transparent 55%),
-              radial-gradient(circle at 70% 70%, rgba(16,163,127,0.16), transparent 55%);
-  filter: blur(50px);
-  opacity: .55;
-}
+/* ================= LAYOUT ================= */
 
 .wrap{
-  max-width: 1000px;
-  margin: auto;
-  padding: calc(26px + env(safe-area-inset-top)) 20px 54px;
+  max-width:1000px;
+  margin:auto;
+  padding:calc(26px + env(safe-area-inset-top)) 20px 54px;
 }
 
 .top{
@@ -67,17 +59,19 @@ body{
   margin-bottom:10px;
   opacity:.86;
 }
+
 .top-left .greet{
   font-size:22px;
   font-weight:600;
-  margin-bottom:2px;
 }
+
 .top-left .weather{
   font-size:13px;
   color:var(--muted);
   display:flex;
   gap:8px;
 }
+
 .clock{
   font-family:"JetBrains Mono";
   font-weight:600;
@@ -87,9 +81,10 @@ body{
 
 .quote-area{
   margin:20px 0 28px;
-  padding:0 10px;
+  padding-left:10px;
   border-left:2px solid var(--hair);
 }
+
 .quote-text{
   font-size:15px;
   font-style:italic;
@@ -97,38 +92,33 @@ body{
   line-height:1.5;
   max-width:600px;
 }
+
 .quote-author{
   font-size:11px;
   text-transform:uppercase;
-  letter-spacing:0.1em;
+  letter-spacing:.1em;
   margin-top:6px;
-  opacity:0.6;
+  opacity:.6;
 }
 
 .search{
   display:flex;
   align-items:center;
-  gap:12px;
   background:var(--search);
   border:1px solid var(--hair);
   padding:13px 18px;
   border-radius:999px;
   margin-bottom:18px;
-  backdrop-filter: blur(20px);
-  transition:.3s var(--ease);
+  backdrop-filter:blur(20px);
 }
-.search:focus-within{
-  transform:scaleX(1.018);
-  border-color: rgba(124,92,255,0.4);
-}
+
 .search input{
   flex:1;
-  width:100%;
-  background:transparent;
   border:0;
   outline:none;
-  color:var(--text);
+  background:transparent;
   font-size:18px;
+  color:var(--text);
 }
 
 .section{
@@ -142,6 +132,7 @@ body{
   text-transform:uppercase;
   font-weight:600;
 }
+
 .section .line{
   flex:1;
   height:1px;
@@ -150,11 +141,19 @@ body{
 
 .grid{
   display:grid;
-  grid-template-columns:repeat(6, 1fr);
+  grid-template-columns:repeat(6,1fr);
   gap:26px 18px;
 }
-@media (max-width:900px){ .grid{ grid-template-columns:repeat(4, 1fr); } }
-@media (max-width:600px){ .grid{ grid-template-columns:repeat(3, 1fr); } }
+
+@media(max-width:900px){
+  .grid{ grid-template-columns:repeat(4,1fr); }
+}
+
+@media(max-width:600px){
+  .grid{ grid-template-columns:repeat(3,1fr); }
+}
+
+/* ================= ITEM ================= */
 
 .item{
   position:relative;
@@ -164,126 +163,114 @@ body{
   gap:12px;
   text-decoration:none;
   color:var(--muted);
-  transition:.25s var(--ease);
   min-height:86px;
+  transition:.25s var(--ease);
   isolation:isolate;
 }
+
 .item:active{
-  transform:scale(0.95);
-  transition:0.1s;
+  transform:scale(.95);
 }
 
-/* icon container */
+/* ================= ICON ================= */
+
 .icon{
   width:54px;
   height:54px;
   display:grid;
   place-items:center;
   position:relative;
+  transition:.35s var(--ease);
 }
+
+/* icon img */
 .icon img{
   width:36px;
   height:36px;
   object-fit:contain;
   transition:.35s var(--ease);
+  backface-visibility:hidden;
 }
 
-/* Gemini overlay positioning */
+/* ===== 默认灰态 ===== */
+
+.icon img.single,
+.icon img.base,
+.icon.gemini img.g0{
+  filter:grayscale(100%)
+         brightness(var(--icon-brightness))
+         opacity(var(--icon-default-opacity))
+         drop-shadow(0 2px 4px var(--icon-shadow));
+}
+
+/* 双图逻辑 */
+.icon img.active{ opacity:0; }
+.icon img.base{ opacity:1; }
+
+/* Gemini 居中 */
 .icon.gemini img{
   position:absolute;
   top:50%;
   left:50%;
-  transform:translate(-50%, -50%) scale(var(--s, 1));
+  transform:translate(-50%,-50%) scale(var(--s,1));
 }
 
-/* ===== 默认：全部灰（关键） ===== */
-.icon img.single,
-.icon img.base,
-.icon.gemini img.g0{
-  filter: grayscale(100%)
-    brightness(var(--icon-brightness))
-    opacity(var(--icon-default-opacity))
-    drop-shadow(0 2px 4px var(--icon-shadow));
-}
-
-/* 双图：默认显示 base，隐藏 active */
-.icon img.active{ opacity:0; }
-.icon img.base{ opacity:1; }
-
-/* Gemini：默认 g0 显示，g1 隐藏 */
+/* 默认隐藏彩色层 */
 .icon.gemini img.g1{ opacity:0; }
 
-/* 夜间模式：如果标记了 white-invert，就对“默认灰态”做补光 */
+/* ===== 夜间补光 ===== */
+
 body.theme-night .white-invert .icon img.single,
 body.theme-night .white-invert .icon img.base,
 body.theme-night .white-invert .icon.gemini img.g0{
-  filter: grayscale(100%)
-    invert(1)
-    brightness(1.8)
-    opacity(0.92)
-    drop-shadow(0 2px 4px var(--icon-shadow)) !important;
+  filter:grayscale(100%)
+         invert(1)
+         brightness(1.8)
+         opacity(.92)
+         drop-shadow(0 2px 4px var(--icon-shadow));
 }
 
-/* ===== 唤醒（hover）：变彩 ===== */
+/* ================= 唤醒动画 ================= */
+
+/* 关键：位移写在 icon 容器上，不再写在 img 上（彻底解决下沉） */
+
+.item:hover .icon,
+.item.awake .icon{
+  transform:translateY(-6px);
+}
+
+/* 单图去灰 */
 .item:hover .icon img.single,
-.item:hover .icon img.base{
-  filter: grayscale(0%) brightness(1) opacity(1) !important;
+.item.awake .icon img.single{
+  filter:grayscale(0%) brightness(1) opacity(1) !important;
 }
 
-/* 双图：hover 切到 active */
-.item:hover .icon img.base{ opacity:0; }
-.item:hover .icon img.active{ opacity:1; filter:none !important; opacity:1; }
-
-/* Gemini：hover 切 g1 */
-.item:hover .icon.gemini img.g0{ opacity:0; }
-.item:hover .icon.gemini img.g1{ opacity:1; filter:none !important; opacity:1; }
-
-/* hover 位移 */
-.item:hover .icon img{
-  transform: translateY(-6px) scale(var(--s, 1));
+/* 双图切换 */
+.item:hover .icon img.base,
+.item.awake .icon img.base{
+  opacity:0;
 }
-.item:hover .icon.gemini img{
-  transform: translate(-50%, calc(-50% - 6px)) scale(var(--s, 1));
+
+.item:hover .icon img.active,
+.item.awake .icon img.active{
+  opacity:1;
+  filter:none !important;
+}
+
+/* Gemini 切换 */
+.item:hover .icon.gemini img.g0,
+.item.awake .icon.gemini img.g0{
+  opacity:0;
+}
+
+.item:hover .icon.gemini img.g1,
+.item.awake .icon.gemini img.g1{
+  opacity:1;
+  filter:none !important;
 }
 
 /* glow */
-.item:hover .icon::after{
-  content:"";
-  position:absolute;
-  inset:-10px;
-  border-radius:50%;
-  z-index:-1;
-  filter:blur(35px);
-  opacity:var(--glow-opacity);
-  background: radial-gradient(circle, var(--brand-color, #7C5CFF), transparent 75%);
-}
-
-/* label */
-.label{
-  font-size:13px;
-  transition:.25s var(--ease);
-  text-align:center;
-}
-.item:hover .label{ color:var(--text); }
-
-/* ===== 手机“点一下唤醒”：awake 视觉等同 hover ===== */
-.item.awake .icon img.single,
-.item.awake .icon img.base{
-  filter: grayscale(0%) brightness(1) opacity(1) !important;
-}
-.item.awake .icon img.base{ opacity:0; }
-.item.awake .icon img.active{ opacity:1; filter:none !important; opacity:1; }
-
-.item.awake .icon.gemini img.g0{ opacity:0; }
-.item.awake .icon.gemini img.g1{ opacity:1; filter:none !important; opacity:1; }
-
-.item.awake .icon img{
-  transform: translateY(-6px) scale(var(--s, 1));
-}
-.item.awake .icon.gemini img{
-  transform: translate(-50%, calc(-50% - 6px)) scale(var(--s, 1));
-}
-
+.item:hover .icon::after,
 .item.awake .icon::after{
   content:"";
   position:absolute;
@@ -292,23 +279,33 @@ body.theme-night .white-invert .icon.gemini img.g0{
   z-index:-1;
   filter:blur(35px);
   opacity:var(--glow-opacity);
-  background: radial-gradient(circle, var(--brand-color, #7C5CFF), transparent 75%);
+  background:radial-gradient(circle,var(--brand-color,#7C5CFF),transparent 75%);
+}
+
+/* label */
+.label{
+  font-size:13px;
+  transition:.25s var(--ease);
+}
+
+.item:hover .label,
+.item.awake .label{
+  color:var(--text);
 }
 
 /* more */
-#moreArea[aria-hidden="true"]{ display:none; }
+#moreArea[aria-hidden="true"]{
+  display:none;
+}
 
 .morebtn{
   background:var(--search);
   border:1px solid var(--hair);
-  color:var(--text);
   padding:8px 24px;
   border-radius:999px;
-  cursor:pointer;
   font-size:13px;
-  opacity:.65;
-  transition:.3s var(--ease);
+  cursor:pointer;
   margin:28px auto 0;
   display:block;
+  opacity:.65;
 }
-.morebtn:active{ transform: scale(0.98); }
