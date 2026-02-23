@@ -7,9 +7,7 @@ function imgTag(src, cls) {
 
 function render() {
   const ess = document.getElementById("ess"), ext = document.getElementById("ext");
-  if (!ess || !ext) return;
   ess.innerHTML = ext.innerHTML = "";
-
   SITES.forEach(s => {
     const a = document.createElement("a");
     a.className = `item ${s.whiteInvert ? "white-invert" : ""}`;
@@ -17,6 +15,7 @@ function render() {
     a.style.setProperty("--brand-color", s.c || "#7C5CFF");
     if (s.s) a.style.setProperty("--s", String(s.s));
     
+    // ✅ Use separate logic for Gemini layering
     const iconHTML = s.gemini 
       ? `<div class="icon gemini">${imgTag("gemini.svg", "g0")}${imgTag("gemini-color.svg", "g1")}</div>`
       : `<div class="icon">${imgTag(s.icons[0], "single")}</div>`;
@@ -26,28 +25,42 @@ function render() {
   });
 }
 
-// 自动切换主题
 function updateTheme() {
-  const h = new Date().getHours();
+  const h = new Date().getHours(), b = document.body, g = document.getElementById("greet");
   const night = (h >= 17 || h < 8);
-  document.body.classList.toggle("theme-night", night);
-  const greet = document.getElementById("greet");
-  if (greet) greet.textContent = night ? "Good night." : (h < 12 ? "Good morning." : "Good afternoon.");
+  b.classList.toggle("theme-night", night);
+  if (g) g.textContent = night ? "Good night." : (h < 12 ? "Good morning." : "Good afternoon.");
 }
 
-// 展开/收起逻辑
-let isExpanded = false;
+async function updateWeather() {
+  try {
+    const res = await fetch('https://wttr.in/?format=j1');
+    const data = await res.json();
+    const current = data.current_condition[0];
+    document.getElementById("temp").textContent = current.temp_C + "°C";
+    document.getElementById("city").textContent = data.nearest_area[0].areaName[0].value.toUpperCase();
+    document.getElementById("condition").textContent = current.weatherDesc[0].value;
+  } catch (e) { if (document.getElementById("city")) document.getElementById("city").textContent = "OFFLINE"; }
+}
+
 function toggleMore() {
-  isExpanded = !isExpanded;
-  const area = document.getElementById("moreArea");
-  const btn = document.getElementById("toggleBtn");
-  if (area) area.setAttribute("aria-hidden", String(!isExpanded));
-  if (btn) btn.textContent = isExpanded ? "Less Icons" : "More Icons";
+  const area = document.getElementById("moreArea"), btn = document.getElementById("toggleBtn");
+  const isHidden = area.getAttribute("aria-hidden") === "true";
+  area.setAttribute("aria-hidden", String(!isHidden));
+  btn.textContent = isHidden ? "Less Icons" : "More Icons";
 }
 
-// 初始化
-updateTheme(); render();
+// Init
+updateTheme(); render(); updateWeather();
 const btn = document.getElementById("toggleBtn");
 if (btn) btn.onclick = toggleMore;
 
-setInterval(updateTheme, 60000);
+const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+document.getElementById("quote").textContent = `"${q.t}"`;
+document.getElementById("author").textContent = q.a;
+
+function tick() {
+  const d = new Date();
+  document.getElementById("clock").textContent = `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+}
+tick(); setInterval(tick, 1000); setInterval(updateTheme, 60000);
