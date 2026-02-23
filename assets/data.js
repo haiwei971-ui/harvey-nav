@@ -161,7 +161,7 @@ export const SITES = [
   { n:"Telegram",
     u:"https://web.telegram.org/",
     r:3,
-    icons:["telegram.svg"],
+    icons:["telegram2.svg"],
     whiteInvert:true
   }
 
