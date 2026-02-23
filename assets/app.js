@@ -3,87 +3,199 @@ import { ICON_BASE, FALLBACK_ICON, QUOTES, SITES } from "./data.js";
 
 const $ = (id) => document.getElementById(id);
 
-function pick(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
+const isTouch = () => ("ontouchstart" in window) || (navigator.maxTouchPoints > 0);
+
+function pad2(n){ return String(n).padStart(2, "0"); }
+
+function setThemeAuto(){
+  // 优先跟随系统
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  // 再结合时间（更自然）
+  const h = new Date().getHours();
+  const nightByTime = (h >= 19 || h < 7);
+  const night = prefersDark || nightByTime;
+
+  document.body.classList.toggle("theme-night", night);
 }
 
-function pad2(n) {
-  return String(n).padStart(2, "0");
-}
-
-function setClock() {
-  const el = $("clock");
-  if (!el) return;
-  const d = new Date();
-  el.textContent = `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
-}
-
-function setGreet() {
+function setGreeting(){
   const el = $("greet");
   if (!el) return;
   const h = new Date().getHours();
-  let t = "Hello.";
-  if (h >= 5 && h < 12) t = "Good morning.";
-  else if (h >= 12 && h < 18) t = "Good afternoon.";
-  else if (h >= 18 || h < 2) t = "Good night.";
-  else t = "Still awake?";
-  el.textContent = t;
+  let text = "Hello.";
+  if (h < 5) text = "Still awake?";
+  else if (h < 12) text = "Good morning.";
+  else if (h < 18) text = "Good afternoon.";
+  else text = "Good night.";
+  el.textContent = text;
 }
 
-function setQuote() {
-  const q = $("quote");
-  const a = $("author");
-  if (!q || !a) return;
-  const item = pick(QUOTES || []);
-  if (!item) return;
-  q.textContent = `"${item.t}"`;
-  a.textContent = item.a;
-}
-
-/**
- * 生成 <div class="icon">，内部叠两张图：
- *  - .icon-img.base  默认显示
- *  - .icon-img.active  交互时显示（hover/focus/active）
- */
-function buildIconNode(site) {
-  const wrap = document.createElement("div");
-  wrap.className = site.gemini ? "icon gemini" : "icon";
-
-  const icons = Array.isArray(site.icons) ? site.icons : [];
-  const baseIcon =
-    (site.gemini ? "gemini.svg" : icons[0]) || FALLBACK_ICON;
-  const activeIcon =
-    (site.gemini ? "gemini-color.svg" : icons[1]) || null;
-
-  // base img
-  const imgBase = document.createElement("img");
-  imgBase.className = "icon-img base";
-  imgBase.alt = site.n || "";
-  imgBase.src = ICON_BASE + encodeURIComponent(baseIcon);
-  imgBase.onerror = function () {
-    this.onerror = null;
-    this.src = ICON_BASE + encodeURIComponent(FALLBACK_ICON);
+function startClock(){
+  const el = $("clock");
+  if (!el) return;
+  const tick = () => {
+    const d = new Date();
+    el.textContent = `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
   };
-  wrap.appendChild(imgBase);
+  tick();
+  setInterval(tick, 1000);
+}
 
-  // active img（有才创建）
-  if (activeIcon) {
-    const imgActive = document.createElement("img");
-    imgActive.className = "icon-img active";
-    imgActive.alt = site.n || "";
-    imgActive.src = ICON_BASE + encodeURIComponent(activeIcon);
-    imgActive.onerror = function () {
-      // active 失败就别挡住 base
-      this.remove();
-    };
-    wrap.appendChild(imgActive);
-    wrap.classList.add("has-active");
+function pickQuote(){
+  if (!Array.isArray(QUOTES) || QUOTES.length === 0) return;
+  const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+  const qt = $("quote");
+  const au = $("author");
+  if (qt) qt.textContent = `"${q.t}"`;
+  if (au) au.textContent = q.a;
+}
+
+function setSearch(){
+  const form = $("searchForm");
+  const input = $("q");
+  if (!form || !input) return;
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const q = (input.value || "").trim();
+    if (!q) return;
+    // 默认 Google 搜索
+    const url = `https://www.google.com/search?q=${encodeURIComponent(q)}`;
+    window.location.href = url;
+  });
+}
+
+async function setWeather(){
+  // 轻量：拿地理位置 -> open-meteo
+  const tempEl = $("temp");
+  const cityEl = $("city");
+  const condEl = $("condition");
+  if (!tempEl || !cityEl) return;
+
+  cityEl.textContent = "Loading...";
+
+  try{
+    const pos = await new Promise((resolve, reject) => {
+      if (!navigator.geolocation) return reject(new Error("no geolocation"));
+      navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 6000 });
+    });
+
+    const lat = pos.coords.latitude;
+    const lon = pos.coords.longitude;
+
+    // 反查城市：用 Nominatim（可能被限流，失败就不显示城市）
+    let city = "";
+    try{
+      const rev = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`, {
+        headers: { "Accept": "application/json" }
+      });
+      if (rev.ok){
+        const js = await rev.json();
+        city = js?.address?.city || js?.address?.town || js?.address?.village || js?.address?.state || "";
+      }
+    }catch(_e){}
+
+    // open-meteo 实况
+    const w = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&temperature_unit=celsius`);
+    if (!w.ok) throw new Error("weather fetch failed");
+    const wj = await w.json();
+
+    const t = wj?.current?.temperature_2m;
+    const code = wj?.current?.weather_code;
+
+    tempEl.textContent = (typeof t === "number") ? `${Math.round(t)}°C` : "--";
+    cityEl.textContent = city || "Local";
+    condEl.textContent = codeToText(code);
+
+  }catch(_e){
+    tempEl.textContent = "--";
+    cityEl.textContent = "Local";
+    if (condEl) condEl.textContent = "";
+  }
+}
+
+function codeToText(code){
+  // open-meteo weather_code 简化映射（不追求全覆盖）
+  const map = new Map([
+    [0, "Clear"],
+    [1, "Mainly clear"], [2, "Partly cloudy"], [3, "Overcast"],
+    [45, "Fog"], [48, "Fog"],
+    [51, "Drizzle"], [53, "Drizzle"], [55, "Drizzle"],
+    [61, "Rain"], [63, "Rain"], [65, "Rain"],
+    [71, "Snow"], [73, "Snow"], [75, "Snow"],
+    [80, "Showers"], [81, "Showers"], [82, "Showers"],
+    [95, "Thunder"], [96, "Thunder"], [99, "Thunder"],
+  ]);
+  if (typeof code !== "number") return "";
+  return map.get(code) || "";
+}
+
+function imgTag(src, cls){
+  const safe = ICON_BASE + encodeURIComponent(src);
+  const fallback = ICON_BASE + encodeURIComponent(FALLBACK_ICON);
+  return `<img class="${cls}" src="${safe}" alt="" loading="lazy"
+    onerror="this.onerror=null;this.src='${fallback}'">`;
+}
+
+function buildIconHTML(site){
+  // Gemini：专用两层（g0 灰底图、g1 彩色图）
+  if (site.gemini){
+    return `
+      <div class="icon gemini" style="--s:${site.s ? String(site.s) : "1"}">
+        ${imgTag("gemini.svg", "g0")}
+        ${imgTag("gemini-color.svg", "g1")}
+      </div>
+    `;
   }
 
-  return wrap;
+  const icons = Array.isArray(site.icons) ? site.icons : [];
+
+  // 双图：base + active
+  if (icons.length >= 2){
+    return `
+      <div class="icon" style="--s:${site.s ? String(site.s) : "1"}">
+        ${imgTag(icons[0], "base")}
+        ${imgTag(icons[1], "active")}
+      </div>
+    `;
+  }
+
+  // 单图：single（默认灰，唤醒去灰）
+  const one = icons[0] || FALLBACK_ICON;
+  return `
+    <div class="icon" style="--s:${site.s ? String(site.s) : "1"}">
+      ${imgTag(one, "single")}
+    </div>
+  `;
 }
 
-function renderSites() {
+function attachAwakeTap(a){
+  // 手机：第一次 tap 唤醒，不跳转；第二次 tap 才跳转
+  if (!isTouch()) return;
+
+  a.addEventListener("click", (e) => {
+    if (!a.classList.contains("awake")){
+      e.preventDefault();
+
+      // 清掉其它 awake
+      document.querySelectorAll(".item.awake").forEach(x => x.classList.remove("awake"));
+
+      a.classList.add("awake");
+      setTimeout(() => a.classList.remove("awake"), 1200);
+    }
+  }, { passive: false });
+
+  // 点空白处熄灭
+  document.addEventListener("touchstart", (ev) => {
+    const t = ev.target;
+    if (!(t instanceof Element)) return;
+    if (!t.closest(".item")) {
+      document.querySelectorAll(".item.awake").forEach(x => x.classList.remove("awake"));
+    }
+  }, { passive: true });
+}
+
+function renderSites(){
   const ess = $("ess");
   const ext = $("ext");
   if (!ess || !ext) return;
@@ -91,127 +203,69 @@ function renderSites() {
   ess.innerHTML = "";
   ext.innerHTML = "";
 
-  (SITES || []).forEach((s) => {
-    const a = document.createElement("a");
-    a.className = `item ${s.whiteInvert ? "whiteInvert" : ""}`;
-    a.href = s.u;
-    a.target = "_blank";
-    a.rel = "noopener noreferrer";
-    if (s.c) a.style.setProperty("--brand-color", s.c);
-    if (s.s) a.style.setProperty("--s", String(s.s));
+  const essentials = SITES.filter(s => s.r === 1 || s.r === 2);
+  const extended = SITES.filter(s => s.r === 3);
 
-    // icon
-    const iconNode = buildIconNode(s);
-    a.appendChild(iconNode);
+  const renderList = (arr, root) => {
+    arr.forEach(site => {
+      const a = document.createElement("a");
+      a.className = `item ${site.whiteInvert ? "white-invert" : ""}`;
+      a.href = site.u;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
 
-    // label
-    const label = document.createElement("div");
-    label.className = "label";
-    label.textContent = s.n || "";
-    a.appendChild(label);
+      a.style.setProperty("--brand-color", site.c || "#7C5CFF");
+      if (site.s) a.style.setProperty("--s", String(site.s));
 
-    // group
-    const r = s.r || 1;
-    if (r === 1) ess.appendChild(a);
-    else ext.appendChild(a);
-  });
+      a.innerHTML = `
+        ${buildIconHTML(site)}
+        <div class="label">${site.n}</div>
+      `;
+
+      attachAwakeTap(a);
+
+      root.appendChild(a);
+    });
+  };
+
+  renderList(essentials, ess);
+  renderList(extended, ext);
 }
 
-function setupMore() {
+function setupMoreToggle(){
+  const moreArea = $("moreArea");
   const btn = $("toggleBtn");
-  const area = $("moreArea");
-  if (!btn || !area) return;
+  if (!moreArea || !btn) return;
 
-  const setOpen = (open) => {
-    area.setAttribute("aria-hidden", open ? "false" : "true");
-    area.style.display = open ? "block" : "none";
+  const setState = (open) => {
+    moreArea.setAttribute("aria-hidden", open ? "false" : "true");
     btn.textContent = open ? "Less Icons" : "More Icons";
-    btn.setAttribute("aria-expanded", open ? "true" : "false");
   };
 
   let open = false;
-  setOpen(open);
+  setState(open);
+
   btn.addEventListener("click", () => {
     open = !open;
-    setOpen(open);
+    setState(open);
   });
 }
 
-/**
- * 可选：简单天气（无 key），用 Open-Meteo
- * 如果你不想要天气，把 initWeather() 整个删掉即可
- */
-async function initWeather() {
-  const temp = $("temp");
-  const city = $("city");
-  const cond = $("condition");
-  if (!temp || !city) return;
-
-  try {
-    city.textContent = "Loading...";
-    const pos = await new Promise((resolve, reject) => {
-      if (!navigator.geolocation) reject(new Error("no geo"));
-      navigator.geolocation.getCurrentPosition(resolve, reject, {
-        enableHighAccuracy: false,
-        timeout: 6000,
-        maximumAge: 300000,
-      });
-    });
-
-    const lat = pos.coords.latitude;
-    const lon = pos.coords.longitude;
-
-    // 取当前温度
-    const url =
-      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
-      `&current=temperature_2m&timezone=auto`;
-
-    const r = await fetch(url);
-    const j = await r.json();
-
-    const t = j?.current?.temperature_2m;
-    temp.textContent = typeof t === "number" ? `${Math.round(t)}°C` : "--";
-
-    // 城市名（反地理编码）
-    const g =
-      `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=en&count=1`;
-    const rr = await fetch(g);
-    const jj = await rr.json();
-    const name = jj?.results?.[0]?.name || "Local";
-    city.textContent = name;
-
-    if (cond) cond.textContent = "";
-  } catch (e) {
-    // 失败就别挡页面
-    city.textContent = "COFFEE";
-    temp.textContent = "--";
-    if (cond) cond.textContent = "";
-  }
-}
-
-function init() {
-  setClock();
-  setGreet();
-  setQuote();
+function boot(){
+  setThemeAuto();
+  setGreeting();
+  startClock();
+  pickQuote();
+  setSearch();
   renderSites();
-  setupMore();
-  initWeather();
+  setupMoreToggle();
+  setWeather();
 
-  setInterval(setClock, 1000 * 10);
-
-  // 搜索框
-  const form = $("searchForm");
-  const q = $("q");
-  if (form && q) {
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const v = (q.value || "").trim();
-      if (!v) return;
-      const url = "https://www.google.com/search?q=" + encodeURIComponent(v);
-      window.open(url, "_blank", "noopener,noreferrer");
-      q.value = "";
-    });
-  }
+  // 每分钟更新一次问候/主题（更自然）
+  setInterval(() => {
+    setThemeAuto();
+    setGreeting();
+  }, 60_000);
 }
 
-init();
+boot();
