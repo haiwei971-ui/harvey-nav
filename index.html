@@ -15,15 +15,12 @@
   <style>
     :root{
       --ease: cubic-bezier(0.16, 1, 0.3, 1);
-      /* Day Mode */
       --bg-top:#FFFFFF; --bg-bottom:#F5F5F7;
       --text:#1D1D1F; --muted:rgba(0,0,0,0.45);
       --hair:rgba(0,0,0,0.06); --search:rgba(0,0,0,0.03);
       --glow-opacity:0.06;
       --icon-default-opacity: 0.65;
       --icon-brightness: 1.0;
-
-      /* ✅ 给背景 blob 一个基础色（避免一直 fallback） */
       --accent: #a1c4fd;
     }
 
@@ -34,7 +31,6 @@
       --glow-opacity:0.35;
       --icon-default-opacity: 0.85;
       --icon-brightness: 1.4;
-
       --accent: rgba(90,80,255,0.55);
     }
 
@@ -79,7 +75,6 @@
 
     .icon{ width:54px; height:54px; display:grid; place-items:center; position:relative; }
 
-    /* ✅ 这里用上 --s，Gemini / 尖锐图标缩放才会生效 */
     .icon img.single{
       width:36px; height:36px; object-fit:contain;
       transform: scale(var(--s, 1));
@@ -87,7 +82,6 @@
       transition: .35s var(--ease);
     }
 
-    /* ✅ 深色模式下：只针对单层图标做 invert，避免影响 Gemini 双层 */
     body.theme-night .white-invert img.single{
       filter: grayscale(100%) invert(1) brightness(1.6) opacity(var(--icon-default-opacity));
     }
@@ -97,7 +91,6 @@
       transform: translateY(-6px) scale(var(--s, 1));
     }
 
-    /* ✅ Gemini 双层（灰 -> 彩），同时支持 --s */
     .icon.gemini img{
       position:absolute; width:36px; height:36px; object-fit:contain;
       transform: scale(var(--s, 1));
@@ -162,9 +155,7 @@
         onerror="this.onerror=null;this.src='${ICON_BASE}${FALLBACK}'">`;
     }
 
-    // ✅ 保持你的 22 个；Gemini 用目录里已有 gemini.svg + gemini-color.svg
-    // ✅ Reddit：你如果仓库没有 reddit-color.svg，就会回退成 OpenAI。
-    //    最稳：先用 reddit.svg（如果你确定存在），不确定就保留两种兜底。
+    // ✅ 已按你最新目录更新：ChatGPT=openai.svg，Reddit=reddit.svg
     const SITES = [
       { n:"ChatGPT",      u:"https://chatgpt.com/",                  icons:["openai.svg"],                 c:"#10a37f", r:1 },
       { n:"Claude",       u:"https://claude.ai/",                    icons:["claude-color.svg"],           c:"#d97757", r:1 },
@@ -188,8 +179,7 @@
       { n:"Spotify",      u:"https://spotify.com/",                  icons:["spotify-icon.svg"],           c:"#1db954", r:3 },
       { n:"X",            u:"https://x.com/",                        icons:["x.svg"],                      c:"#ffffff", r:3, whiteInvert:true },
 
-      // ✅ 兜底两种命名，最大概率避免回退到 OpenAI
-      { n:"Reddit",       u:"https://www.reddit.com/",               icons:["reddit.svg","reddit-color.svg"], c:"#ff4500", r:3 },
+      { n:"Reddit",       u:"https://www.reddit.com/",               icons:["reddit.svg"],                 c:"#ff4500", r:3 },
 
       { n:"Telegram",     u:"https://web.telegram.org/",             icons:["telegram.svg"],               c:"#2aabee", r:3 },
       { n:"Apple",        u:"https://www.apple.com/",                icons:["apple.svg"],                  c:"#9aa0a6", r:3, whiteInvert:true }
@@ -218,17 +208,7 @@
               ${imgTag("gemini-color.svg","g1")}
             </div>`;
         } else {
-          // ✅ 不只用 icons[0]，用“多个候选图标”逐个失败回退（不依赖 OpenAI fallback）
-          const candidates = (s.icons && s.icons.length ? s.icons : [FALLBACK]).slice();
-          const first = candidates.shift();
-          const chain = candidates.map(x => `'${ICON_BASE}${encodeURIComponent(x)}'`).join(",");
-          const onerr = chain
-            ? `if(!this.dataset.i){this.dataset.i=0};var arr=[${chain}];var k=+this.dataset.i; if(k<arr.length){this.src=arr[k]; this.dataset.i=k+1;} else {this.src='${ICON_BASE}${FALLBACK}'; this.onerror=null;}`
-            : `this.onerror=null;this.src='${ICON_BASE}${FALLBACK}'`;
-
-          iconHTML = `<div class="icon">
-              <img class="single" src="${ICON_BASE + encodeURIComponent(first)}" loading="lazy" decoding="async" onerror="${onerr}">
-            </div>`;
+          iconHTML = `<div class="icon">${imgTag(s.icons[0], "single")}</div>`;
         }
 
         a.innerHTML = `${iconHTML}<div class="label">${s.n}</div>`;
@@ -246,11 +226,10 @@
 
     function updateTheme(){
       const h = new Date().getHours();
-      const b = document.body;
-      const g = document.getElementById("greet");
       const night = (h >= 17 || h < 8);
-      b.classList.toggle("theme-night", night);
-      g.textContent = night ? "Good night." : (h < 12 ? "Good morning." : "Good afternoon.");
+      document.body.classList.toggle("theme-night", night);
+      document.getElementById("greet").textContent =
+        night ? "Good night." : (h < 12 ? "Good morning." : "Good afternoon.");
     }
 
     function tick(){
