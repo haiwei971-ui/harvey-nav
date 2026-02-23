@@ -1,155 +1,71 @@
-// assets/app.js
-import { ICON_BASE, FALLBACK_ICON, QUOTES, SITES } from "./data.js";
+import { SITES, QUOTES, ICON_BASE, FALLBACK_ICON } from './data.js';
 
-/* ---------- helpers ---------- */
-
-function $(id){
-  return document.getElementById(id);
+function imgTag(src, cls) {
+  const safe = ICON_BASE + encodeURIComponent(src);
+  return `<img class="${cls}" src="${safe}" onerror="this.onerror=null;this.src='${ICON_BASE}${FALLBACK_ICON}'">`;
 }
 
-function imgTag(src, cls){
-  const safe = ICON_BASE + encodeURIComponent(src || FALLBACK_ICON);
-  return `
-    <img class="${cls}" 
-         src="${safe}" 
-         onerror="this.onerror=null;this.src='${ICON_BASE + FALLBACK_ICON}'">
-  `;
-}
-
-/* ---------- render icons ---------- */
-
-function renderSites(){
-  const ess = $("ess");
-  const ext = $("ext");
-  if(!ess || !ext) return;
-
-  ess.innerHTML = "";
-  ext.innerHTML = "";
-
-  SITES.forEach(site => {
-
+function render() {
+  const ess = document.getElementById("ess"), ext = document.getElementById("ext");
+  ess.innerHTML = ext.innerHTML = "";
+  SITES.forEach(s => {
     const a = document.createElement("a");
-    a.className = "item";
-    a.href = site.u;
-    a.target = "_blank";
-    a.rel = "noopener noreferrer";
-
-    if(site.color){
-      a.style.setProperty("--brand-color", site.color);
-    }
-
-    if(site.s){
-      a.style.setProperty("--s", site.s);
-    }
-
-    const iconHTML = site.gemini
-      ? `<div class="icon gemini">${imgTag(site.icons?.[0], "")}</div>`
-      : `<div class="icon">${imgTag(site.icons?.[0], "")}</div>`;
-
-    a.innerHTML = `
-      ${iconHTML}
-      <div class="label">${site.n}</div>
-    `;
-
-    if(site.r === 1){
-      ess.appendChild(a);
-    } else {
-      ext.appendChild(a);
-    }
-
+    a.className = `item ${s.whiteInvert ? "white-invert" : ""}`;
+    a.href = s.u; a.target = "_blank"; a.rel = "noopener noreferrer";
+    a.style.setProperty("--brand-color", s.c || "#7C5CFF");
+    if (s.s) a.style.setProperty("--s", String(s.s));
+    
+    const iconHTML = s.gemini 
+      ? `<div class="icon gemini">${imgTag("gemini.svg", "g0")}${imgTag("gemini-color.svg", "g1")}</div>`
+      : `<div class="icon">${imgTag(s.icons[0], "single")}</div>`;
+    
+    a.innerHTML = `${iconHTML}<div class="label">${s.n}</div>`;
+    (s.r <= 2 ? ess : ext).appendChild(a);
   });
 }
 
-/* ---------- greeting ---------- */
-
-function updateGreeting(){
-  const h = new Date().getHours();
-  const g = $("greet");
-  if(!g) return;
-
-  if(h < 5) g.textContent = "Still awake?";
-  else if(h < 12) g.textContent = "Good morning.";
-  else if(h < 18) g.textContent = "Good afternoon.";
-  else g.textContent = "Good evening.";
+async function updateWeather() {
+  try {
+    const res = await fetch('https://wttr.in/?format=j1');
+    const data = await res.json();
+    const current = data.current_condition[0];
+    document.getElementById("temp").textContent = current.temp_C + "°C";
+    document.getElementById("city").textContent = data.nearest_area[0].areaName[0].value.toUpperCase();
+    document.getElementById("condition").textContent = current.weatherDesc[0].value;
+  } catch (e) { document.getElementById("city").textContent = "OFFLINE"; }
 }
 
-/* ---------- clock ---------- */
-
-function startClock(){
-  const el = $("clock");
-  if(!el) return;
-
-  function tick(){
-    const d = new Date();
-    const hh = String(d.getHours()).padStart(2,"0");
-    const mm = String(d.getMinutes()).padStart(2,"0");
-    el.textContent = `${hh}:${mm}`;
-  }
-
-  tick();
-  setInterval(tick, 1000);
+function updateTheme() {
+  const h = new Date().getHours(), b = document.body, g = document.getElementById("greet");
+  const night = (h >= 17 || h < 8);
+  b.classList.toggle("theme-night", night);
+  g.textContent = night ? "Good night." : (h < 12 ? "Good morning." : "Good afternoon.");
 }
 
-/* ---------- quotes ---------- */
-
-function setRandomQuote(){
-  const q = $("quote");
-  const a = $("author");
-  if(!q || !a || !QUOTES?.length) return;
-
-  const item = QUOTES[Math.floor(Math.random()*QUOTES.length)];
-  q.textContent = `"${item.t}"`;
-  a.textContent = item.a;
+function tick() {
+  const d = new Date();
+  document.getElementById("clock").textContent = `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
 }
 
-/* ---------- search ---------- */
+// 事件绑定
+document.getElementById("toggleBtn").onclick = () => {
+  const area = document.getElementById("moreArea");
+  const exp = area.getAttribute("aria-hidden") === "false";
+  area.setAttribute("aria-hidden", String(!exp));
+  document.getElementById("toggleBtn").textContent = !exp ? "Less Icons" : "More Icons";
+};
 
-function initSearch(){
-  const form = $("searchForm");
-  const input = $("q");
-  if(!form || !input) return;
+document.getElementById("searchForm").onsubmit = (e) => {
+  e.preventDefault();
+  const q = document.getElementById("q").value.trim();
+  if (q) window.open("https://www.google.com/search?q=" + encodeURIComponent(q), "_blank");
+};
 
-  form.addEventListener("submit", e=>{
-    e.preventDefault();
-    const v = input.value.trim();
-    if(!v) return;
-    window.location.href = `https://www.google.com/search?q=${encodeURIComponent(v)}`;
-  });
-}
+// 初始化
+updateTheme(); tick(); render(); updateWeather();
+const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+document.getElementById("quote").textContent = `"${q.t}"`;
+document.getElementById("author").textContent = q.a;
 
-/* ---------- more toggle ---------- */
-
-function initToggle(){
-  const btn = $("toggleBtn");
-  const area = $("moreArea");
-  if(!btn || !area) return;
-
-  btn.addEventListener("click", ()=>{
-    const hidden = area.getAttribute("aria-hidden") === "true";
-    area.setAttribute("aria-hidden", hidden ? "false" : "true");
-    btn.textContent = hidden ? "Less Icons" : "More Icons";
-  });
-}
-
-/* ---------- theme auto ---------- */
-
-function autoTheme(){
-  const h = new Date().getHours();
-  if(h >= 18 || h < 6){
-    document.body.classList.add("theme-night");
-  }
-}
-
-/* ---------- init ---------- */
-
-function init(){
-  renderSites();
-  updateGreeting();
-  startClock();
-  setRandomQuote();
-  initSearch();
-  initToggle();
-  autoTheme();
-}
-
-document.addEventListener("DOMContentLoaded", init);
+setInterval(tick, 1000); 
+setInterval(updateTheme, 60000); // ✅ 每分钟检查昼夜状态
