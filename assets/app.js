@@ -53,14 +53,13 @@ function toggleMore() {
   btn.textContent = isHidden ? "Less Icons" : "More Icons";
 }
 
-// 初始化 UI
+// 初始化
 updateTheme(); render(); updateWeather();
 const btn = document.getElementById("toggleBtn");
 if (btn) btn.onclick = toggleMore;
 
-// 励志语逻辑
-const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
 const qEl = document.getElementById("quote"), aEl = document.getElementById("author");
+const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
 if (qEl) qEl.textContent = `"${q.t}"`;
 if (aEl) aEl.textContent = q.a;
 
