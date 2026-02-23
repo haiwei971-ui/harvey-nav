@@ -9,137 +9,93 @@
 
 <style>
 :root{
-  --ease:cubic-bezier(0.16,1,0.3,1);
-  --bg1:#09112A;
-  --bg2:#070A12;
-  --text:rgba(255,255,255,.92);
-  --muted:rgba(255,255,255,.45);
-  --hair:rgba(255,255,255,.08);
-  --search:rgba(255,255,255,.08);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --bg-top: #FFFFFF; --bg-bottom: #F5F5F7;
+  --text: #1D1D1F; --muted: rgba(0,0,0,0.45);
+  --hair: rgba(0,0,0,0.06); --search: rgba(0,0,0,0.03);
+  --glow-opacity: 0.06;
+  --accent: #a1c4fd;
+}
+
+body.theme-night {
+  --bg-top: #09112A; --bg-bottom: #070A12;
+  --text: rgba(255,255,255,0.92); --muted: rgba(255,255,255,0.45);
+  --hair: rgba(255,255,255,0.08); --search: rgba(255,255,255,0.08);
+  --glow-opacity: 0.35;
+  --accent: rgba(90,80,255,0.55);
 }
 
 *{box-sizing:border-box}
 body{
   margin:0;
-  font-family:Inter,-apple-system,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-  background:linear-gradient(180deg,var(--bg1),var(--bg2));
-  color:var(--text);
-  -webkit-font-smoothing:antialiased;
-  text-rendering:optimizeLegibility;
+  font-family: Inter, -apple-system, sans-serif;
+  background: linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+  color: var(--text);
+  min-height: 100vh;
+  transition: background 1.5s var(--ease), color 1.5s var(--ease);
 }
 
-.wrap{
-  max-width:1000px;
-  margin:auto;
-  padding:34px 20px 60px;
+body::before{
+  content:""; position:fixed; inset:0; opacity:.04; pointer-events:none; z-index:-1;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
 }
 
-.top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:12px;
-}
+.wrap{ max-width:1000px; margin:auto; padding:calc(40px + env(safe-area-inset-top)) 20px 60px; }
 
-.clock{
-  font-family:"JetBrains Mono";
-  font-weight:600;
-}
+.top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; opacity: 0.85; }
+.clock{ font-family:"JetBrains Mono"; font-weight:600; font-size:18px; }
 
 .search{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  background:var(--search);
-  border:1px solid var(--hair);
-  padding:12px 18px;
-  border-radius:999px;
-  margin-bottom:26px; /* ✅ 比你之前更紧凑 */
-  transition:.3s var(--ease);
+  display:flex; align-items:center; gap:12px;
+  background: var(--search); border: 1px solid var(--hair);
+  padding:14px 20px; border-radius:999px; margin-bottom:28px;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  transition: .3s var(--ease);
 }
-
-.search:focus-within{
-  box-shadow:0 0 0 1px rgba(124,92,255,.42);
-}
-
-.search input{
-  flex:1;
-  background:transparent;
-  border:0;
-  outline:none;
-  color:var(--text);
-  font-size:16px;
-}
+.search:focus-within{ transform: scaleX(1.02); border-color: rgba(124,92,255,0.4); }
+.search input{ flex:1; background:transparent; border:0; outline:none; color:var(--text); font-size:18px; }
 
 .section{
-  margin:18px 0 12px;  /* ✅ 更紧凑 */
-  display:flex;
-  align-items:center;
-  gap:12px;
-  color:var(--muted);
-  font-size:12px;
-  letter-spacing:.2em;
-  text-transform:uppercase;
+  margin:18px 0 12px; display:flex; align-items:center; gap:12px;
+  color:var(--muted); font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:600;
 }
+.section .line{ flex:1; height:1px; background:var(--hair); }
 
-.section .line{
-  flex:1;
-  height:1px;
-  background:var(--hair);
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:26px 18px;
-}
-
+.grid{ display:grid; grid-template-columns:repeat(6,1fr); gap:26px 18px; }
 @media(max-width:900px){.grid{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:600px){.grid{grid-template-columns:repeat(3,1fr)}}
 
 .item{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:10px;
-  text-decoration:none;
-  color:var(--muted);
-  transition:.25s var(--ease);
-  min-height:86px;
+  position: relative; display:flex; flex-direction:column; align-items:center; gap:12px;
+  text-decoration:none; color:var(--muted); transition:.25s var(--ease); min-height:86px;
 }
+.item:active { transform: scale(0.95); transition: 0.1s; }
 
-.icon{
-  width:54px;
-  height:54px;
-  display:grid;
-  place-items:center;
-  transition:.3s var(--ease);
-}
-
+.icon{ width:54px; height:54px; display:grid; place-items:center; position: relative; }
 .icon img{
-  width:36px;
-  height:36px;
-  filter:grayscale(100%) opacity(.62);
-  transition:.3s var(--ease);
+  width:36px; height:36px; object-fit:contain;
+  filter: grayscale(100%) opacity(0.6);
+  transition: .35s var(--ease);
 }
 
-.item:hover img{
-  filter:none;
-  transform:translateY(-4px);
+.item:hover img { filter: grayscale(0%) opacity(1); transform: translateY(-6px); }
+
+.item:hover .icon::after {
+  content: ""; position: absolute; inset: -10px; border-radius: 50%; z-index: -1;
+  filter: blur(35px); opacity: var(--glow-opacity);
+  background: radial-gradient(circle, var(--brand-color, #7C5CFF), transparent 75%);
 }
 
-.label{
-  font-size:13px;
-}
+.label{ font-size:13px; transition: .25s var(--ease); }
+.item:hover .label { color: var(--text); }
 </style>
 </head>
 
 <body>
 <div class="wrap">
-
   <div class="top">
-    <div id="greet">Good night.</div>
-    <div class="clock" id="clock"></div>
+    <div id="greet">Hello.</div>
+    <div class="clock" id="clock">00:00</div>
   </div>
 
   <form class="search" id="searchForm" autocomplete="off">
@@ -147,90 +103,80 @@ body{
   </form>
 
   <div class="section">ESSENTIALS<div class="line"></div></div>
-  <div class="grid" id="ess"></div>
+  <div id="ess" class="grid"></div>
 
   <div class="section">EXTENDED<div class="line"></div></div>
-  <div class="grid" id="ext"></div>
-
+  <div id="ext" class="grid"></div>
 </div>
 
 <script>
 const ICON_BASE = "icons/";
 const FALLBACK  = "openai.svg";
 
-/** ✅ 终极修正：自动对文件名做 URL 编码（解决 telegram 2.svg 这种带空格的文件名） */
 function icon(name){
   const src = ICON_BASE + encodeURIComponent(name);
   const fb  = ICON_BASE + encodeURIComponent(FALLBACK);
   return `<img src="${src}" onerror="this.onerror=null;this.src='${fb}'">`;
 }
 
-/** ✅ 图标清单（已删除：WhatsApp / Discord / Anthropic / Mastercard；Telegram 改成 telegram 2.svg） */
 const SITES = [
-  // Essentials
-  {n:"ChatGPT",      u:"https://chatgpt.com/",                i:"openai.svg",             r:1},
-  {n:"Claude",       u:"https://claude.ai/",                  i:"claude-color.svg",       r:1},
-  {n:"Copilot",      u:"https://copilot.microsoft.com/",      i:"copilot-color.svg",      r:1},
-  {n:"Gemini",       u:"https://gemini.google.com/",          i:"gemini-color.svg",       r:1},
-  {n:"Cloudflare",   u:"https://dash.cloudflare.com/",        i:"cloudflare-color.svg",   r:1},
-  {n:"GitHub",       u:"https://github.com/",                 i:"github.svg",             r:1},
+  {n:"ChatGPT",      u:"https://chatgpt.com/",                i:"openai.svg",           c:"#10a37f", r:1},
+  {n:"Claude",       u:"https://claude.ai/",                  i:"claude-color.svg",     c:"#d97757", r:1},
+  {n:"Copilot",      u:"https://copilot.microsoft.com/",      i:"copilot-color.svg",    c:"#0078d4", r:1},
+  {n:"Gemini",       u:"https://gemini.google.com/",          i:"gemini-color.svg",     c:"#4e85ff", r:1},
+  {n:"Cloudflare",   u:"https://dash.cloudflare.com/",        i:"cloudflare-color.svg", c:"#f48120", r:1},
+  {n:"GitHub",       u:"https://github.com/",                 i:"github.svg",           c:"#333333", r:1},
 
-  {n:"Gmail",        u:"https://mail.google.com/",            i:"google-gmail.svg",       r:2},
-  {n:"Google",       u:"https://google.com",                  i:"google-color.svg",       r:2},
-  {n:"Google Cloud", u:"https://console.cloud.google.com/",   i:"googlecloud-color.svg",  r:2},
-  {n:"Google Drive", u:"https://drive.google.com/",           i:"google-drive.svg",       r:2},
-  {n:"Google Maps",  u:"https://maps.google.com/",            i:"google-maps.svg",        r:2},
-  {n:"YouTube",      u:"https://youtube.com/",                i:"youtube_red.svg",        r:2},
+  {n:"Gmail",        u:"https://mail.google.com/",            i:"google-gmail.svg",     c:"#ea4335", r:2},
+  {n:"Google",       u:"https://google.com",                  i:"google-color.svg",     c:"#4285f4", r:2},
+  {n:"Google Cloud", u:"https://console.cloud.google.com/",   i:"googlecloud-color.svg",c:"#4285f4", r:2},
+  {n:"Google Drive", u:"https://drive.google.com/",           i:"google-drive.svg",     c:"#34a853", r:2},
+  {n:"Google Maps",  u:"https://maps.google.com/",            i:"google-maps.svg",      c:"#4285f4", r:2},
+  {n:"YouTube",      u:"https://www.youtube.com/",            i:"youtube_red.svg",      c:"#ff0000", r:2},
 
-  // Extended
-  {n:"AWS",          u:"https://console.aws.amazon.com/",     i:"aws.svg",                r:3},
-  {n:"Azure",        u:"https://portal.azure.com/",           i:"azure.svg",              r:3},
-  {n:"Bing",         u:"https://bing.com/",                   i:"bing.svg",               r:3},
-  {n:"Microsoft",    u:"https://microsoft.com/",              i:"microsoft.svg",          r:3},
-  {n:"Netflix",      u:"https://netflix.com/",                i:"netflix-icon.svg",       r:3},
-  {n:"Spotify",      u:"https://spotify.com/",                i:"spotify-icon.svg",       r:3},
-
-  {n:"X",            u:"https://x.com/",                      i:"x.svg",                  r:4},
-  {n:"Facebook",     u:"https://facebook.com/",               i:"facebook.svg",           r:4},
-  {n:"Reddit",       u:"https://reddit.com/",                 i:"reddit-color.svg",       r:4},
-
-  /** ✅ 这里就是你要改的：使用 telegram 2.svg（带空格也没问题） */
-  {n:"Telegram",     u:"https://web.telegram.org/",           i:"telegram 2.svg",         r:4},
-
-  {n:"Apple",        u:"https://apple.com/",                  i:"apple.svg",              r:4},
+  {n:"AWS",          u:"https://aws.amazon.com/",             i:"aws.svg",              c:"#ff9900", r:3},
+  {n:"Azure",        u:"https://portal.azure.com/",           i:"azure.svg",            c:"#0078d4", r:3},
+  {n:"X",            u:"https://x.com/",                      i:"x.svg",                c:"#111111", r:3},
+  {n:"Reddit",       u:"https://reddit.com/",                 i:"reddit-color.svg",     c:"#ff4500", r:3},
+  {n:"Telegram",     u:"https://web.telegram.org/",           i:"telegram 2.svg",       c:"#2aabee", r:3},
+  {n:"Apple",        u:"https://apple.com/",                  i:"apple.svg",            c:"#999999", r:3}
 ];
 
 function render(){
-  const ess = document.getElementById("ess");
-  const ext = document.getElementById("ext");
-  ess.innerHTML = "";
-  ext.innerHTML = "";
-
+  const ess = document.getElementById("ess"), ext = document.getElementById("ext");
+  ess.innerHTML = ext.innerHTML = "";
   SITES.forEach(s=>{
     const a = document.createElement("a");
     a.className = "item";
     a.href = s.u;
     a.target = "_blank";
     a.rel = "noopener noreferrer";
+    a.style.setProperty('--brand-color', s.c);
     a.innerHTML = `<div class="icon">${icon(s.i)}</div><div class="label">${s.n}</div>`;
     (s.r<=2 ? ess : ext).appendChild(a);
   });
 }
 
-function setGreet(){
+function updateTheme(){
   const h = new Date().getHours();
+  const b = document.body;
   const g = document.getElementById("greet");
-  if(h>=5 && h<12) g.textContent = "Good morning.";
-  else if(h>=12 && h<17) g.textContent = "Good afternoon.";
-  else if(h>=17 && h<21) g.textContent = "Good evening.";
-  else g.textContent = "Good night.";
+  b.classList.toggle("theme-night", (h >= 17 || h < 8));
+  g.textContent = (h >= 17 || h < 8) ? "Good night." : (h < 12 ? "Good morning." : "Good afternoon.");
 }
 
+let _lastMin = "";
 function tick(){
   const d = new Date();
-  document.getElementById("clock").textContent =
-    String(d.getHours()).padStart(2,"0") + ":" +
-    String(d.getMinutes()).padStart(2,"0");
+  const hh = String(d.getHours()).padStart(2,"0");
+  const mm = String(d.getMinutes()).padStart(2,"0");
+  document.getElementById("clock").textContent = `${hh}:${mm}`;
+
+  const key = `${hh}:${mm}`;
+  if(key !== _lastMin){
+    _lastMin = key;
+    updateTheme(); // ✅ 每分钟刷新主题/问候
+  }
 }
 
 document.getElementById("searchForm").onsubmit = (e)=>{
@@ -240,11 +186,9 @@ document.getElementById("searchForm").onsubmit = (e)=>{
   window.open("https://google.com/search?q="+encodeURIComponent(v), "_blank");
 };
 
-setGreet();
+render();
 tick();
 setInterval(tick, 1000);
-render();
 </script>
-
 </body>
 </html>
