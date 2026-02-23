@@ -1,3 +1,4 @@
+// assets/app.js
 import { SITES, QUOTES, ICON_BASE, FALLBACK_ICON } from './data.js';
 
 function imgTag(src, cls) {
