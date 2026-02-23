@@ -34,7 +34,7 @@ export const SITES = [
   { n:"Claude",
     u:"https://claude.ai/",
     r:1,
-    icons:["claude.svg"],
+    icons:["claude-color.svg"],
     whiteInvert:true
   },
 
