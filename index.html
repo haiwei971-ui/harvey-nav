@@ -60,7 +60,12 @@
       padding:13px 18px; border-radius:999px; margin-bottom:18px;
       backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); transition:.3s var(--ease);
     }
-    .search:focus-within{ transform:scaleX(1.018); border-color:rgba(124,92,255,0.4); background: rgba(255,255,255,0.08); }
+    /* ✅ 必修 1：不写死白色背景，夜间也自然 */
+    .search:focus-within{
+      transform:scaleX(1.018);
+      border-color:rgba(124,92,255,0.4);
+      background: var(--search);
+    }
     .search input{ flex:1; width:100%; background:transparent; border:0; outline:none; color:var(--text); font-size:18px; }
 
     .section{ margin:16px 0 10px; display:flex; align-items:center; gap:12px; color:var(--muted); font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:600; }
@@ -83,7 +88,7 @@
     }
 
     /* ✅ 夜间补光：针对开启 whiteInvert 的图标在深夜变白 */
-    body.theme-night .white-invert .icon img.single, 
+    body.theme-night .white-invert .icon img.single,
     body.theme-night .white-invert .icon.gemini img.g0 {
       filter: grayscale(100%) invert(1) brightness(1.8) opacity(var(--icon-default-opacity)) drop-shadow(0 2px 4px var(--icon-shadow)) !important;
     }
@@ -126,7 +131,7 @@
   <div class="wrap">
     <div class="top"><div id="greet">Hello.</div><div class="clock" id="clock">00:00</div></div>
     <form class="search" id="searchForm" autocomplete="off"><input id="q" placeholder="Search..." autofocus /></form>
-    
+
     <div class="section">ESSENTIALS<div class="line"></div></div>
     <div id="ess" class="grid"></div>
 
@@ -134,7 +139,7 @@
       <div class="section" style="margin-top:18px;">EXTENDED<div class="line"></div></div>
       <div id="ext" class="grid"></div>
     </div>
-    
+
     <button class="morebtn" id="toggleBtn">More Icons</button>
   </div>
 
@@ -159,8 +164,9 @@
       { n:"Google",       u:"https://www.google.com/",               icons:["google-color.svg"],           c:"#4285f4", r:2 },
       { n:"Google Cloud", u:"https://console.cloud.google.com/",     icons:["googlecloud-color.svg"],      c:"#4285f4", r:2 },
       { n:"Google Drive", u:"https://drive.google.com/",             icons:["google-drive.svg"],           c:"#34a853", r:2 },
-      { n:"Google Maps",  u:"http://googleusercontent.com/maps.google.com/13",              icons:["google-maps.svg"],            c:"#4285f4", r:2 },
-      { n:"YouTube",      u:"https://www.youtube.com/",                  icons:["youtube_red.svg"],            c:"#ff0000", r:2 },
+      /* ✅ 必修 2：Maps 回归官方入口 */
+      { n:"Google Maps",  u:"https://maps.google.com/",              icons:["google-maps.svg"],            c:"#4285f4", r:2 },
+      { n:"YouTube",      u:"https://www.youtube.com/",              icons:["youtube_red.svg"],            c:"#ff0000", r:2 },
 
       { n:"AWS",          u:"https://aws.amazon.com/",               icons:["aws.svg"],                    c:"#ff9900", r:3, whiteInvert:true },
       { n:"Azure",        u:"https://portal.azure.com/",             icons:["azure.svg"],                  c:"#0078d4", r:3, whiteInvert:true },
@@ -185,9 +191,11 @@
         a.href = s.u; a.target = "_blank"; a.rel = "noopener noreferrer";
         a.style.setProperty("--brand-color", s.c || "#7C5CFF");
         if (s.s) a.style.setProperty("--s", String(s.s));
-        const iconHTML = s.gemini 
+
+        const iconHTML = s.gemini
           ? `<div class="icon gemini">${imgTag("gemini.svg", "g0")}${imgTag("gemini-color.svg", "g1")}</div>`
           : `<div class="icon">${imgTag(s.icons[0], "single")}</div>`;
+
         a.innerHTML = `${iconHTML}<div class="label">${s.n}</div>`;
         (s.r <= 2 ? ess : ext).appendChild(a);
       });
@@ -209,16 +217,19 @@
 
     function tick(){
       const d = new Date();
-      document.getElementById("clock").textContent = `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+      document.getElementById("clock").textContent =
+        `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
     }
 
     document.getElementById("toggleBtn").onclick = toggleMore;
     document.getElementById("searchForm").onsubmit = (e)=>{
-      e.preventDefault(); window.open("https://www.google.com/search?q="+encodeURIComponent(document.getElementById("q").value.trim()), "_blank");
+      e.preventDefault();
+      window.open("https://www.google.com/search?q="+encodeURIComponent(document.getElementById("q").value.trim()), "_blank");
     };
 
     updateTheme(); tick(); render();
-    setInterval(tick, 1000); setInterval(updateTheme, 60000);
+    setInterval(tick, 1000);
+    setInterval(updateTheme, 60000);
   </script>
 </body>
 </html>
