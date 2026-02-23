@@ -17,9 +17,11 @@
     :root{
       --easeWave: cubic-bezier(0.16, 1, 0.3, 1);
       --ease2: cubic-bezier(.22,.61,.36,1);
+
       --bg-top:#FFFFFF; --bg-bottom:#F5F5F7;
       --text:#1D1D1F; --text-muted:rgba(0,0,0,0.45);
       --hair:rgba(0,0,0,0.06); --search-bg:rgba(0,0,0,0.03);
+
       --icon-opacity:0.42; --icon-color:#333; --accent:#a1c4fd;
       --glow-opacity: 0.05;
     }
@@ -38,8 +40,10 @@
       color:var(--text); font-family: Inter, -apple-system, sans-serif;
       -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
       background: linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
-      overflow-x:hidden; transition: background 1.8s var(--easeWave), color 1.8s var(--easeWave);
+      overflow-x:hidden;
+      transition: background 1.8s var(--easeWave), color 1.8s var(--easeWave);
     }
+
     body::before{
       content:""; position:fixed; inset:0; opacity:.06; pointer-events:none; z-index:-1;
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
@@ -47,50 +51,85 @@
     }
 
     .bg-flow{ position:fixed; inset:-20%; pointer-events:none; z-index:-3; filter:blur(120px); opacity:.38; }
-    .bg-flow .blob{ position:absolute; width:70vmax; height:70vmax; border-radius:999px; background: radial-gradient(circle, var(--accent), transparent 60%); animation: drift 60s var(--ease2) infinite alternate; }
+    .bg-flow .blob{
+      position:absolute; width:70vmax; height:70vmax; border-radius:999px;
+      background: radial-gradient(circle, var(--accent), transparent 60%);
+      animation: drift 60s var(--ease2) infinite alternate;
+    }
     @keyframes drift{ from{transform:translate(-5%,-5%)} to{transform:translate(10%,10%)} }
 
-    .wrap{ min-height:100%; display:flex; justify-content:center; padding:calc(60px + env(safe-area-inset-top)) 18px 60px; }
+    /* ✅ 更紧凑：整体上移一点、减少上下 padding */
+    .wrap{
+      min-height:100%;
+      display:flex; justify-content:center;
+      padding:calc(40px + env(safe-area-inset-top)) 18px 42px;
+    }
     .shell{ width:min(980px, 100%); transition: .4s var(--ease2); }
 
-    .topbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
+    /* ✅ 更紧凑：topbar margin-bottom 从 24px -> 14px */
+    .topbar{
+      display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:14px;
+    }
     .greet{ font-size:18px; font-weight:500; opacity:.85; letter-spacing:.02em; }
     .clock{ font-family:"JetBrains Mono"; font-size:18px; font-weight:600; font-variant-numeric:tabular-nums; }
 
+    /* ✅ 更紧凑：search margin-bottom 从 48px -> 26px */
     .search{
-      display:flex; align-items:center; gap:12px; padding:15px 22px; border-radius:999px;
-      background: var(--search-bg); border:1px solid var(--hair); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-      box-shadow:0 10px 30px rgba(0,0,0,0.03); transition:.3s var(--easeWave); margin-bottom:48px;
+      display:flex; align-items:center; gap:12px; padding:14px 20px; border-radius:999px;
+      background: var(--search-bg); border:1px solid var(--hair);
+      backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+      box-shadow:0 10px 30px rgba(0,0,0,0.03);
+      transition:.3s var(--easeWave);
+      margin-bottom:26px;
     }
-    .search:focus-within{ transform:scaleX(1.03); border-color: rgba(124,92,255,0.5); box-shadow: 0 20px 60px rgba(0,0,0,0.08), inset 0 0 0 1px rgba(124,92,255,0.2); }
+    .search:focus-within{
+      transform:scaleX(1.02);
+      border-color: rgba(124,92,255,0.5);
+      box-shadow: 0 18px 56px rgba(0,0,0,0.08), inset 0 0 0 1px rgba(124,92,255,0.2);
+    }
     .search input{ width:100%; border:0; outline:none; background:transparent; color:var(--text); font-size:18px; }
 
-    .dim-on-focus .grid, .dim-on-focus .sectionbar, .dim-on-focus .morebtn{ opacity:0.28; filter:blur(4px); transform:scale(0.985); }
+    .dim-on-focus .grid, .dim-on-focus .sectionbar, .dim-on-focus .morebtn{
+      opacity:0.28; filter:blur(4px); transform:scale(0.985);
+    }
 
-    .sectionbar{ display:flex; align-items:center; gap:15px; margin:20px 0; color: var(--text-muted); font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:600; }
+    /* ✅ 更紧凑：sectionbar margin 从 20px -> 14px */
+    .sectionbar{
+      display:flex; align-items:center; gap:15px;
+      margin:14px 0;
+      color: var(--text-muted);
+      font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:600;
+    }
     .dotline{ height:1px; flex:1; background: var(--hair); }
 
-    .grid{ display:grid; grid-template-columns:repeat(6, 1fr); gap:32px 20px; transition:.4s var(--ease2); }
+    /* ✅ 更紧凑：gap 稍微收一点 */
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(6, 1fr);
+      gap:26px 18px;
+      transition:.4s var(--ease2);
+    }
     @media (max-width: 860px){ .grid{grid-template-columns:repeat(4,1fr)} }
     @media (max-width: 520px){ .grid{grid-template-columns:repeat(3,1fr)} }
 
     .item{
-      position:relative; display:flex; flex-direction:column; align-items:center; gap:14px;
-      text-decoration:none; outline:none; min-height: 90px;
-      --mx:0px; --my:0px; transform:translate3d(var(--mx), var(--my), 0);
+      position:relative; display:flex; flex-direction:column; align-items:center; gap:12px;
+      text-decoration:none; outline:none; min-height: 86px;
+      --mx:0px; --my:0px;
+      transform:translate3d(var(--mx), var(--my), 0);
       transition:transform .22s var(--easeWave);
     }
 
-    /* img 方案：用 filter 做“默认灰 + 透明度”，hover 时恢复彩色 */
     .icon{
       width:54px; height:54px; display:grid; place-items:center;
       filter:grayscale(100%) opacity(var(--icon-opacity));
-      transition:.35s var(--easeWave); position:relative;
+      transition:.35s var(--easeWave);
+      position:relative;
     }
     .icon img{
       width:36px; height:36px; display:block;
       object-fit:contain;
-      /* 防止某些 svg 自带 viewBox 不标准导致溢出 */
       max-width:36px; max-height:36px;
     }
     .glyph{ transform: scale(var(--s, 1)) translateY(var(--ty, 0px)); transition: .28s var(--easeWave); display:grid; place-items:center; }
@@ -103,22 +142,46 @@
       transform: translate(calc(var(--mx) * -0.8), calc(var(--my) * -0.8 + 4px));
     }
 
-    .label{ font-size:13px; color: var(--text-muted); transition:.25s var(--easeWave); --lx:0px; --ly:0px; transform: translate3d(var(--lx), var(--ly), 0); }
+    .label{
+      font-size:13px; color: var(--text-muted);
+      transition:.25s var(--easeWave);
+      --lx:0px; --ly:0px;
+      transform: translate3d(var(--lx), var(--ly), 0);
+    }
     .item:hover .label{ color: var(--text); opacity:1; }
 
-    .kbd{ position:absolute; top:-4px; right:4px; opacity:0; font-family:"JetBrains Mono"; font-size:11px; color:#fff; background:rgba(0,0,0,.35); backdrop-filter:blur(10px); padding:3px 6px; border-radius:8px; border:1px solid rgba(255,255,255,.12); transition:.18s var(--easeWave); pointer-events:none; z-index:10; }
+    .kbd{
+      position:absolute; top:-4px; right:4px; opacity:0;
+      font-family:"JetBrains Mono"; font-size:11px; color:#fff;
+      background:rgba(0,0,0,.35); backdrop-filter:blur(10px);
+      padding:3px 6px; border-radius:8px;
+      border:1px solid rgba(255,255,255,.12);
+      transition:.18s var(--easeWave);
+      pointer-events:none; z-index:10;
+    }
     .show-hotkeys .kbd{ opacity:1; transform:translateY(6px); }
 
     #moreArea[aria-hidden="true"]{ display:none; }
-    .morebtn{ background: var(--search-bg); border:1px solid var(--hair); color:var(--text); padding:8px 24px; border-radius:99px; cursor:pointer; font-size:13px; opacity:.65; transition:.3s var(--easeWave); margin: 40px auto; display:block; }
-    .reveal{ animation: rise .72s var(--easeWave) both; animation-delay: var(--d, 0ms); }
-    @keyframes rise{ from{ opacity:0; transform:translateY(20px) scale(.98); filter:blur(5px); } to{ opacity:1; transform:translateY(0) scale(1); filter:blur(0); } }
+    /* ✅ 更紧凑：More 按钮 margin 从 40px -> 28px */
+    .morebtn{
+      background: var(--search-bg);
+      border:1px solid var(--hair);
+      color:var(--text);
+      padding:8px 24px;
+      border-radius:99px;
+      cursor:pointer;
+      font-size:13px;
+      opacity:.65;
+      transition:.3s var(--easeWave);
+      margin:28px auto 0;
+      display:block;
+    }
 
-    /* 保留你原来 hover 上色 class（对 img 不影响，但也不破坏你现有结构） */
-    .item.chatgpt:hover .icon{transform:translateY(-6px)}
-    .item.gemini:hover .icon{transform:translateY(-6px)}
-    .item.claude:hover .icon{transform:translateY(-6px)}
-    .item.copilot:hover .icon{transform:translateY(-6px)}
+    .reveal{ animation: rise .72s var(--easeWave) both; animation-delay: var(--d, 0ms); }
+    @keyframes rise{
+      from{ opacity:0; transform:translateY(20px) scale(.98); filter:blur(5px); }
+      to{ opacity:1; transform:translateY(0) scale(1); filter:blur(0); }
+    }
   </style>
 </head>
 
@@ -126,7 +189,10 @@
   <div class="bg-flow"><div class="blob"></div></div>
 
   <div class="wrap"><div class="shell" id="app">
-    <div class="topbar"><div class="greet" id="greet">Hello.</div><div class="clock" id="clock">00:00</div></div>
+    <div class="topbar">
+      <div class="greet" id="greet">Hello.</div>
+      <div class="clock" id="clock">00:00</div>
+    </div>
 
     <form class="search" id="searchForm" autocomplete="off">
       <input id="q" type="text" placeholder="Search..." autofocus />
@@ -137,7 +203,7 @@
     <div class="grid" id="gridEssentials"></div>
 
     <div id="moreArea" aria-hidden="true">
-      <div class="sectionbar" style="margin-top:40px"><span>Extended</span><div class="dotline"></div></div>
+      <div class="sectionbar" style="margin-top:22px"><span>Extended</span><div class="dotline"></div></div>
       <div class="grid" id="gridMore"></div>
     </div>
 
@@ -145,33 +211,21 @@
   </div></div>
 
   <script>
-    // ✅ img 方案：直接引用你 repo 的 icons 目录
-    // 规则：优先用 *-color.svg（如果你给了），否则用普通 .svg
     const ICON_BASE = "./icons/";
     const ICON_FILE = {
-      // —— AI & 常用（你截图里明确存在）——
       chatgpt: "openai.svg",
       openai: "openai.svg",
       claude: "claude-color.svg",
       anthropic: "anthropic.svg",
       gemini: "gemini-color.svg",
       copilot: "copilot-color.svg",
+
       google: "google-color.svg",
       gmail: "google-gmail.svg",
       drive: "google-drive.svg",
       maps: "google-maps.svg",
       github: "github.svg",
       cloudflare: "cloudflare-color.svg",
-      microsoft: "microsoft-color.svg",
-      azure: "azure-color.svg",
-      azureai: "azureai-color.svg",
-      aws: "aws-brand-color.svg",
-      meta: "meta-color.svg",
-      apple: "apple.svg",
-      bing: "bing-color.svg",
-      bilibili: "bilibili-color.svg",
-      bytedance: "bytedance-brand-color.svg",
-      capcut: "capcut.svg",
 
       youtube: "youtube_red.svg",
       netflix: "netflix-icon.svg",
@@ -179,131 +233,64 @@
       whatsapp: "whatsapp-icon.svg",
       x: "x.svg",
       facebook: "facebook.svg",
-      mastercard: "mastercard.svg",
+      apple: "apple.svg",
 
-      // —— 你 icons 里一堆 AI/厂商（截图里能看到）——
+      microsoft: "microsoft-color.svg",
+      azure: "azure-color.svg",
+      azureai: "azureai-color.svg",
+      aws: "aws-brand-color.svg",
+      googlecloud: "googlecloud-color.svg",
+      bing: "bing-color.svg",
+
       adobe: "adobe-color.svg",
       adobefirefly: "adobefirefly-color.svg",
-      agui: "agui.svg",
-      ai2: "ai2-color.svg",
-      ai21: "ai21-brand-color.svg",
-      ai302: "ai302-color.svg",
-      ai360: "ai360-color.svg",
-      aihubmix: "aihubmix-color.svg",
-      aimass: "aimass-color.svg",
-      aionlabs: "aionlabs-color.svg",
-      aistudio: "aistudio.svg",
-      akashchat: "akashchat-color.svg",
-      alephalpha: "alephalpha.svg",
-      alibaba: "alibaba-brand-color.svg",
-      alibabacloud: "alibabacloud-color.svg",
-      antgroup: "antgroup-brand-color.svg",
-      anyscale: "anyscale-color.svg",
-      arcee: "arcee-color.svg",
-      assemblyai: "assemblyai-color.svg",
-      atlasc: "atlasccloud.svg",
-      aya: "aya-color.svg",
-      baai: "baai.svg",
-      baichuan: "baichuan-color.svg",
-      baidu: "baidu-brand-color.svg",
-      baidicloud: "baidicloud-color.svg",
-      bfl: "bfl.svg",
-      baseten: "baseten.svg",
+      meta: "meta-color.svg",
       bedrock: "bedrock-color.svg",
-      burncloud: "burncloud-color.svg",
-      centml: "centml-color.svg",
       fireworks: "fireworks-color.svg",
-      googlecloud: "googlecloud-color.svg"
+      anyscale: "anyscale-color.svg"
     };
 
     function iconImg(key, alt) {
       const file = ICON_FILE[key] || "";
       const src = file ? (ICON_BASE + file) : "";
-      // 用 loading=lazy 省一点性能；用 decoding=async 更顺滑
       return src
         ? `<img src="${src}" alt="${alt || key}" loading="lazy" decoding="async" />`
         : `<img src="${ICON_BASE}openai.svg" alt="${alt || key}" loading="lazy" decoding="async" />`;
     }
 
-    // ✅ 扩展到“几十个常用的”，同时尽量保留你原来主页已有的
+    // ✅ 控制总数 ≤ 26：这里一共 24 个
     const ALL_SITES = [
-      // —— 你原来已有（尽量保留）——
-      { name:"ChatGPT",   url:"https://chatgpt.com/",                     key:"C", glow:"#10A37F", iconKey:"chatgpt",   rank:1,   scale:0.96, cls:"chatgpt" },
-      { name:"Gemini",    url:"https://gemini.google.com/",               key:"G", glow:"#4E85FF", iconKey:"gemini",    rank:1,   scale:1.06, cls:"gemini" },
-      { name:"Claude",    url:"https://claude.ai/",                       key:"L", glow:"#D97757", iconKey:"claude",    rank:1,   scale:1.00, cls:"claude" },
-      { name:"Copilot",   url:"https://copilot.microsoft.com/",           key:"P", glow:"#0078D4", iconKey:"copilot",   rank:1,   scale:1.02, cls:"copilot" },
+      // Essentials（优先你已有的）
+      { name:"ChatGPT",   url:"https://chatgpt.com/",               key:"C", glow:"#10A37F", iconKey:"chatgpt",   rank:1, scale:0.96, cls:"chatgpt" },
+      { name:"Claude",    url:"https://claude.ai/",                 key:"L", glow:"#D97757", iconKey:"claude",    rank:1, scale:1.00, cls:"claude" },
+      { name:"Copilot",   url:"https://copilot.microsoft.com/",     key:"P", glow:"#0078D4", iconKey:"copilot",   rank:1, scale:1.02, cls:"copilot" },
+      { name:"Gemini",    url:"https://gemini.google.com/",         key:"G", glow:"#4E85FF", iconKey:"gemini",    rank:1, scale:1.06, cls:"gemini" },
 
-      // —— Google / Microsoft / Dev ——（你原来已有的继续放前面）
-      { name:"Google",    url:"https://www.google.com/",                  key:"O", glow:"#4285F4", iconKey:"google",    rank:2,   scale:1.00, cls:"google" },
-      { name:"Gmail",     url:"https://mail.google.com/",                 key:"M", glow:"#EA4335", iconKey:"gmail",     rank:2,   scale:1.02, cls:"gmail" },
-      { name:"YouTube",   url:"https://www.youtube.com/",                 key:"Y", glow:"#FF0000", iconKey:"youtube",   rank:2,   scale:1.02, cls:"youtube" },
-      { name:"GitHub",    url:"https://github.com/",                      key:"H", glow:"#666666", iconKey:"github",    rank:2,   scale:0.96, cls:"github" },
-      { name:"Cloudflare",url:"https://dash.cloudflare.com/",             key:"F", glow:"#F48120", iconKey:"cloudflare",rank:2,   scale:1.06, cls:"cloudflare" },
+      { name:"Cloudflare",url:"https://dash.cloudflare.com/",       key:"F", glow:"#F48120", iconKey:"cloudflare",rank:2, scale:1.06, cls:"cloudflare" },
+      { name:"GitHub",    url:"https://github.com/",                key:"H", glow:"#666666", iconKey:"github",    rank:2, scale:0.96, cls:"github" },
+      { name:"Gmail",     url:"https://mail.google.com/",           key:"M", glow:"#EA4335", iconKey:"gmail",     rank:2, scale:1.02, cls:"gmail" },
+      { name:"Google",    url:"https://www.google.com/",            key:"O", glow:"#4285F4", iconKey:"google",    rank:2, scale:1.00, cls:"google" },
 
-      // —— 你原来有 Reddit/Wiki/Discord/Telegram/Netflix ——（如果你想全都只用 icons 里的文件：reddit/wiki/discord/telegram 目前你截图里没看到对应 svg，所以我不硬加，避免 404）
-      { name:"Netflix",   url:"https://www.netflix.com/",                 key:"N", glow:"#E50914", iconKey:"netflix",   rank:3,   scale:1.08, cls:"netflix" },
+      // Extended
+      { name:"YouTube",      url:"https://www.youtube.com/",           key:"Y", glow:"#FF0000", iconKey:"youtube",     rank:3,  scale:1.02, cls:"youtube" },
+      { name:"Netflix",      url:"https://www.netflix.com/",           key:"N", glow:"#E50914", iconKey:"netflix",     rank:3,  scale:1.06, cls:"netflix" },
+      { name:"Spotify",      url:"https://open.spotify.com/",          key:"S", glow:"#1DB954", iconKey:"spotify",     rank:3,  scale:1.02, cls:"spotify" },
+      { name:"WhatsApp",     url:"https://web.whatsapp.com/",         key:"W", glow:"#25D366", iconKey:"whatsapp",    rank:3,  scale:1.02, cls:"whatsapp" },
 
-      // —— 新增：你 icons 里明确有的常用 —— 
-      { name:"Google Drive", url:"https://drive.google.com/",             key:"D", glow:"#34A853", iconKey:"drive",     rank:3,   scale:1.06, cls:"drive" },
-      { name:"Google Maps",  url:"https://www.google.com/maps",           key:"A", glow:"#4285F4", iconKey:"maps",      rank:3,   scale:1.06, cls:"maps" },
-      { name:"Microsoft",    url:"https://www.microsoft.com/",            key:"S", glow:"#00A4EF", iconKey:"microsoft", rank:3,   scale:1.04, cls:"microsoft" },
-      { name:"Azure",        url:"https://portal.azure.com/",             key:"Z", glow:"#0078D4", iconKey:"azure",     rank:3,   scale:1.04, cls:"azure" },
-      { name:"AWS",          url:"https://console.aws.amazon.com/",       key:"W", glow:"#FF9900", iconKey:"aws",       rank:3,   scale:1.06, cls:"aws" },
-      { name:"Google Cloud", url:"https://console.cloud.google.com/",     key:"K", glow:"#4285F4", iconKey:"googlecloud",rank:3,  scale:1.06, cls:"googlecloud" },
+      { name:"Google Drive", url:"https://drive.google.com/",          key:"D", glow:"#34A853", iconKey:"drive",       rank:4,  scale:1.06, cls:"drive" },
+      { name:"Google Maps",  url:"https://www.google.com/maps",        key:"A", glow:"#4285F4", iconKey:"maps",        rank:4,  scale:1.06, cls:"maps" },
+      { name:"Bing",         url:"https://www.bing.com/",              key:"I", glow:"#00809D", iconKey:"bing",        rank:4,  scale:1.02, cls:"bing" },
+      { name:"X",            url:"https://x.com/",                     key:"X", glow:"#111111", iconKey:"x",           rank:4,  scale:1.00, cls:"x" },
 
-      // —— 社交/内容（你 icons 里有）——
-      { name:"X",         url:"https://x.com/",                           key:"X", glow:"#111111", iconKey:"x",         rank:4,   scale:1.00, cls:"x" },
-      { name:"Facebook",  url:"https://www.facebook.com/",                key:"B", glow:"#1877F2", iconKey:"facebook",  rank:4,   scale:1.02, cls:"facebook" },
-      { name:"Spotify",   url:"https://open.spotify.com/",                key:"Y", glow:"#1DB954", iconKey:"spotify",   rank:4,   scale:1.02, cls:"spotify" },
-      { name:"WhatsApp",  url:"https://web.whatsapp.com/",                key:"Q", glow:"#25D366", iconKey:"whatsapp",  rank:4,   scale:1.02, cls:"whatsapp" },
+      { name:"Microsoft",    url:"https://www.microsoft.com/",         key:"R", glow:"#00A4EF", iconKey:"microsoft",   rank:5,  scale:1.04, cls:"microsoft" },
+      { name:"Azure",        url:"https://portal.azure.com/",          key:"Z", glow:"#0078D4", iconKey:"azure",       rank:5,  scale:1.04, cls:"azure" },
+      { name:"Google Cloud", url:"https://console.cloud.google.com/",  key:"K", glow:"#4285F4", iconKey:"googlecloud", rank:5,  scale:1.06, cls:"googlecloud" },
+      { name:"AWS",          url:"https://console.aws.amazon.com/",    key:"Q", glow:"#FF9900", iconKey:"aws",         rank:5,  scale:1.06, cls:"aws" },
 
-      // —— 搜索/国内常用（你 icons 里有）——
-      { name:"Bing",      url:"https://www.bing.com/",                    key:"I", glow:"#00809D", iconKey:"bing",      rank:4,   scale:1.02, cls:"bing" },
-      { name:"Bilibili",  url:"https://www.bilibili.com/",                key:"V", glow:"#00A1D6", iconKey:"bilibili",  rank:4,   scale:1.02, cls:"bilibili" },
-      { name:"ByteDance", url:"https://www.bytedance.com/",               key:"T", glow:"#3B82F6", iconKey:"bytedance", rank:6,   scale:1.02, cls:"bytedance" },
-      { name:"CapCut",    url:"https://www.capcut.com/",                  key:"U", glow:"#111111", iconKey:"capcut",    rank:6,   scale:1.04, cls:"capcut" },
-
-      // —— 生态/公司（你 icons 里有）——
-      { name:"Apple",     url:"https://www.apple.com/",                   key:"E", glow:"#999999", iconKey:"apple",     rank:6,   scale:1.00, cls:"apple" },
-      { name:"Meta",      url:"https://www.meta.com/",                    key:"R", glow:"#0EA5E9", iconKey:"meta",      rank:6,   scale:1.02, cls:"meta" },
-      { name:"Mastercard",url:"https://www.mastercard.com/",              key:"M", glow:"#EB001B", iconKey:"mastercard",rank:9,   scale:1.02, cls:"mastercard" },
-
-      // —— OpenAI / Anthropic（你 icons 里有 anthropic/openai）——
-      { name:"OpenAI",    url:"https://openai.com/",                      key:"O", glow:"#10A37F", iconKey:"openai",    rank:6,   scale:1.00, cls:"openai" },
-      { name:"Anthropic", url:"https://www.anthropic.com/",               key:"N", glow:"#D97757", iconKey:"anthropic", rank:6,   scale:1.00, cls:"anthropic" },
-
-      // —— Adobe 系（你 icons 里有）——
-      { name:"Adobe",     url:"https://www.adobe.com/",                   key:"J", glow:"#FF0000", iconKey:"adobe",     rank:9,   scale:1.02, cls:"adobe" },
-      { name:"Firefly",   url:"https://firefly.adobe.com/",               key:"F", glow:"#FF6A00", iconKey:"adobefirefly",rank:9,  scale:1.02, cls:"firefly" },
-
-      // —— 一批你 icons 里已有的 AI/云/工具（扩到几十个）——
-      { name:"Azure AI",      url:"https://ai.azure.com/",                key:"I", glow:"#60A5FA", iconKey:"azureai",   rank:12, scale:1.02, cls:"azureai" },
-      { name:"Bedrock",       url:"https://aws.amazon.com/bedrock/",      key:"B", glow:"#FF9900", iconKey:"bedrock",   rank:12, scale:1.02, cls:"bedrock" },
-      { name:"Fireworks",     url:"https://fireworks.ai/",                key:"K", glow:"#F97316", iconKey:"fireworks", rank:12, scale:1.02, cls:"fireworks" },
-      { name:"Anyscale",      url:"https://www.anyscale.com/",            key:"N", glow:"#22C55E", iconKey:"anyscale",  rank:12, scale:1.02, cls:"anyscale" },
-      { name:"AssemblyAI",    url:"https://www.assemblyai.com/",          key:"A", glow:"#8B5CF6", iconKey:"assemblyai",rank:12, scale:1.02, cls:"assemblyai" },
-      { name:"Arcee",         url:"https://www.arcee.ai/",                key:"R", glow:"#06B6D4", iconKey:"arcee",     rank:12, scale:1.02, cls:"arcee" },
-      { name:"Baseten",       url:"https://www.baseten.co/",              key:"S", glow:"#7C3AED", iconKey:"baseten",   rank:12, scale:1.02, cls:"baseten" },
-      { name:"AI2",           url:"https://allenai.org/",                 key:"2", glow:"#22C55E", iconKey:"ai2",       rank:12, scale:1.02, cls:"ai2" },
-      { name:"AI21",          url:"https://www.ai21.com/",                key:"1", glow:"#3B82F6", iconKey:"ai21",      rank:12, scale:1.02, cls:"ai21" },
-      { name:"Aleph Alpha",   url:"https://www.aleph-alpha.com/",         key:"H", glow:"#111827", iconKey:"alephalpha",rank:12, scale:1.02, cls:"alephalpha" },
-      { name:"Akash Chat",    url:"https://chat.akash.network/",          key:"K", glow:"#22C55E", iconKey:"akashchat", rank:12, scale:1.02, cls:"akashchat" },
-
-      { name:"Alibaba",       url:"https://www.alibaba.com/",             key:"L", glow:"#F97316", iconKey:"alibaba",   rank:13, scale:1.02, cls:"alibaba" },
-      { name:"Alibaba Cloud", url:"https://www.alibabacloud.com/",        key:"C", glow:"#F97316", iconKey:"alibabacloud",rank:13,scale:1.02, cls:"alibabacloud" },
-      { name:"Ant Group",     url:"https://www.antgroup.com/",            key:"G", glow:"#06B6D4", iconKey:"antgroup",  rank:13, scale:1.02, cls:"antgroup" },
-
-      { name:"Baidu",         url:"https://www.baidu.com/",               key:"B", glow:"#2563EB", iconKey:"baidu",     rank:13, scale:1.02, cls:"baidu" },
-      { name:"Baidu Cloud",   url:"https://cloud.baidu.com/",             key:"D", glow:"#2563EB", iconKey:"baidicloud",rank:13, scale:1.02, cls:"baidicloud" },
-      { name:"Baichuan",      url:"https://www.baichuan-ai.com/",         key:"C", glow:"#10B981", iconKey:"baichuan",  rank:13, scale:1.02, cls:"baichuan" },
-      { name:"BAAI",          url:"https://www.baai.ac.cn/",              key:"I", glow:"#10B981", iconKey:"baai",      rank:13, scale:1.02, cls:"baai" },
-
-      { name:"AIHubMix",      url:"https://aihubmix.com/",                key:"U", glow:"#8B5CF6", iconKey:"aihubmix",  rank:14, scale:1.02, cls:"aihubmix" },
-      { name:"AIMass",        url:"https://aimass.ai/",                   key:"M", glow:"#F59E0B", iconKey:"aimass",    rank:14, scale:1.02, cls:"aimass" },
-      { name:"AionLabs",      url:"https://aionlabs.ai/",                 key:"O", glow:"#06B6D4", iconKey:"aionlabs",  rank:14, scale:1.02, cls:"aionlabs" },
-      { name:"AI Studio",     url:"https://aistudio.google.com/",         key:"S", glow:"#4E85FF", iconKey:"aistudio",  rank:14, scale:1.02, cls:"aistudio" },
-
-      // —— 如果你后面确认 icons 里也有 discord/telegram/reddit/wiki 的 svg，再把它们 iconKey 加上即可 —— 
+      { name:"OpenAI",       url:"https://openai.com/",                key:"O", glow:"#10A37F", iconKey:"openai",      rank:6,  scale:1.00, cls:"openai" },
+      { name:"Anthropic",    url:"https://www.anthropic.com/",         key:"T", glow:"#D97757", iconKey:"anthropic",   rank:6,  scale:1.00, cls:"anthropic" },
+      { name:"Apple",        url:"https://www.apple.com/",             key:"E", glow:"#999999", iconKey:"apple",       rank:6,  scale:1.00, cls:"apple" },
+      { name:"Meta",         url:"https://www.meta.com/",              key:"M", glow:"#0EA5E9", iconKey:"meta",        rank:6,  scale:1.02, cls:"meta" }
     ];
 
     function applyVars(v){ const r=document.documentElement; for(const [k,val] of Object.entries(v)) r.style.setProperty(k,val); }
@@ -350,14 +337,22 @@
         </a>`;
     }
 
-    let exp=false, _lastMin="";
+    let exp=true, _lastMin=""; // ✅ 默认展开：你现在 Extended 已经在用
     function render(){
       const {essentials,more}=computeLayout(), seed=(Date.now()/1000)|0;
       document.getElementById("gridEssentials").innerHTML=essentials.map((s,i)=>makeItem(s,i,seed)).join("");
       document.getElementById("gridMore").innerHTML=more.map((s,i)=>makeItem(s,i+essentials.length,seed)).join("");
-      const btn=document.getElementById("toggleBtn"); btn.style.display=more.length?"block":"none";
-      if(!more.length){ document.getElementById("moreArea").setAttribute("aria-hidden","true"); btn.textContent="More Icons"; exp=false; }
-      else { document.getElementById("moreArea").setAttribute("aria-hidden",(!exp).toString()); btn.textContent=exp?"Less Icons":"More Icons"; }
+
+      const btn=document.getElementById("toggleBtn");
+      btn.style.display = more.length ? "block" : "none";
+      if(!more.length){
+        document.getElementById("moreArea").setAttribute("aria-hidden","true");
+        btn.textContent="More Icons";
+        exp=false;
+      } else {
+        document.getElementById("moreArea").setAttribute("aria-hidden",(!exp).toString());
+        btn.textContent=exp ? "Less Icons" : "More Icons";
+      }
       bindMagnetic();
     }
 
