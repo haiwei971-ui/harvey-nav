@@ -29,7 +29,7 @@ export const SITES = [
   { n:"Copilot",      u:"https://copilot.microsoft.com/",    icons:["copilot.svg","copilot-color.svg"], c:"#0078d4", r:1, whiteInvert:true },
 
   // ✅ Gemini：专用逻辑（两张图叠加，唤醒才彩）
-  { n:"Gemini",       u:"https://gemini.google.com/",        icons:[], gemini:true, s:1.14,       c:"#4e85ff", r:1, whiteInvert:true },
+  { n:"Gemini",       u:"https://gemini.google.com/",        icons:["gemini.svg","gemini-color.svg"],gemini:true, s:1.14,     c:"#4e85ff", r:1, whiteInvert:true },
 
   { n:"Cloudflare",   u:"https://dash.cloudflare.com/",      icons:["cloudflare.svg","cloudflare-color.svg"], c:"#f48120", r:1, whiteInvert:true },
   { n:"GitHub",       u:"https://github.com/",               icons:["github.svg"],                 c:"#ffffff", r:1, whiteInvert:true },
