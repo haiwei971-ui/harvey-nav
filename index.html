@@ -25,15 +25,12 @@
       --surface: rgba(255,255,255,0.56);
       --surface-strong: rgba(255,255,255,0.72);
 
-      /* Search */
-      --search: rgba(0,0,0,0.035);
-
       /* Icon optics */
       --icon-default-opacity: 0.70;
       --icon-brightness: 1.05;
       --icon-shadow: rgba(0,0,0,0.06);
 
-      /* Glow (very subtle, Apple-like) */
+      /* Glow (subtle) */
       --glow-opacity:0.12;
 
       /* Focus ring (system-ish) */
@@ -41,7 +38,7 @@
       --focus-border: rgba(0,122,255,0.42);
     }
 
-    /* Stable dark mode: follow system by default */
+    /* Dark: follow system unless user forces .theme-day */
     @media (prefers-color-scheme: dark){
       body:not(.theme-day){
         --bg-top:#0B0F18;
@@ -52,8 +49,6 @@
         --hair:rgba(255,255,255,0.10);
         --surface: rgba(18,22,32,0.58);
         --surface-strong: rgba(18,22,32,0.70);
-
-        --search: rgba(255,255,255,0.09);
 
         --icon-default-opacity: 0.92;
         --icon-brightness: 1.45;
@@ -66,8 +61,7 @@
       }
     }
 
-    /* Optional: JS will still add theme-night for time-based greeting,
-       but colors primarily follow system unless you force .theme-day */
+    /* Optional time-based class; colors mostly follow system */
     body.theme-night{
       --bg-top:#0B0F18;
       --bg-bottom:#070A12;
@@ -77,8 +71,6 @@
       --hair:rgba(255,255,255,0.10);
       --surface: rgba(18,22,32,0.58);
       --surface-strong: rgba(18,22,32,0.70);
-
-      --search: rgba(255,255,255,0.09);
 
       --icon-default-opacity: 0.92;
       --icon-brightness: 1.45;
@@ -104,7 +96,7 @@
       text-rendering: optimizeLegibility;
     }
 
-    /* Subtle animated blob background (Apple-like, ultra soft) */
+    /* Subtle animated blob background */
     .bg-flow{
       position:fixed; inset:-20%;
       pointer-events:none; z-index:-3;
@@ -121,7 +113,7 @@
       to{ transform:translate(10%,10%) }
     }
 
-    /* Reduced motion support */
+    /* Reduced motion */
     @media (prefers-reduced-motion: reduce){
       *{ animation:none !important; transition:none !important; }
       .bg-flow{ display:none; }
@@ -164,7 +156,7 @@
       white-space:nowrap;
     }
 
-    /* Quote (background mood) */
+    /* Quote */
     .quote-area{
       margin: 14px 0 18px;
       padding: 0 10px;
@@ -186,7 +178,7 @@
       opacity: 0.62;
     }
 
-    /* Search: primary anchor */
+    /* Search */
     .search{
       display:flex;
       align-items:center;
@@ -237,7 +229,7 @@
       flex:1; height:1px; background: var(--hair);
     }
 
-    /* Grid: more stable on iPad / large screens */
+    /* Grid */
     .grid{
       display:grid;
       gap: 26px 18px;
@@ -256,7 +248,7 @@
       .grid{ grid-template-columns: repeat(3, 1fr); }
     }
 
-    /* Items: iOS launcher feel */
+    /* Items */
     .item{
       position:relative;
       display:flex;
@@ -272,26 +264,22 @@
       border-radius: 18px;
       padding: 6px 4px 8px;
     }
-
-    /* Touch feedback */
     .item:active{
       transform: scale(0.96);
       transition: transform .08s;
     }
 
     /* Keyboard focus */
-    .item:focus-visible{
-      outline: none;
-    }
+    .item:focus-visible{ outline:none; }
     .item:focus-visible .icon{
-      box-shadow: 0 0 0 3px var(--focus);
+      box-shadow:
+        0 0 0 3px var(--focus),
+        0 12px 28px rgba(0,0,0,0.10);
       border-color: var(--focus-border);
     }
-    .item:focus-visible .label{
-      color: var(--text);
-    }
+    .item:focus-visible .label{ color: var(--text); }
 
-    /* Icon baseplate (clickable feel) */
+    /* Icon baseplate: cleaner iOS-like */
     .icon{
       width: 56px;
       height: 56px;
@@ -299,11 +287,25 @@
       place-items:center;
       position:relative;
       border-radius: 16px;
-      background: var(--surface-strong);
-      border: 1px solid color-mix(in srgb, var(--hair) 70%, transparent);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+
+      background: color-mix(in srgb, #fff 78%, var(--surface-strong));
+      border: 1px solid color-mix(in srgb, var(--hair) 92%, transparent);
+
+      box-shadow:
+        0 1px 0 rgba(0,0,0,0.03),
+        0 10px 24px rgba(0,0,0,0.08);
+
       transition: transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);
       overflow:hidden;
+    }
+    /* Subtle highlight */
+    .icon::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0));
+      opacity: .35;
+      pointer-events:none;
     }
 
     /* Icon image optics */
@@ -318,7 +320,7 @@
       will-change: transform, filter;
     }
 
-    /* Gemini: grayscale idle -> color on hover */
+    /* Gemini */
     .icon.gemini img{
       position:absolute;
       width: 36px;
@@ -337,11 +339,13 @@
       filter: none;
     }
 
-    /* Hover for pointer devices */
+    /* Hover (pointer devices only) */
     @media (hover:hover) and (pointer:fine){
       .item:hover{ transform: translateY(-2px); }
       .item:hover .icon{
-        box-shadow: 0 14px 34px rgba(0,0,0,0.12);
+        box-shadow:
+          0 1px 0 rgba(0,0,0,0.03),
+          0 16px 34px rgba(0,0,0,0.12);
       }
       .item:hover .icon img.single{
         filter: grayscale(0%) brightness(1) opacity(1) drop-shadow(0 6px 14px rgba(0,0,0,0.12));
@@ -353,7 +357,6 @@
       .item:hover .icon.gemini img.g0{ opacity: 0; }
       .item:hover .icon.gemini img.g1{ opacity: 1; }
 
-      /* Brand glow (very subtle) */
       .item:hover .icon::after{
         content:"";
         position:absolute;
@@ -368,13 +371,16 @@
       .item:hover .label{ color: var(--text); }
     }
 
-    /* Night mode invert for selected logos (avoid broad invert) */
-    body.theme-night .white-invert .icon img.single,
+    /* Dark invert for selected monochrome marks */
     @media (prefers-color-scheme: dark){
       body:not(.theme-day) .white-invert .icon img.single{
         filter: grayscale(100%) invert(1) brightness(1.85) opacity(var(--icon-default-opacity))
-                drop-shadow(0 2px 4px var(--icon-shadow)) !important;
+                drop-shadow(0 2px 4px rgba(0,0,0,0)) !important;
       }
+    }
+    body.theme-night .white-invert .icon img.single{
+      filter: grayscale(100%) invert(1) brightness(1.85) opacity(var(--icon-default-opacity))
+              drop-shadow(0 2px 4px rgba(0,0,0,0)) !important;
     }
 
     .label{
@@ -457,7 +463,6 @@
     const ICON_BASE = "icons/";
     const FALLBACK  = "openai.svg";
 
-    // Minimal, Apple-ish quotes (keep short)
     const QUOTES = [
       { t: "Stay hungry, stay foolish.", a: "Steve Jobs" },
       { t: "Simplicity is the ultimate sophistication.", a: "Leonardo da Vinci" },
@@ -471,10 +476,8 @@
       return `<img class="${cls}" src="${safe}" loading="lazy" decoding="async" alt="" onerror="this.onerror=null;this.src='${ICON_BASE}${FALLBACK}'">`;
     }
 
-    // NOTE:
-    // - s: scale
-    // - y: vertical optical adjustment in px
-    // - whiteInvert: only for logos that need invert in dark mode (monochrome whites)
+    // s: scale, y: vertical optical adjustment in px
+    // whiteInvert: only for logos that need invert in dark mode
     const SITES = [
       { n:"ChatGPT", u:"https://chatgpt.com/", icons:["openai.svg"], c:"#10a37f", r:1, s:1.00, y:0 },
       { n:"Claude", u:"https://claude.ai/", icons:["claude-color.svg"], c:"#d97757", r:1, s:1.02, y:0 },
@@ -517,7 +520,9 @@
         a.target = "_blank";
         a.rel = "noopener noreferrer";
         a.setAttribute("role","listitem");
-        a.setAttribute("aria-label", s.n);
+
+        const id = "lab_" + s.n.replace(/\s+/g,"_").toLowerCase();
+        a.setAttribute("aria-labelledby", id);
 
         a.style.setProperty("--brand-color", s.c || "#7C5CFF");
         if (s.s) a.style.setProperty("--s", String(s.s));
@@ -532,7 +537,7 @@
               ${imgTag(s.icons[0], "single")}
             </div>`;
 
-        a.innerHTML = `${iconHTML}<div class="label">${s.n}</div>`;
+        a.innerHTML = `${iconHTML}<div class="label" id="${id}">${s.n}</div>`;
         (s.r <= 2 ? ess : ext).appendChild(a);
       });
     }
@@ -547,39 +552,13 @@
       btn.textContent = isOpen ? "More Icons" : "Less Icons";
     }
 
-    // Weather (IP-based, no API key). Add timeout & graceful fallback.
-    async function updateWeather(){
-      const ctrl = new AbortController();
-      const timer = setTimeout(()=>ctrl.abort(), 2500);
-
-      try{
-        const res = await fetch("https://wttr.in/?format=j1", { signal: ctrl.signal, cache: "no-store" });
-        const data = await res.json();
-
-        const current = data?.current_condition?.[0];
-        const city    = data?.nearest_area?.[0]?.areaName?.[0]?.value;
-
-        if (!current || !city) throw new Error("bad weather data");
-
-        document.getElementById("temp").textContent = `${current.temp_C}°C`;
-        document.getElementById("city").textContent = String(city).toUpperCase();
-        document.getElementById("condition").textContent = current.weatherDesc?.[0]?.value || "";
-      }catch(e){
-        document.getElementById("temp").textContent = "";
-        document.getElementById("city").textContent = "WEATHER UNAVAILABLE";
-        document.getElementById("condition").textContent = "";
-      }finally{
-        clearTimeout(timer);
-      }
-    }
-
     function updateQuote(){
       const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
       document.getElementById("quote").textContent = `"${q.t}"`;
       document.getElementById("author").textContent = q.a;
     }
 
-    // Theme: greeting/time-based "theme-night" (colors still follow system unless you force theme-day)
+    // Greeting + optional time-based theme-night class
     function updateTheme(){
       const h = new Date().getHours();
       const b = document.body;
@@ -591,7 +570,7 @@
       g.textContent = night ? "Good night." : (h < 12 ? "Good morning." : "Good afternoon.");
     }
 
-    // Clock: update only on minute change (battery-friendly)
+    // Clock: update only when minute changes
     function tick(){
       const d = new Date();
       const hhmm = `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
@@ -607,8 +586,91 @@
       window.open("https://www.google.com/search?q=" + encodeURIComponent(q), "_blank");
     };
 
+    // --- Weather (Open-Meteo, no API key) ---
+    async function updateWeather(){
+      const tempEl = document.getElementById("temp");
+      const cityEl = document.getElementById("city");
+      const condEl = document.getElementById("condition");
+
+      const ctrl = new AbortController();
+      const timer = setTimeout(()=>ctrl.abort(), 3500);
+
+      const setUnavailable = ()=>{
+        tempEl.textContent = "";
+        cityEl.textContent = "WEATHER UNAVAILABLE";
+        condEl.textContent = "";
+      };
+
+      const wx = (code)=>{
+        const map = {
+          0:"Clear", 1:"Mainly clear", 2:"Partly cloudy", 3:"Overcast",
+          45:"Fog", 48:"Fog",
+          51:"Drizzle", 53:"Drizzle", 55:"Drizzle",
+          61:"Rain", 63:"Rain", 65:"Heavy rain",
+          66:"Freezing rain", 67:"Freezing rain",
+          71:"Snow", 73:"Snow", 75:"Heavy snow",
+          77:"Snow grains",
+          80:"Rain showers", 81:"Rain showers", 82:"Violent showers",
+          85:"Snow showers", 86:"Snow showers",
+          95:"Thunderstorm", 96:"Thunderstorm", 99:"Thunderstorm"
+        };
+        return map[code] || "Weather";
+      };
+
+      const getGeo = () => new Promise((resolve, reject)=>{
+        if (!navigator.geolocation) return reject(new Error("no geolocation"));
+        navigator.geolocation.getCurrentPosition(
+          (p)=>resolve({ lat: p.coords.latitude, lon: p.coords.longitude, precise:true }),
+          (e)=>reject(e),
+          { enableHighAccuracy:false, timeout: 2000, maximumAge: 10 * 60 * 1000 }
+        );
+      });
+
+      try{
+        let geo;
+        try{
+          geo = await getGeo();
+        }catch{
+          const ipRes = await fetch("https://ipapi.co/json/", { signal: ctrl.signal, cache:"no-store" });
+          const ip = await ipRes.json();
+          if (!ip || !ip.latitude || !ip.longitude) throw new Error("ip location failed");
+          geo = { lat: ip.latitude, lon: ip.longitude, precise:false, city: ip.city };
+        }
+
+        const wUrl = `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(geo.lat)}&longitude=${encodeURIComponent(geo.lon)}&current=temperature_2m,weather_code&temperature_unit=celsius`;
+        const wRes = await fetch(wUrl, { signal: ctrl.signal, cache:"no-store" });
+        const w = await wRes.json();
+
+        const t = w?.current?.temperature_2m;
+        const code = w?.current?.weather_code;
+        if (typeof t !== "number") throw new Error("bad weather data");
+
+        let city = geo.city;
+        if (!city){
+          const nUrl = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(geo.lat)}&lon=${encodeURIComponent(geo.lon)}`;
+          const nRes = await fetch(nUrl, {
+            signal: ctrl.signal,
+            cache:"no-store",
+            headers: { "Accept":"application/json" }
+          });
+          const n = await nRes.json();
+          const addr = n?.address || {};
+          city = addr.city || addr.town || addr.village || addr.state || "LOCAL";
+        }
+
+        tempEl.textContent = `${Math.round(t)}°C`;
+        cityEl.textContent = String(city).toUpperCase();
+        condEl.textContent = wx(code);
+      }catch(e){
+        setUnavailable();
+      }finally{
+        clearTimeout(timer);
+      }
+    }
+
     // Init
     document.getElementById("toggleBtn").addEventListener("click", toggleMore);
+
     updateTheme();
     tick();
     render();
