@@ -5,16 +5,26 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
 <title>Harveyi</title>
 
+<!-- ✅ PWA（你要求补齐） -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 
 <style>
 :root{
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* 默认白天模式变量 */
   --bg-top: #FFFFFF; --bg-bottom: #F5F5F7;
   --text: #1D1D1F; --muted: rgba(0,0,0,0.45);
   --hair: rgba(0,0,0,0.06); --search: rgba(0,0,0,0.03);
-  --glow-opacity: 0.06;
+
+  --glow-opacity: 0.06; /* 白天光晕极淡 */
   --accent: #a1c4fd;
+
+  /* ✅ 大师级：根据布局列数动态缩放（JS 会写入） */
+  --layout-scale: 1.00;
 }
 
 body.theme-night {
@@ -35,59 +45,160 @@ body{
   transition: background 1.5s var(--ease), color 1.5s var(--ease);
 }
 
+/* 氛围噪点 */
 body::before{
   content:""; position:fixed; inset:0; opacity:.04; pointer-events:none; z-index:-1;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
 }
 
-.wrap{ max-width:1000px; margin:auto; padding:calc(40px + env(safe-area-inset-top)) 20px 60px; }
+.wrap{
+  max-width:1000px;
+  margin:auto;
+  /* ✅ 你之前说搜索框上下距离太宽：整体顶部缩小一点 */
+  padding:calc(28px + env(safe-area-inset-top)) 20px 54px;
+}
 
-.top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; opacity: 0.85; }
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px; /* ✅ 收紧 */
+  opacity: 0.85;
+}
 .clock{ font-family:"JetBrains Mono"; font-weight:600; font-size:18px; }
 
 .search{
   display:flex; align-items:center; gap:12px;
   background: var(--search); border: 1px solid var(--hair);
-  padding:14px 20px; border-radius:999px; margin-bottom:28px;
+  /* ✅ 收紧搜索框上下 padding */
+  padding:12px 18px;
+  border-radius:999px;
+  margin-bottom:18px; /* ✅ 收紧 */
   backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   transition: .3s var(--ease);
 }
-.search:focus-within{ transform: scaleX(1.02); border-color: rgba(124,92,255,0.4); }
+.search:focus-within{ transform: scaleX(1.015); border-color: rgba(124,92,255,0.4); }
 .search input{ flex:1; background:transparent; border:0; outline:none; color:var(--text); font-size:18px; }
 
 .section{
-  margin:18px 0 12px; display:flex; align-items:center; gap:12px;
-  color:var(--muted); font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:600;
+  margin:16px 0 10px;
+  display:flex; align-items:center; gap:12px;
+  color:var(--muted);
+  font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:600;
 }
 .section .line{ flex:1; height:1px; background:var(--hair); }
 
-.grid{ display:grid; grid-template-columns:repeat(6,1fr); gap:26px 18px; }
+.grid{ display:grid; grid-template-columns:repeat(6,1fr); gap:24px 18px; }
 @media(max-width:900px){.grid{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:600px){.grid{grid-template-columns:repeat(3,1fr)}}
 
 .item{
-  position: relative; display:flex; flex-direction:column; align-items:center; gap:12px;
-  text-decoration:none; color:var(--muted); transition:.25s var(--ease); min-height:86px;
+  position: relative;
+  display:flex; flex-direction:column; align-items:center;
+  gap:12px;
+  text-decoration:none;
+  color:var(--muted);
+  transition:.25s var(--ease);
+  min-height:86px;
+  /* ✅ 大师级：预留图标个体 scale 变量 + 布局 scale 变量叠加 */
+  --icon-scale: 1.00;
 }
+
 .item:active { transform: scale(0.95); transition: 0.1s; }
 
-.icon{ width:54px; height:54px; display:grid; place-items:center; position: relative; }
-.icon img{
-  width:36px; height:36px; object-fit:contain;
-  filter: grayscale(100%) opacity(0.6);
-  transition: .35s var(--ease);
+.icon{
+  width:54px; height:54px;
+  display:grid; place-items:center;
+  position: relative;
 }
 
-.item:hover img { filter: grayscale(0%) opacity(1); transform: translateY(-6px); }
+/* 默认走 img 的图标 */
+.icon img{
+  width:36px; height:36px;
+  object-fit:contain;
+  filter: grayscale(100%) opacity(0.6);
+  transition: .35s var(--ease);
+  /* ✅ 大师级核心：图标最终缩放 = 个体scale * 布局scale */
+  transform: scale(calc(var(--icon-scale) * var(--layout-scale)));
+  will-change: transform, filter;
+}
 
+/* hover 唤醒 */
+.item:hover img{
+  filter: grayscale(0%) opacity(1);
+  transform:
+    translateY(-6px)
+    scale(calc(var(--icon-scale) * var(--layout-scale)));
+}
+
+/* 光晕 */
 .item:hover .icon::after {
-  content: ""; position: absolute; inset: -10px; border-radius: 50%; z-index: -1;
-  filter: blur(35px); opacity: var(--glow-opacity);
+  content: "";
+  position: absolute; inset: -10px;
+  border-radius: 50%;
+  z-index: -1;
+  filter: blur(35px);
+  opacity: var(--glow-opacity);
   background: radial-gradient(circle, var(--brand-color, #7C5CFF), transparent 75%);
 }
 
 .label{ font-size:13px; transition: .25s var(--ease); }
 .item:hover .label { color: var(--text); }
+
+/* =============== ✅ Gemini：三色渐变唤醒 =============== */
+/* 用 mask 把 svg 当“镂空模具”，hover 时背景变三色渐变 */
+.gemini-mask{
+  width:36px; height:36px;
+  /* 默认灰度（跟其他图标一致的感觉） */
+  background: rgba(255,255,255,0.0);
+  opacity: .6;
+  filter: grayscale(1);
+  transition: .35s var(--ease);
+  transform: scale(calc(var(--icon-scale) * var(--layout-scale)));
+  will-change: transform, opacity, background-position;
+  /* mask */
+  -webkit-mask-image: var(--gemini-mask-url);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+  mask-image: var(--gemini-mask-url);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+
+  /* 默认用当前文字色的“灰”来填充 */
+  background: currentColor;
+  color: rgba(255,255,255,0.7); /* 夜间更柔；白天由父级颜色影响很小 */
+}
+
+/* 白天时 Gemini 默认灰更像“禁用态” */
+body:not(.theme-night) .gemini-mask{
+  color: rgba(0,0,0,0.55);
+}
+
+/* hover：三色渐变 + 轻微流动 */
+.item.gemini:hover .gemini-mask{
+  opacity: 1;
+  filter: none;
+  transform:
+    translateY(-6px)
+    scale(calc(var(--icon-scale) * var(--layout-scale)));
+
+  background: linear-gradient(
+    120deg,
+    #4E85FF 0%,
+    #A855F7 45%,
+    #FF4FD8 100%
+  );
+  background-size: 220% 220%;
+  animation: geminiShift 1.8s var(--ease) infinite alternate;
+}
+
+/* 渐变轻微移动 */
+@keyframes geminiShift{
+  from { background-position: 0% 50%; }
+  to   { background-position: 100% 50%; }
+}
 </style>
 </head>
 
@@ -113,47 +224,110 @@ body::before{
 const ICON_BASE = "icons/";
 const FALLBACK  = "openai.svg";
 
-function icon(name){
-  const src = ICON_BASE + encodeURIComponent(name);
-  const fb  = ICON_BASE + encodeURIComponent(FALLBACK);
-  return `<img src="${src}" onerror="this.onerror=null;this.src='${fb}'">`;
+/* ✅ 大师级：按列数设定全局缩放，让“密集布局不挤 / 稀疏布局不空” */
+function getCols(){
+  const w = window.innerWidth;
+  return w <= 600 ? 3 : (w <= 900 ? 4 : 6);
+}
+function applyLayoutScale(){
+  const cols = getCols();
+  // 3列手机：整体略放大（图标更“撑满”），4列稍微放大，6列正常
+  const layoutScale = (cols === 3) ? 1.06 : (cols === 4 ? 1.03 : 1.00);
+  document.documentElement.style.setProperty("--layout-scale", layoutScale.toFixed(2));
 }
 
+/* ✅ icon 渲染：普通用 img；Gemini 用 mask 渐变方案 */
+function iconHTML(site){
+  if(site.geminiMask){
+    // 用 gemini.svg 做遮罩（要求 icons/ 里有 gemini.svg）
+    const maskUrl = `url("${ICON_BASE}${encodeURIComponent(site.geminiMask)}")`;
+    return `<span class="gemini-mask" style="--gemini-mask-url:${maskUrl};"></span>`;
+  }
+
+  const src = ICON_BASE + encodeURIComponent(site.i);
+  return `<img src="${src}" onerror="this.onerror=null;this.src='${ICON_BASE}${FALLBACK}'">`;
+}
+
+/** ✅ 视觉体积补偿（大师级：既按图标形状，也按布局列数做综合平衡） */
+const SCALE_MAP = {
+  "ChatGPT": 1.00,
+  "Claude":  1.06,
+  "Copilot": 1.00,
+  "Gemini":  1.12,
+  "Cloudflare": 1.05,
+  "GitHub":     1.00,
+
+  "Gmail":        1.02,
+  "Google":       1.00,
+  "Google Cloud": 1.03,
+  "Google Drive": 1.02,
+  "Google Maps":  1.02,
+  "YouTube":      1.00,
+
+  "AWS":   1.02,
+  "Azure": 1.02,
+
+  "X":        1.05,
+  "Reddit":   1.06,
+  "Telegram": 1.03,
+  "Apple":    1.05
+};
+
+/** ✅ 你的站点（<=26 个、无国内图标、并去掉你圈的那四个） */
 const SITES = [
-  {n:"ChatGPT",      u:"https://chatgpt.com/",                i:"openai.svg",           c:"#10a37f", r:1},
-  {n:"Claude",       u:"https://claude.ai/",                  i:"claude-color.svg",     c:"#d97757", r:1},
-  {n:"Copilot",      u:"https://copilot.microsoft.com/",      i:"copilot-color.svg",    c:"#0078d4", r:1},
-  {n:"Gemini",       u:"https://gemini.google.com/",          i:"gemini-color.svg",     c:"#4e85ff", r:1},
-  {n:"Cloudflare",   u:"https://dash.cloudflare.com/",        i:"cloudflare-color.svg", c:"#f48120", r:1},
-  {n:"GitHub",       u:"https://github.com/",                 i:"github.svg",           c:"#333333", r:1},
+  {n:"ChatGPT",      u:"https://chatgpt.com/",                 i:"openai.svg",           c:"#10a37f", r:1},
+  {n:"Claude",       u:"https://claude.ai/",                   i:"claude-color.svg",     c:"#d97757", r:1},
+  {n:"Copilot",      u:"https://copilot.microsoft.com/",       i:"copilot-color.svg",    c:"#0078d4", r:1},
 
-  {n:"Gmail",        u:"https://mail.google.com/",            i:"google-gmail.svg",     c:"#ea4335", r:2},
-  {n:"Google",       u:"https://google.com",                  i:"google-color.svg",     c:"#4285f4", r:2},
-  {n:"Google Cloud", u:"https://console.cloud.google.com/",   i:"googlecloud-color.svg",c:"#4285f4", r:2},
-  {n:"Google Drive", u:"https://drive.google.com/",           i:"google-drive.svg",     c:"#34a853", r:2},
-  {n:"Google Maps",  u:"https://maps.google.com/",            i:"google-maps.svg",      c:"#4285f4", r:2},
-  {n:"YouTube",      u:"https://www.youtube.com/",            i:"youtube_red.svg",      c:"#ff0000", r:2},
+  // ✅ Gemini：用 mask 方案实现三色渐变唤醒
+  {n:"Gemini",       u:"https://gemini.google.com/",           geminiMask:"gemini.svg",  c:"#4e85ff", r:1},
 
-  {n:"AWS",          u:"https://aws.amazon.com/",             i:"aws.svg",              c:"#ff9900", r:3},
-  {n:"Azure",        u:"https://portal.azure.com/",           i:"azure.svg",            c:"#0078d4", r:3},
-  {n:"X",            u:"https://x.com/",                      i:"x.svg",                c:"#111111", r:3},
-  {n:"Reddit",       u:"https://reddit.com/",                 i:"reddit-color.svg",     c:"#ff4500", r:3},
-  {n:"Telegram",     u:"https://web.telegram.org/",           i:"telegram 2.svg",       c:"#2aabee", r:3},
-  {n:"Apple",        u:"https://apple.com/",                  i:"apple.svg",            c:"#999999", r:3}
+  {n:"Cloudflare",   u:"https://dash.cloudflare.com/",         i:"cloudflare-color.svg", c:"#f48120", r:1},
+  {n:"GitHub",       u:"https://github.com/",                  i:"github.svg",           c:"#333333", r:1},
+
+  {n:"Gmail",        u:"https://mail.google.com/",             i:"google-gmail.svg",     c:"#ea4335", r:2},
+  {n:"Google",       u:"https://www.google.com/",              i:"google-color.svg",     c:"#4285f4", r:2},
+  {n:"Google Cloud", u:"https://console.cloud.google.com/",    i:"googlecloud-color.svg",c:"#4285f4", r:2},
+  {n:"Google Drive", u:"https://drive.google.com/",            i:"google-drive.svg",     c:"#34a853", r:2},
+  {n:"Google Maps",  u:"https://www.google.com/maps",          i:"google-maps.svg",      c:"#4285f4", r:2},
+  {n:"YouTube",      u:"https://www.youtube.com/",             i:"youtube_red.svg",      c:"#ff0000", r:2},
+
+  {n:"AWS",          u:"https://aws.amazon.com/",              i:"aws.svg",              c:"#ff9900", r:3},
+  {n:"Azure",        u:"https://portal.azure.com/",            i:"azure.svg",            c:"#0078d4", r:3},
+  {n:"Bing",         u:"https://www.bing.com/",                i:"bing-color.svg",       c:"#0aa0ff", r:3},   // 若没有此文件会自动 fallback
+  {n:"Microsoft",    u:"https://www.microsoft.com/",           i:"microsoft-color.svg",  c:"#0078d4", r:3},
+  {n:"Netflix",      u:"https://www.netflix.com/",             i:"netflix-icon.svg",     c:"#e50914", r:3},
+  {n:"Spotify",      u:"https://open.spotify.com/",            i:"spotify-icon.svg",     c:"#1db954", r:3},
+
+  {n:"X",            u:"https://x.com/",                       i:"x.svg",                c:"#111111", r:3},
+  {n:"Reddit",       u:"https://www.reddit.com/",              i:"reddit-color.svg",     c:"#ff4500", r:3},
+  {n:"Telegram",     u:"https://web.telegram.org/",            i:"telegram.svg",         c:"#2aabee", r:3},
+  {n:"Apple",        u:"https://www.apple.com/",               i:"apple.svg",            c:"#999999", r:3}
 ];
 
 function render(){
-  const ess = document.getElementById("ess"), ext = document.getElementById("ext");
-  ess.innerHTML = ext.innerHTML = "";
+  const ess = document.getElementById("ess");
+  const ext = document.getElementById("ext");
+  ess.innerHTML = "";
+  ext.innerHTML = "";
+
   SITES.forEach(s=>{
     const a = document.createElement("a");
-    a.className = "item";
+    a.className = "item" + (s.n === "Gemini" ? " gemini" : "");
     a.href = s.u;
     a.target = "_blank";
     a.rel = "noopener noreferrer";
-    a.style.setProperty('--brand-color', s.c);
-    a.innerHTML = `<div class="icon">${icon(s.i)}</div><div class="label">${s.n}</div>`;
-    (s.r<=2 ? ess : ext).appendChild(a);
+
+    // ✅ 品牌色（光晕用）
+    a.style.setProperty("--brand-color", s.c);
+
+    // ✅ 大师级：图标个体视觉体积补偿
+    const scale = (SCALE_MAP[s.n] ?? 1.00);
+    a.style.setProperty("--icon-scale", scale.toFixed(2));
+
+    a.innerHTML = `<div class="icon">${iconHTML(s)}</div><div class="label">${s.n}</div>`;
+
+    (s.r <= 2 ? ess : ext).appendChild(a);
   });
 }
 
@@ -161,34 +335,45 @@ function updateTheme(){
   const h = new Date().getHours();
   const b = document.body;
   const g = document.getElementById("greet");
-  b.classList.toggle("theme-night", (h >= 17 || h < 8));
-  g.textContent = (h >= 17 || h < 8) ? "Good night." : (h < 12 ? "Good morning." : "Good afternoon.");
+
+  b.classList.remove("theme-night");
+
+  if(h >= 17 || h < 8) {
+    b.classList.add("theme-night");
+    g.textContent = "Good night.";
+  } else {
+    g.textContent = h < 12 ? "Good morning." : "Good afternoon.";
+  }
 }
 
-let _lastMin = "";
 function tick(){
   const d = new Date();
-  const hh = String(d.getHours()).padStart(2,"0");
-  const mm = String(d.getMinutes()).padStart(2,"0");
-  document.getElementById("clock").textContent = `${hh}:${mm}`;
-
-  const key = `${hh}:${mm}`;
-  if(key !== _lastMin){
-    _lastMin = key;
-    updateTheme(); // ✅ 每分钟刷新主题/问候
-  }
+  document.getElementById("clock").textContent =
+    String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0");
 }
 
 document.getElementById("searchForm").onsubmit = (e)=>{
   e.preventDefault();
-  const v = document.getElementById("q").value.trim();
-  if(!v) return;
-  window.open("https://google.com/search?q="+encodeURIComponent(v), "_blank");
+  const q = document.getElementById("q").value.trim();
+  if(!q) return;
+  window.open("https://www.google.com/search?q=" + encodeURIComponent(q), "_blank");
 };
 
-render();
+applyLayoutScale();
+updateTheme();
 tick();
+render();
+
 setInterval(tick, 1000);
+
+// ✅ 大师级：屏幕旋转/尺寸变化时自动重新计算布局 scale
+window.addEventListener("resize", ()=>{
+  clearTimeout(window.__rsz);
+  window.__rsz = setTimeout(()=>{
+    applyLayoutScale();
+    // 不强制重渲染也行；但你如果以后按列数分配 essentials 数量，可以在这里 render()
+  }, 120);
+});
 </script>
 </body>
 </html>
