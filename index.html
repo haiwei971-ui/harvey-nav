@@ -1,4 +1,4 @@
-。<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
@@ -12,19 +12,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 
-  <!-- 样式 -->
+  <!-- ✅ 注意：GitHub Pages/自定义域名下，用 /assets/... 最稳 -->
   <link rel="stylesheet" href="/assets/style.css">
 </head>
 
 <body>
-
-  <div class="bg-flow">
-    <div class="blob"></div>
-  </div>
+  <div class="bg-flow"><div class="blob"></div></div>
 
   <div class="wrap">
-
-    <!-- Header -->
     <div class="top">
       <div class="top-left">
         <div id="greet" class="greet">Hello.</div>
@@ -37,45 +32,27 @@
       <div class="clock" id="clock">00:00</div>
     </div>
 
-    <!-- Quote -->
     <div class="quote-area">
-      <div id="quote" class="quote-text">
-        "Stay hungry, stay foolish."
-      </div>
-      <div id="author" class="quote-author">
-        Steve Jobs
-      </div>
+      <div id="quote" class="quote-text">"Stay hungry, stay foolish."</div>
+      <div id="author" class="quote-author">Steve Jobs</div>
     </div>
 
-    <!-- Search -->
     <form class="search" id="searchForm" autocomplete="off">
       <input id="q" placeholder="Search..." autofocus />
     </form>
 
-    <!-- Essentials -->
-    <div class="section">
-      ESSENTIALS
-      <div class="line"></div>
-    </div>
+    <div class="section">ESSENTIALS<div class="line"></div></div>
     <div id="ess" class="grid"></div>
 
-    <!-- Extended -->
     <div id="moreArea" aria-hidden="true">
-      <div class="section" style="margin-top:18px;">
-        EXTENDED
-        <div class="line"></div>
-      </div>
+      <div class="section" style="margin-top:18px;">EXTENDED<div class="line"></div></div>
       <div id="ext" class="grid"></div>
     </div>
 
-    <button class="morebtn" id="toggleBtn">
-      More Icons
-    </button>
-
+    <button class="morebtn" id="toggleBtn">More Icons</button>
   </div>
 
-  <!-- JS -->
-<script type="module" src="/assets/app.js"></script>
-
+  <!-- ✅ 你现在 app.js 是 ES Module（有 import），必须用 type="module" -->
+  <script type="module" src="/assets/app.js"></script>
 </body>
 </html>
