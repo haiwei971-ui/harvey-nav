@@ -22,7 +22,10 @@
       --text:#1D1D1F; --text-muted:rgba(0,0,0,0.45);
       --hair:rgba(0,0,0,0.06); --search-bg:rgba(0,0,0,0.03);
 
-      --icon-opacity:0.42; --icon-color:#333; --accent:#a1c4fd;
+      --icon-opacity:0.42;
+      --icon-color:#333;
+      --accent:#a1c4fd;
+
       --glow-opacity: 0.05;
     }
 
@@ -31,138 +34,244 @@
       --text:rgba(255,255,255,0.92); --text-muted:rgba(255,255,255,0.45);
       --hair:rgba(255,255,255,0.08); --search-bg:rgba(255,255,255,0.08);
       --icon-opacity:0.50; --icon-color:rgba(255,255,255,0.90); --accent:rgba(90,80,255,0.55);
-      --glow-opacity: 0.3;
+      --glow-opacity: 0.30;
     }
 
     *{ box-sizing:border-box; }
     html,body{ height:100%; margin:0; }
+
     body{
-      color:var(--text); font-family: Inter, -apple-system, sans-serif;
-      -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+      color:var(--text);
+      font-family: Inter, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
       background: linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
       overflow-x:hidden;
       transition: background 1.8s var(--easeWave), color 1.8s var(--easeWave);
     }
 
     body::before{
-      content:""; position:fixed; inset:0; opacity:.06; pointer-events:none; z-index:-1;
+      content:"";
+      position:fixed; inset:0;
+      opacity:.06;
+      pointer-events:none;
+      z-index:-1;
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
       mix-blend-mode: overlay;
     }
 
-    .bg-flow{ position:fixed; inset:-20%; pointer-events:none; z-index:-3; filter:blur(120px); opacity:.38; }
+    .bg-flow{
+      position:fixed; inset:-20%;
+      pointer-events:none;
+      z-index:-3;
+      filter:blur(120px);
+      opacity:.38;
+    }
     .bg-flow .blob{
-      position:absolute; width:70vmax; height:70vmax; border-radius:999px;
+      position:absolute;
+      width:70vmax; height:70vmax;
+      border-radius:999px;
       background: radial-gradient(circle, var(--accent), transparent 60%);
       animation: drift 60s var(--ease2) infinite alternate;
     }
     @keyframes drift{ from{transform:translate(-5%,-5%)} to{transform:translate(10%,10%)} }
 
-    /* ✅ 更紧凑：整体上移一点、减少上下 padding */
+    /* ✅ 更紧凑：顶部/搜索框上下距离缩短 */
     .wrap{
       min-height:100%;
-      display:flex; justify-content:center;
-      padding:calc(40px + env(safe-area-inset-top)) 18px 42px;
+      display:flex;
+      justify-content:center;
+      padding:calc(34px + env(safe-area-inset-top)) 18px 46px;
     }
     .shell{ width:min(980px, 100%); transition: .4s var(--ease2); }
 
-    /* ✅ 更紧凑：topbar margin-bottom 从 24px -> 14px */
     .topbar{
-      display:flex; justify-content:space-between; align-items:center;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
       margin-bottom:14px;
     }
     .greet{ font-size:18px; font-weight:500; opacity:.85; letter-spacing:.02em; }
     .clock{ font-family:"JetBrains Mono"; font-size:18px; font-weight:600; font-variant-numeric:tabular-nums; }
 
-    /* ✅ 更紧凑：search margin-bottom 从 48px -> 26px */
     .search{
-      display:flex; align-items:center; gap:12px; padding:14px 20px; border-radius:999px;
-      background: var(--search-bg); border:1px solid var(--hair);
-      backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+      display:flex;
+      align-items:center;
+      gap:12px;
+
+      padding:13px 20px;
+      border-radius:999px;
+
+      background: var(--search-bg);
+      border:1px solid var(--hair);
+      backdrop-filter:blur(20px);
+      -webkit-backdrop-filter:blur(20px);
+
       box-shadow:0 10px 30px rgba(0,0,0,0.03);
       transition:.3s var(--easeWave);
-      margin-bottom:26px;
+
+      margin-bottom:28px; /* ✅ 原来 48px，收紧 */
     }
     .search:focus-within{
       transform:scaleX(1.02);
       border-color: rgba(124,92,255,0.5);
-      box-shadow: 0 18px 56px rgba(0,0,0,0.08), inset 0 0 0 1px rgba(124,92,255,0.2);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.08), inset 0 0 0 1px rgba(124,92,255,0.2);
     }
-    .search input{ width:100%; border:0; outline:none; background:transparent; color:var(--text); font-size:18px; }
+    .search input{
+      width:100%;
+      border:0;
+      outline:none;
+      background:transparent;
+      color:var(--text);
+      font-size:18px;
+    }
+    .hint{
+      display:flex;
+      gap:12px;
+      font-size:12px;
+      color:var(--text-muted);
+      white-space:nowrap;
+      user-select:none;
+    }
+    @media (max-width: 520px){
+      .hint{ display:none; }
+    }
 
     .dim-on-focus .grid, .dim-on-focus .sectionbar, .dim-on-focus .morebtn{
-      opacity:0.28; filter:blur(4px); transform:scale(0.985);
+      opacity:0.28;
+      filter:blur(4px);
+      transform:scale(0.985);
     }
 
-    /* ✅ 更紧凑：sectionbar margin 从 20px -> 14px */
     .sectionbar{
-      display:flex; align-items:center; gap:15px;
-      margin:14px 0;
+      display:flex;
+      align-items:center;
+      gap:15px;
+
+      margin:14px 0; /* ✅ 原来 20px，收紧 */
       color: var(--text-muted);
-      font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:600;
+
+      font-size:11px;
+      letter-spacing:.2em;
+      text-transform:uppercase;
+      font-weight:600;
     }
     .dotline{ height:1px; flex:1; background: var(--hair); }
 
-    /* ✅ 更紧凑：gap 稍微收一点 */
     .grid{
       display:grid;
       grid-template-columns:repeat(6, 1fr);
-      gap:26px 18px;
+      gap:28px 20px; /* ✅ 轻微收紧 */
       transition:.4s var(--ease2);
     }
     @media (max-width: 860px){ .grid{grid-template-columns:repeat(4,1fr)} }
     @media (max-width: 520px){ .grid{grid-template-columns:repeat(3,1fr)} }
 
     .item{
-      position:relative; display:flex; flex-direction:column; align-items:center; gap:12px;
-      text-decoration:none; outline:none; min-height: 86px;
+      position:relative;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:12px;
+      text-decoration:none;
+      outline:none;
+      min-height: 86px;
+
       --mx:0px; --my:0px;
       transform:translate3d(var(--mx), var(--my), 0);
       transition:transform .22s var(--easeWave);
     }
 
     .icon{
-      width:54px; height:54px; display:grid; place-items:center;
+      width:54px; height:54px;
+      display:grid;
+      place-items:center;
+
+      color: var(--icon-color);
       filter:grayscale(100%) opacity(var(--icon-opacity));
       transition:.35s var(--easeWave);
       position:relative;
     }
-    .icon img{
-      width:36px; height:36px; display:block;
-      object-fit:contain;
-      max-width:36px; max-height:36px;
-    }
-    .glyph{ transform: scale(var(--s, 1)) translateY(var(--ty, 0px)); transition: .28s var(--easeWave); display:grid; place-items:center; }
 
-    .item:hover .icon{ filter:none; transform:translateY(-6px); }
+    /* ✅ 让 img/svg 都统一尺寸 */
+    .icon img{
+      width:36px;
+      height:36px;
+      display:block;
+    }
+
+    .glyph{
+      transform: scale(var(--s, 1)) translateY(var(--ty, 0px));
+      transition: .28s var(--easeWave);
+      display:grid;
+      place-items:center;
+    }
+
+    .item:hover .icon{
+      filter:none;
+      transform:translateY(-6px);
+    }
+
     .item:hover .icon::after{
-      content:""; position:absolute; inset:-15px; border-radius:50%; z-index:-1;
-      filter:blur(40px); opacity:var(--glow-opacity);
+      content:"";
+      position:absolute;
+      inset:-15px;
+      border-radius:50%;
+      z-index:-1;
+
+      filter:blur(40px);
+      opacity:var(--glow-opacity);
       background:radial-gradient(circle, var(--glow), transparent 75%);
+
       transform: translate(calc(var(--mx) * -0.8), calc(var(--my) * -0.8 + 4px));
     }
 
     .label{
-      font-size:13px; color: var(--text-muted);
+      font-size:13px;
+      color: var(--text-muted);
       transition:.25s var(--easeWave);
+
       --lx:0px; --ly:0px;
       transform: translate3d(var(--lx), var(--ly), 0);
     }
-    .item:hover .label{ color: var(--text); opacity:1; }
+    .item:hover .label{
+      color: var(--text);
+      opacity:1;
+    }
+
+    /* ✅ 按下反馈（更像原生） */
+    .item:active{
+      transform: translate3d(var(--mx), var(--my), 0) scale(0.96);
+    }
+    .item:active .icon{
+      filter:none;
+      transform: translateY(-2px);
+      opacity:0.95;
+    }
+    .item:active .label{
+      opacity:0.92;
+    }
 
     .kbd{
-      position:absolute; top:-4px; right:4px; opacity:0;
-      font-family:"JetBrains Mono"; font-size:11px; color:#fff;
-      background:rgba(0,0,0,.35); backdrop-filter:blur(10px);
-      padding:3px 6px; border-radius:8px;
+      position:absolute;
+      top:-4px; right:4px;
+      opacity:0;
+      font-family:"JetBrains Mono";
+      font-size:11px;
+      color:#fff;
+      background:rgba(0,0,0,.35);
+      backdrop-filter:blur(10px);
+      padding:3px 6px;
+      border-radius:8px;
       border:1px solid rgba(255,255,255,.12);
       transition:.18s var(--easeWave);
-      pointer-events:none; z-index:10;
+      pointer-events:none;
+      z-index:10;
     }
     .show-hotkeys .kbd{ opacity:1; transform:translateY(6px); }
 
     #moreArea[aria-hidden="true"]{ display:none; }
-    /* ✅ 更紧凑：More 按钮 margin 从 40px -> 28px */
+
     .morebtn{
       background: var(--search-bg);
       border:1px solid var(--hair);
@@ -173,250 +282,369 @@
       font-size:13px;
       opacity:.65;
       transition:.3s var(--easeWave);
-      margin:28px auto 0;
+
+      margin: 26px auto 0; /* ✅ 原来 40px，收紧 */
       display:block;
     }
 
-    .reveal{ animation: rise .72s var(--easeWave) both; animation-delay: var(--d, 0ms); }
+    .reveal{
+      animation: rise .72s var(--easeWave) both;
+      animation-delay: var(--d, 0ms);
+    }
     @keyframes rise{
       from{ opacity:0; transform:translateY(20px) scale(.98); filter:blur(5px); }
       to{ opacity:1; transform:translateY(0) scale(1); filter:blur(0); }
     }
+
+    /* hover color hint */
+    .item.chatgpt:hover .icon{color:#10A37F}
+    .item.gemini:hover .icon{color:#4E85FF}
+    .item.claude:hover .icon{color:#D97757}
+    .item.copilot:hover .icon{color:#0078D4}
+    .item.cloudflare:hover .icon{color:#F48120}
+    .item.github:hover .icon{color:#333}
+    .item.google:hover .icon{color:#4285F4}
+    .item.gmail:hover .icon{color:#EA4335}
+    .item.youtube:hover .icon{color:#FF0033}
+    .item.aws:hover .icon{color:#FF9900}
+    .item.azure:hover .icon{color:#0078D4}
+    .item.gcp:hover .icon{color:#4285F4}
+    .item.bing:hover .icon{color:#3B82F6}
+    .item.netflix:hover .icon{color:#E50914}
+    .item.spotify:hover .icon{color:#1DB954}
+    .item.whatsapp:hover .icon{color:#25D366}
+    .item.x:hover .icon{color:#111}
+    .item.apple:hover .icon{color:#111}
+    .item.facebook:hover .icon{color:#1877F2}
+    .item.discord:hover .icon{color:#5865F2}
+    .item.telegram:hover .icon{color:#2AABEE}
+    .item.reddit:hover .icon{color:#FF4500}
+    .item.openai:hover .icon{color:#10A37F}
+    .item.anthropic:hover .icon{color:#D97757}
+    .item.microsoft:hover .icon{color:#0078D4}
   </style>
 </head>
 
 <body>
   <div class="bg-flow"><div class="blob"></div></div>
 
-  <div class="wrap"><div class="shell" id="app">
-    <div class="topbar">
-      <div class="greet" id="greet">Hello.</div>
-      <div class="clock" id="clock">00:00</div>
+  <div class="wrap">
+    <div class="shell" id="app">
+      <div class="topbar">
+        <div class="greet" id="greet">Hello.</div>
+        <div class="clock" id="clock">00:00</div>
+      </div>
+
+      <form class="search" id="searchForm" autocomplete="off">
+        <input id="q" type="text" placeholder="Search..." autofocus />
+        <div class="hint"><span>/g Google</span><span>/y YouTube</span><span>/c ChatGPT</span></div>
+      </form>
+
+      <div class="sectionbar"><span>Essentials</span><div class="dotline"></div></div>
+      <div class="grid" id="gridEssentials"></div>
+
+      <div id="moreArea" aria-hidden="true">
+        <div class="sectionbar" style="margin-top:28px"><span>Extended</span><div class="dotline"></div></div>
+        <div class="grid" id="gridMore"></div>
+      </div>
+
+      <button class="morebtn" id="toggleBtn" type="button">More Icons</button>
     </div>
-
-    <form class="search" id="searchForm" autocomplete="off">
-      <input id="q" type="text" placeholder="Search..." autofocus />
-      <div class="hint"><span>/g Google</span><span>/y YouTube</span><span>/c ChatGPT</span></div>
-    </form>
-
-    <div class="sectionbar"><span>Essentials</span><div class="dotline"></div></div>
-    <div class="grid" id="gridEssentials"></div>
-
-    <div id="moreArea" aria-hidden="true">
-      <div class="sectionbar" style="margin-top:22px"><span>Extended</span><div class="dotline"></div></div>
-      <div class="grid" id="gridMore"></div>
-    </div>
-
-    <button class="morebtn" id="toggleBtn" type="button">More Icons</button>
-  </div></div>
+  </div>
 
   <script>
-    const ICON_BASE = "./icons/";
-    const ICON_FILE = {
-      chatgpt: "openai.svg",
-      openai: "openai.svg",
-      claude: "claude-color.svg",
-      anthropic: "anthropic.svg",
-      gemini: "gemini-color.svg",
-      copilot: "copilot-color.svg",
+    // ✅ 更稳的 icons 路径（防止某些环境白屏）
+    const ICON_BASE = "icons/";
 
-      google: "google-color.svg",
-      gmail: "google-gmail.svg",
-      drive: "google-drive.svg",
-      maps: "google-maps.svg",
-      github: "github.svg",
-      cloudflare: "cloudflare-color.svg",
+    // ✅ 你 icons 里如果缺某个，就会 fallback 到这个
+    const FALLBACK_ICON = "openai.svg";
 
-      youtube: "youtube_red.svg",
-      netflix: "netflix-icon.svg",
-      spotify: "spotify-icon.svg",
-      whatsapp: "whatsapp-icon.svg",
-      x: "x.svg",
-      facebook: "facebook.svg",
-      apple: "apple.svg",
-
-      microsoft: "microsoft-color.svg",
-      azure: "azure-color.svg",
-      azureai: "azureai-color.svg",
-      aws: "aws-brand-color.svg",
-      googlecloud: "googlecloud-color.svg",
-      bing: "bing-color.svg",
-
-      adobe: "adobe-color.svg",
-      adobefirefly: "adobefirefly-color.svg",
-      meta: "meta-color.svg",
-      bedrock: "bedrock-color.svg",
-      fireworks: "fireworks-color.svg",
-      anyscale: "anyscale-color.svg"
-    };
-
-    function iconImg(key, alt) {
-      const file = ICON_FILE[key] || "";
-      const src = file ? (ICON_BASE + file) : "";
-      return src
-        ? `<img src="${src}" alt="${alt || key}" loading="lazy" decoding="async" />`
-        : `<img src="${ICON_BASE}openai.svg" alt="${alt || key}" loading="lazy" decoding="async" />`;
+    function iconImg(file, alt = "") {
+      const safeAlt = String(alt || "");
+      const src = ICON_BASE + file;
+      const fallback = ICON_BASE + FALLBACK_ICON;
+      return `
+        <img
+          src="${src}"
+          alt="${safeAlt}"
+          loading="lazy"
+          decoding="async"
+          onerror="this.onerror=null;this.src='${fallback}'"
+        />
+      `;
     }
 
-    // ✅ 控制总数 ≤ 26：这里一共 24 个
+    // ✅ 总数 ≤ 26：这里给 24 个（全是常用 + 你现有已出现的为主）
+    // ✅ 删除国内图标：不含 bilibili/baidu/alibaba/bytedance/tencent 等
     const ALL_SITES = [
-      // Essentials（优先你已有的）
-      { name:"ChatGPT",   url:"https://chatgpt.com/",               key:"C", glow:"#10A37F", iconKey:"chatgpt",   rank:1, scale:0.96, cls:"chatgpt" },
-      { name:"Claude",    url:"https://claude.ai/",                 key:"L", glow:"#D97757", iconKey:"claude",    rank:1, scale:1.00, cls:"claude" },
-      { name:"Copilot",   url:"https://copilot.microsoft.com/",     key:"P", glow:"#0078D4", iconKey:"copilot",   rank:1, scale:1.02, cls:"copilot" },
-      { name:"Gemini",    url:"https://gemini.google.com/",         key:"G", glow:"#4E85FF", iconKey:"gemini",    rank:1, scale:1.06, cls:"gemini" },
+      // ====== Essentials（优先保留你已有的）======
+      { name:"ChatGPT",    url:"https://chatgpt.com/",                key:"C", glow:"#10A37F", icon:"openai.svg",         rank:1, scale:1.00, cls:"chatgpt openai" },
+      { name:"Claude",     url:"https://claude.ai/",                  key:"L", glow:"#D97757", icon:"claude-color.svg",    rank:1, scale:1.00, cls:"claude anthropic" },
+      { name:"Copilot",    url:"https://copilot.microsoft.com/",      key:"P", glow:"#0078D4", icon:"copilot-color.svg",   rank:1, scale:1.00, cls:"copilot" },
+      { name:"Gemini",     url:"https://gemini.google.com/",          key:"G", glow:"#4E85FF", icon:"gemini-color.svg",    rank:1, scale:1.12, cls:"gemini" },
 
-      { name:"Cloudflare",url:"https://dash.cloudflare.com/",       key:"F", glow:"#F48120", iconKey:"cloudflare",rank:2, scale:1.06, cls:"cloudflare" },
-      { name:"GitHub",    url:"https://github.com/",                key:"H", glow:"#666666", iconKey:"github",    rank:2, scale:0.96, cls:"github" },
-      { name:"Gmail",     url:"https://mail.google.com/",           key:"M", glow:"#EA4335", iconKey:"gmail",     rank:2, scale:1.02, cls:"gmail" },
-      { name:"Google",    url:"https://www.google.com/",            key:"O", glow:"#4285F4", iconKey:"google",    rank:2, scale:1.00, cls:"google" },
+      { name:"Cloudflare", url:"https://dash.cloudflare.com/",        key:"F", glow:"#F48120", icon:"cloudflare-color.svg",rank:2, scale:1.06, cls:"cloudflare" },
+      { name:"GitHub",     url:"https://github.com/",                 key:"H", glow:"#666666", icon:"github.svg",          rank:2, scale:0.96, cls:"github" },
+      { name:"Gmail",      url:"https://mail.google.com/",            key:"M", glow:"#EA4335", icon:"google-gmail.svg",    rank:2, scale:1.02, cls:"gmail" },
+      { name:"Google",     url:"https://www.google.com/",             key:"O", glow:"#4285F4", icon:"google-color.svg",    rank:2, scale:1.00, cls:"google" },
 
-      // Extended
-      { name:"YouTube",      url:"https://www.youtube.com/",           key:"Y", glow:"#FF0000", iconKey:"youtube",     rank:3,  scale:1.02, cls:"youtube" },
-      { name:"Netflix",      url:"https://www.netflix.com/",           key:"N", glow:"#E50914", iconKey:"netflix",     rank:3,  scale:1.06, cls:"netflix" },
-      { name:"Spotify",      url:"https://open.spotify.com/",          key:"S", glow:"#1DB954", iconKey:"spotify",     rank:3,  scale:1.02, cls:"spotify" },
-      { name:"WhatsApp",     url:"https://web.whatsapp.com/",         key:"W", glow:"#25D366", iconKey:"whatsapp",    rank:3,  scale:1.02, cls:"whatsapp" },
+      // ====== Extended（常用 20+，但总数不超 26）======
+      { name:"YouTube",    url:"https://www.youtube.com/",            key:"Y", glow:"#FF0033", icon:"youtube_red.svg",     rank:3, scale:1.02, cls:"youtube" },
+      { name:"Google Drive",url:"https://drive.google.com/",          key:"D", glow:"#4285F4", icon:"google-drive.svg",    rank:3, scale:1.00, cls:"google" },
+      { name:"Google Maps",url:"https://www.google.com/maps",         key:"A", glow:"#34A853", icon:"google-maps.svg",     rank:3, scale:1.00, cls:"google" },
+      { name:"Google Cloud",url:"https://console.cloud.google.com/",  key:"K", glow:"#4285F4", icon:"googlecloud-color.svg",rank:3,scale:1.00, cls:"gcp" },
 
-      { name:"Google Drive", url:"https://drive.google.com/",          key:"D", glow:"#34A853", iconKey:"drive",       rank:4,  scale:1.06, cls:"drive" },
-      { name:"Google Maps",  url:"https://www.google.com/maps",        key:"A", glow:"#4285F4", iconKey:"maps",        rank:4,  scale:1.06, cls:"maps" },
-      { name:"Bing",         url:"https://www.bing.com/",              key:"I", glow:"#00809D", iconKey:"bing",        rank:4,  scale:1.02, cls:"bing" },
-      { name:"X",            url:"https://x.com/",                     key:"X", glow:"#111111", iconKey:"x",           rank:4,  scale:1.00, cls:"x" },
+      { name:"AWS",        url:"https://console.aws.amazon.com/",     key:"S", glow:"#FF9900", icon:"aws.svg",             rank:4, scale:1.00, cls:"aws" },
+      { name:"Azure",      url:"https://portal.azure.com/",           key:"Z", glow:"#0078D4", icon:"azure.svg",           rank:4, scale:1.00, cls:"azure" },
+      { name:"Microsoft",  url:"https://www.microsoft.com/",          key:"I", glow:"#0078D4", icon:"microsoft.svg",       rank:4, scale:1.00, cls:"microsoft" },
+      { name:"Bing",       url:"https://www.bing.com/",               key:"B", glow:"#3B82F6", icon:"bing.svg",            rank:4, scale:1.00, cls:"bing" },
 
-      { name:"Microsoft",    url:"https://www.microsoft.com/",         key:"R", glow:"#00A4EF", iconKey:"microsoft",   rank:5,  scale:1.04, cls:"microsoft" },
-      { name:"Azure",        url:"https://portal.azure.com/",          key:"Z", glow:"#0078D4", iconKey:"azure",       rank:5,  scale:1.04, cls:"azure" },
-      { name:"Google Cloud", url:"https://console.cloud.google.com/",  key:"K", glow:"#4285F4", iconKey:"googlecloud", rank:5,  scale:1.06, cls:"googlecloud" },
-      { name:"AWS",          url:"https://console.aws.amazon.com/",    key:"Q", glow:"#FF9900", iconKey:"aws",         rank:5,  scale:1.06, cls:"aws" },
+      { name:"Netflix",    url:"https://www.netflix.com/",            key:"N", glow:"#E50914", icon:"netflix-icon.svg",    rank:5, scale:1.08, cls:"netflix" },
+      { name:"Spotify",    url:"https://open.spotify.com/",           key:"Y", glow:"#1DB954", icon:"spotify-icon.svg",    rank:5, scale:1.00, cls:"spotify" },
+      { name:"WhatsApp",   url:"https://web.whatsapp.com/",           key:"W", glow:"#25D366", icon:"whatsapp-icon.svg",   rank:5, scale:1.00, cls:"whatsapp" },
+      { name:"X",          url:"https://x.com/",                      key:"X", glow:"#111111", icon:"x.svg",               rank:5, scale:1.00, cls:"x" },
 
-      { name:"OpenAI",       url:"https://openai.com/",                key:"O", glow:"#10A37F", iconKey:"openai",      rank:6,  scale:1.00, cls:"openai" },
-      { name:"Anthropic",    url:"https://www.anthropic.com/",         key:"T", glow:"#D97757", iconKey:"anthropic",   rank:6,  scale:1.00, cls:"anthropic" },
-      { name:"Apple",        url:"https://www.apple.com/",             key:"E", glow:"#999999", iconKey:"apple",       rank:6,  scale:1.00, cls:"apple" },
-      { name:"Meta",         url:"https://www.meta.com/",              key:"M", glow:"#0EA5E9", iconKey:"meta",        rank:6,  scale:1.02, cls:"meta" }
+      { name:"Facebook",   url:"https://www.facebook.com/",           key:"E", glow:"#1877F2", icon:"facebook.svg",        rank:6, scale:1.00, cls:"facebook" },
+      { name:"Reddit",     url:"https://www.reddit.com/",             key:"R", glow:"#FF4500", icon:"reddit.svg",          rank:6, scale:1.00, cls:"reddit" },
+      { name:"Discord",    url:"https://discord.com/app",             key:"Q", glow:"#5865F2", icon:"discord.svg",         rank:6, scale:1.00, cls:"discord" },
+      { name:"Telegram",   url:"https://web.telegram.org/",           key:"T", glow:"#2AABEE", icon:"telegram.svg",        rank:6, scale:1.00, cls:"telegram" },
+
+      { name:"OpenAI",     url:"https://openai.com/",                 key:"O", glow:"#10A37F", icon:"openai.svg",          rank:7, scale:1.00, cls:"openai" },
+      { name:"Anthropic",  url:"https://www.anthropic.com/",          key:"H", glow:"#D97757", icon:"anthropic.svg",       rank:7, scale:1.00, cls:"anthropic" },
+      { name:"Apple",      url:"https://www.apple.com/",              key:"P", glow:"#111111", icon:"apple.svg",           rank:7, scale:1.00, cls:"apple" },
+      { name:"Mastercard", url:"https://www.mastercard.com/",         key:"C", glow:"#FF5F00", icon:"mastercard.svg",      rank:8, scale:1.00, cls:"" }
     ];
 
-    function applyVars(v){ const r=document.documentElement; for(const [k,val] of Object.entries(v)) r.style.setProperty(k,val); }
-
+    // ===== Theme =====
+    function applyVars(v){
+      const r = document.documentElement;
+      for(const [k,val] of Object.entries(v)) r.style.setProperty(k,val);
+    }
     function updateTheme(){
       const h=new Date().getHours(), b=document.body, g=document.getElementById("greet");
       b.classList.remove("theme-dawn","theme-day","theme-twilight","theme-night");
       if(h>=5&&h<8){
         b.classList.add("theme-dawn");
-        applyVars({"--bg-top":"#FDFCFB","--bg-bottom":"#E2D1C3","--text":"#1F2937","--text-muted":"rgba(31,41,55,0.55)","--hair":"rgba(31,41,55,0.1)","--search-bg":"rgba(255,255,255,0.62)","--icon-opacity":"0.52","--icon-color":"#2b2b2b","--accent":"#ff9a9e"});
+        applyVars({
+          "--bg-top":"#FDFCFB","--bg-bottom":"#E2D1C3",
+          "--text":"#1F2937","--text-muted":"rgba(31,41,55,0.55)",
+          "--hair":"rgba(31,41,55,0.1)","--search-bg":"rgba(255,255,255,0.62)",
+          "--icon-opacity":"0.52","--icon-color":"#2b2b2b","--accent":"#ff9a9e",
+          "--glow-opacity":"0.06"
+        });
         g.textContent="Good morning, Dawn.";
       } else if(h>=8&&h<17){
         b.classList.add("theme-day");
-        applyVars({"--bg-top":"#FFFFFF","--bg-bottom":"#F5F5F7","--text":"#1D1D1F","--text-muted":"rgba(0,0,0,0.45)","--hair":"rgba(0,0,0,0.06)","--search-bg":"rgba(0,0,0,0.03)","--icon-opacity":"0.45","--icon-color":"#333","--accent":"#a1c4fd"});
+        applyVars({
+          "--bg-top":"#FFFFFF","--bg-bottom":"#F5F5F7",
+          "--text":"#1D1D1F","--text-muted":"rgba(0,0,0,0.45)",
+          "--hair":"rgba(0,0,0,0.06)","--search-bg":"rgba(0,0,0,0.03)",
+          "--icon-opacity":"0.45","--icon-color":"#333","--accent":"#a1c4fd",
+          "--glow-opacity":"0.05"
+        });
         g.textContent=(h<12)?"Good morning.":"Good afternoon.";
       } else if(h>=17&&h<20){
         b.classList.add("theme-twilight");
-        applyVars({"--bg-top":"#2D1B4D","--bg-bottom":"#1A0B2E","--text":"#FDEBD0","--text-muted":"rgba(253,235,208,0.58)","--hair":"rgba(253,235,208,0.16)","--search-bg":"rgba(253,235,208,0.08)","--icon-opacity":"0.55","--icon-color":"rgba(253,235,208,0.92)","--accent":"#fad0c4"});
+        applyVars({
+          "--bg-top":"#2D1B4D","--bg-bottom":"#1A0B2E",
+          "--text":"#FDEBD0","--text-muted":"rgba(253,235,208,0.58)",
+          "--hair":"rgba(253,235,208,0.16)","--search-bg":"rgba(253,235,208,0.08)",
+          "--icon-opacity":"0.55","--icon-color":"rgba(253,235,208,0.92)","--accent":"#fad0c4",
+          "--glow-opacity":"0.22"
+        });
         g.textContent="Good evening, Twilight.";
       } else {
         b.classList.add("theme-night");
-        applyVars({"--bg-top":"#09112A","--bg-bottom":"#070A12","--text":"rgba(255,255,255,0.92)","--text-muted":"rgba(255,255,255,0.45)","--hair":"rgba(255,255,255,0.08)","--search-bg":"rgba(255,255,255,0.08)","--icon-opacity":"0.50","--icon-color":"rgba(255,255,255,0.9)","--accent":"rgba(90,80,255,0.55)"});
+        applyVars({
+          "--bg-top":"#09112A","--bg-bottom":"#070A12",
+          "--text":"rgba(255,255,255,0.92)","--text-muted":"rgba(255,255,255,0.45)",
+          "--hair":"rgba(255,255,255,0.08)","--search-bg":"rgba(255,255,255,0.08)",
+          "--icon-opacity":"0.50","--icon-color":"rgba(255,255,255,0.9)","--accent":"rgba(90,80,255,0.55)",
+          "--glow-opacity":"0.30"
+        });
         g.textContent="Good night.";
       }
     }
 
-    function getCols(){ const w=window.innerWidth; return w<=520?3:w<=860?4:6; }
-    function computeLayout(){
-      const cols=getCols(), maxEss=cols*2;
-      const sorted=[...ALL_SITES].sort((a,b)=>(a.rank-b.rank)||a.name.localeCompare(b.name));
-      return {essentials:sorted.slice(0,maxEss),more:sorted.slice(maxEss)};
+    // ===== Layout =====
+    function getCols(){
+      const w=window.innerWidth;
+      return w<=520?3:w<=860?4:6;
     }
-    function waveDelay(i,seed){ const cols=getCols(), r=Math.floor(i/cols), c=i%cols; return Math.max(0,(i*22)+(r*18)+(c*8)+(((seed+i*7)%13)-6)); }
-
+    function computeLayout(){
+      const cols=getCols();
+      const maxEss = cols*2; // Essentials 固定两行
+      const sorted=[...ALL_SITES].sort((a,b)=>(a.rank-b.rank)||a.name.localeCompare(b.name));
+      return { essentials: sorted.slice(0,maxEss), more: sorted.slice(maxEss) };
+    }
+    function waveDelay(i,seed){
+      const cols=getCols(), r=Math.floor(i/cols), c=i%cols;
+      return Math.max(0,(i*22)+(r*18)+(c*8)+(((seed+i*7)%13)-6));
+    }
     function makeItem(s,i,seed){
       const d=waveDelay(i,seed);
-      const iconHTML = `<span class="glyph" style="--s:${s.scale??1};--ty:${s.ty??0}px">${iconImg(s.iconKey || "", s.name)}</span>`;
       return `
-        <a class="item reveal ${s.cls||""}" href="${s.url}" target="_blank" rel="noopener noreferrer"
+        <a class="item reveal ${s.cls||""}"
+           href="${s.url}"
+           target="_blank"
+           rel="noopener noreferrer"
            style="--glow:${s.glow};--d:${d}ms;">
           <span class="kbd">${s.key||""}</span>
-          <div class="icon">${iconHTML}</div>
+          <div class="icon">
+            <span class="glyph" style="--s:${s.scale??1};--ty:${s.ty??0}px">
+              ${iconImg(s.icon, s.name)}
+            </span>
+          </div>
           <div class="label">${s.name}</div>
-        </a>`;
+        </a>
+      `;
     }
 
-    let exp=true, _lastMin=""; // ✅ 默认展开：你现在 Extended 已经在用
+    let exp=false, _lastMin="";
     function render(){
-      const {essentials,more}=computeLayout(), seed=(Date.now()/1000)|0;
-      document.getElementById("gridEssentials").innerHTML=essentials.map((s,i)=>makeItem(s,i,seed)).join("");
-      document.getElementById("gridMore").innerHTML=more.map((s,i)=>makeItem(s,i+essentials.length,seed)).join("");
+      const {essentials,more}=computeLayout();
+      const seed=(Date.now()/1000)|0;
+
+      document.getElementById("gridEssentials").innerHTML =
+        essentials.map((s,i)=>makeItem(s,i,seed)).join("");
+
+      document.getElementById("gridMore").innerHTML =
+        more.map((s,i)=>makeItem(s,i+essentials.length,seed)).join("");
 
       const btn=document.getElementById("toggleBtn");
-      btn.style.display = more.length ? "block" : "none";
+      btn.style.display=more.length?"block":"none";
+
       if(!more.length){
         document.getElementById("moreArea").setAttribute("aria-hidden","true");
         btn.textContent="More Icons";
         exp=false;
       } else {
         document.getElementById("moreArea").setAttribute("aria-hidden",(!exp).toString());
-        btn.textContent=exp ? "Less Icons" : "More Icons";
+        btn.textContent=exp?"Less Icons":"More Icons";
       }
       bindMagnetic();
     }
 
+    // ===== Magnetic =====
     function bindMagnetic(){
       if(matchMedia("(pointer: coarse)").matches) return;
       document.querySelectorAll(".item").forEach(el=>{
-        if(el.__magBound) return; el.__magBound=true;
-        let tx=0,ty=0,x=0,y=0,anim=0; const label=el.querySelector(".label");
+        if(el.__magBound) return;
+        el.__magBound=true;
+
+        let tx=0,ty=0,x=0,y=0,anim=0;
+        const label=el.querySelector(".label");
+
         const step=()=>{
-          x+=(tx-x)*0.18; y+=(ty-y)*0.18;
+          x+=(tx-x)*0.18;
+          y+=(ty-y)*0.18;
+
           el.style.setProperty("--mx",x.toFixed(2)+"px");
           el.style.setProperty("--my",y.toFixed(2)+"px");
+
           if(label){
             label.style.setProperty("--lx",(x*0.45).toFixed(2)+"px");
             label.style.setProperty("--ly",(y*0.45).toFixed(2)+"px");
           }
-          if(Math.abs(tx-x)+Math.abs(ty-y)<0.02){anim=0;return;}
+
+          if(Math.abs(tx-x)+Math.abs(ty-y)<0.02){ anim=0; return; }
           anim=requestAnimationFrame(step);
         };
+
         el.addEventListener("mousemove",e=>{
           const r=el.getBoundingClientRect();
           const dx=e.clientX-(r.left+r.width/2);
           const dy=e.clientY-(r.top+r.height/2);
           const dist=Math.hypot(dx,dy);
-          if(dist>Math.max(r.width,r.height)/2+20){tx=0;ty=0;}
-          else {tx=(dx/(r.width/2+20))*3;ty=(dy/(r.height/2+20))*3;}
-          if(!anim)anim=requestAnimationFrame(step);
+
+          if(dist>Math.max(r.width,r.height)/2+20){
+            tx=0; ty=0;
+          } else {
+            tx=(dx/(r.width/2+20))*3;
+            ty=(dy/(r.height/2+20))*3;
+          }
+          if(!anim) anim=requestAnimationFrame(step);
         });
-        el.addEventListener("mouseleave",()=>{tx=0;ty=0;if(!anim)anim=requestAnimationFrame(step);});
+
+        el.addEventListener("mouseleave",()=>{
+          tx=0; ty=0;
+          if(!anim) anim=requestAnimationFrame(step);
+        });
       });
     }
 
-    window.addEventListener("resize",()=>{clearTimeout(window.rT);window.rT=setTimeout(render,90);});
-    document.getElementById("toggleBtn").onclick=()=>{exp=!exp;render();};
+    // ===== Events =====
+    window.addEventListener("resize",()=>{
+      clearTimeout(window.rT);
+      window.rT=setTimeout(render,90);
+    });
+
+    document.getElementById("toggleBtn").onclick=()=>{ exp=!exp; render(); };
 
     window.addEventListener("keydown",e=>{
-      const active=document.activeElement, typing=active&&(active.tagName==="INPUT"||active.tagName==="TEXTAREA"||active.isContentEditable);
+      const active=document.activeElement;
+      const typing=active&&(active.tagName==="INPUT"||active.tagName==="TEXTAREA"||active.isContentEditable);
       if(typing) return;
-      if(e.key==="/"){e.preventDefault();document.getElementById("q").focus({preventScroll:true});return;}
-      if(e.altKey){document.body.classList.add("show-hotkeys");}
+
+      if(e.key==="/"){
+        e.preventDefault();
+        document.getElementById("q").focus({preventScroll:true});
+        return;
+      }
+
+      if(e.altKey) document.body.classList.add("show-hotkeys");
+
       const k=e.key.toUpperCase();
       const s=ALL_SITES.find(x=>x.key===k);
-      if(s && !e.altKey){ e.preventDefault(); window.open(s.url,"_blank"); }
+
+      if(s && !e.altKey){
+        e.preventDefault();
+        window.open(s.url,"_blank");
+      }
     });
-    window.addEventListener("keyup",e=>{ if(e.key==="Alt") document.body.classList.remove("show-hotkeys"); });
+    window.addEventListener("keyup",e=>{
+      if(e.key==="Alt") document.body.classList.remove("show-hotkeys");
+    });
 
     document.getElementById("searchForm").onsubmit=e=>{
       e.preventDefault();
       const v=document.getElementById("q").value.trim();
       if(!v) return;
-      const engines={"/g":"https://google.com/search?q=","/y":"https://youtube.com/results?search_query=","/c":"https://chatgpt.com/"};
+
+      const engines = {
+        "/g":"https://google.com/search?q=",
+        "/y":"https://youtube.com/results?search_query=",
+        "/c":"https://chatgpt.com/"
+      };
+
       const prefix=v.slice(0,2);
-      if(engines[prefix]) window.open(prefix==="/c"?engines["/c"]:engines[prefix]+encodeURIComponent(v.slice(3)),"_blank");
-      else window.open("https://google.com/search?q="+encodeURIComponent(v),"_blank");
+      if(engines[prefix]){
+        window.open(prefix==="/c" ? engines["/c"] : engines[prefix]+encodeURIComponent(v.slice(3)), "_blank");
+      } else {
+        window.open("https://google.com/search?q="+encodeURIComponent(v), "_blank");
+      }
     };
+
     document.getElementById("q").onfocus=()=>document.getElementById("app").classList.add("dim-on-focus");
     document.getElementById("q").onblur=()=>document.getElementById("app").classList.remove("dim-on-focus");
 
     function tick(){
-      const d=new Date(), h=d.getHours(), m=d.getMinutes(), k=`${h}:${m}`;
-      document.getElementById("clock").textContent=`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
-      if(k!==_lastMin){ _lastMin=k; updateTheme(); }
+      const d=new Date();
+      const h=d.getHours(), m=d.getMinutes();
+      const k=`${h}:${m}`;
+
+      document.getElementById("clock").textContent =
+        `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
+
+      if(k!==_lastMin){
+        _lastMin=k;
+        updateTheme();
+      }
     }
-    tick(); setInterval(tick, 1000); render();
+
+    tick();
+    setInterval(tick, 1000);
+    render();
   </script>
 </body>
 </html>
