@@ -29,7 +29,7 @@
       --text:rgba(255,255,255,0.92); --muted:rgba(255,255,255,0.55);
       --hair:rgba(255,255,255,0.08); --search:rgba(255,255,255,0.08);
       --glow-opacity:0.35;
-      --icon-default-opacity: 0.90;
+      --icon-default-opacity: 0.90; 
       --icon-brightness: 1.5;
       --icon-shadow: rgba(255,255,255,0.12);
     }
@@ -60,12 +60,7 @@
       padding:13px 18px; border-radius:999px; margin-bottom:18px;
       backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); transition:.3s var(--ease);
     }
-    /* ✅ 必修 1：不写死白色背景，夜间也自然 */
-    .search:focus-within{
-      transform:scaleX(1.018);
-      border-color:rgba(124,92,255,0.4);
-      background: var(--search);
-    }
+    .search:focus-within{ transform:scaleX(1.018); border-color:rgba(124,92,255,0.4); background: var(--search); }
     .search input{ flex:1; width:100%; background:transparent; border:0; outline:none; color:var(--text); font-size:18px; }
 
     .section{ margin:16px 0 10px; display:flex; align-items:center; gap:12px; color:var(--muted); font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:600; }
@@ -87,8 +82,8 @@
       transition: .35s var(--ease);
     }
 
-    /* ✅ 夜间补光：针对开启 whiteInvert 的图标在深夜变白 */
-    body.theme-night .white-invert .icon img.single,
+    /* ✅ 夜间补光核心补丁 */
+    body.theme-night .white-invert .icon img.single, 
     body.theme-night .white-invert .icon.gemini img.g0 {
       filter: grayscale(100%) invert(1) brightness(1.8) opacity(var(--icon-default-opacity)) drop-shadow(0 2px 4px var(--icon-shadow)) !important;
     }
@@ -98,7 +93,7 @@
       transform: translateY(-6px) scale(var(--s, 1));
     }
 
-    /* Gemini 特效 */
+    /* Gemini 特效优化 */
     .icon.gemini img{ position:absolute; width:36px; height:36px; object-fit:contain; transform: scale(var(--s, 1)); transition:.38s var(--ease); }
     .icon.gemini img.g0{ filter: grayscale(100%) brightness(var(--icon-brightness)) opacity(var(--icon-default-opacity)) drop-shadow(0 2px 4px var(--icon-shadow)); }
     .icon.gemini img.g1{ opacity:0; filter:none; }
@@ -131,7 +126,7 @@
   <div class="wrap">
     <div class="top"><div id="greet">Hello.</div><div class="clock" id="clock">00:00</div></div>
     <form class="search" id="searchForm" autocomplete="off"><input id="q" placeholder="Search..." autofocus /></form>
-
+    
     <div class="section">ESSENTIALS<div class="line"></div></div>
     <div id="ess" class="grid"></div>
 
@@ -139,7 +134,7 @@
       <div class="section" style="margin-top:18px;">EXTENDED<div class="line"></div></div>
       <div id="ext" class="grid"></div>
     </div>
-
+    
     <button class="morebtn" id="toggleBtn">More Icons</button>
   </div>
 
@@ -153,31 +148,32 @@
     }
 
     const SITES = [
-      { n:"ChatGPT",      u:"https://chatgpt.com/",                  icons:["openai.svg"],                 c:"#10a37f", r:1, whiteInvert:true },
-      { n:"Claude",       u:"https://claude.ai/",                    icons:["claude-color.svg"],           c:"#d97757", r:1 },
-      { n:"Copilot",      u:"https://copilot.microsoft.com/",        icons:["copilot-color.svg"],          c:"#0078d4", r:1 },
-      { n:"Gemini",       u:"https://gemini.google.com/",            gemini:true, s:1.14,                  c:"#4e85ff", r:1, whiteInvert:true },
-      { n:"Cloudflare",   u:"https://dash.cloudflare.com/",          icons:["cloudflare-color.svg"],       c:"#f48120", r:1 },
-      { n:"GitHub",       u:"https://github.com/",                   icons:["github.svg"],                 c:"#ffffff", r:1, whiteInvert:true },
+      { n:"ChatGPT",      u:"https://chatgpt.com/",              icons:["openai.svg"],           c:"#10a37f", r:1, whiteInvert:true },
+      { n:"Claude",       u:"https://claude.ai/",                icons:["claude-color.svg"],     c:"#d97757", r:1 },
+      { n:"Copilot",      u:"https://copilot.microsoft.com/",    icons:["copilot-color.svg"],    c:"#0078d4", r:1 },
+      { n:"Gemini",       u:"https://gemini.google.com/",        gemini:true, s:1.14,            c:"#4e85ff", r:1, whiteInvert:true },
+      { n:"Cloudflare",   u:"https://dash.cloudflare.com/",      icons:["cloudflare-color.svg"], c:"#f48120", r:1 },
+      { n:"GitHub",       u:"https://github.com/",               icons:["github.svg"],           c:"#ffffff", r:1, whiteInvert:true },
 
-      { n:"Gmail",        u:"https://mail.google.com/",              icons:["google-gmail.svg"],           c:"#ea4335", r:2 },
-      { n:"Google",       u:"https://www.google.com/",               icons:["google-color.svg"],           c:"#4285f4", r:2 },
-      { n:"Google Cloud", u:"https://console.cloud.google.com/",     icons:["googlecloud-color.svg"],      c:"#4285f4", r:2 },
-      { n:"Google Drive", u:"https://drive.google.com/",             icons:["google-drive.svg"],           c:"#34a853", r:2 },
-      /* ✅ 必修 2：Maps 回归官方入口 */
-      { n:"Google Maps",  u:"https://maps.google.com/",              icons:["google-maps.svg"],            c:"#4285f4", r:2 },
-      { n:"YouTube",      u:"https://www.youtube.com/",              icons:["youtube_red.svg"],            c:"#ff0000", r:2 },
+      { n:"Gmail",        u:"https://mail.google.com/",          icons:["google-gmail.svg"],     c:"#ea4335", r:2 },
+      { n:"Google",       u:"https://www.google.com/",           icons:["google-color.svg"],     c:"#4285f4", r:2 },
+      { n:"Google Cloud", u:"https://console.cloud.google.com/", icons:["googlecloud-color.svg"],c:"#4285f4", r:2 },
+      { n:"Google Drive", u:"https://drive.google.com/",         icons:["google-drive.svg"],     c:"#34a853", r:2 },
+      /* ✅ 改回官方 Maps（你的 googleusercontent 链接会不稳定） */
+      { n:"Google Maps",  u:"https://maps.google.com/",          icons:["google-maps.svg"],      c:"#4285f4", r:2 },
+      { n:"YouTube",      u:"https://youtube.com",               icons:["youtube_red.svg"],      c:"#ff0000", r:2 },
 
-      { n:"AWS",          u:"https://aws.amazon.com/",               icons:["aws.svg"],                    c:"#ff9900", r:3, whiteInvert:true },
-      { n:"Azure",        u:"https://portal.azure.com/",             icons:["azure.svg"],                  c:"#0078d4", r:3, whiteInvert:true },
-      { n:"Bing",         u:"https://www.bing.com/",                 icons:["bing.svg"],                   c:"#008373", r:3, whiteInvert:true },
-      { n:"Microsoft",    u:"https://www.microsoft.com/",            icons:["microsoft.svg"],              c:"#ffffff", r:3, whiteInvert:true },
-      { n:"Netflix",      u:"https://www.netflix.com/",              icons:["netflix-icon.svg"],           c:"#e50914", r:3, whiteInvert:true },
-      { n:"Spotify",      u:"https://spotify.com/",                  icons:["spotify-icon.svg"],           c:"#1db954", r:3 },
-      { n:"X",            u:"https://x.com/",                        icons:["x.svg"],                      c:"#ffffff", r:3, whiteInvert:true },
-      { n:"Reddit",       u:"https://www.reddit.com/",               icons:["reddit.svg"],                 c:"#ff4500", r:3, whiteInvert:true },
-      { n:"Telegram",     u:"https://web.telegram.org/",             icons:["telegram.svg"],               c:"#2aabee", r:3, whiteInvert:true },
-      { n:"Apple",        u:"https://www.apple.com/",                icons:["apple.svg"],                  c:"#ffffff", r:3, whiteInvert:true }
+      { n:"AWS",          u:"https://aws.amazon.com/",           icons:["aws.svg"],              c:"#ff9900", r:3, whiteInvert:true },
+      { n:"Azure",        u:"https://portal.azure.com/",         icons:["azure.svg"],            c:"#0078d4", r:3, whiteInvert:true },
+      { n:"Bing",         u:"https://www.bing.com/",             icons:["bing.svg"],             c:"#008373", r:3, whiteInvert:true },
+      { n:"Microsoft",    u:"https://www.microsoft.com/",        icons:["microsoft.svg"],        c:"#ffffff", r:3, whiteInvert:true },
+      { n:"Netflix",      u:"https://www.netflix.com/",          icons:["netflix-icon.svg"],     c:"#e50914", r:3, whiteInvert:true },
+      /* ✅ 改回官方 Spotify（googleusercontent 链接不建议用） */
+      { n:"Spotify",      u:"https://open.spotify.com/",         icons:["spotify-icon.svg"],     c:"#1db954", r:3 },
+      { n:"X",            u:"https://x.com/",                    icons:["x.svg"],                c:"#ffffff", r:3, whiteInvert:true },
+      { n:"Reddit",       u:"https://www.reddit.com/",           icons:["reddit.svg"],           c:"#ff4500", r:3, whiteInvert:true },
+      { n:"Telegram",     u:"https://web.telegram.org/",         icons:["telegram.svg"],         c:"#2aabee", r:3, whiteInvert:true },
+      { n:"Apple",        u:"https://www.apple.com/",            icons:["apple.svg"],            c:"#ffffff", r:3, whiteInvert:true }
     ];
 
     let exp = false;
@@ -192,7 +188,7 @@
         a.style.setProperty("--brand-color", s.c || "#7C5CFF");
         if (s.s) a.style.setProperty("--s", String(s.s));
 
-        const iconHTML = s.gemini
+        const iconHTML = s.gemini 
           ? `<div class="icon gemini">${imgTag("gemini.svg", "g0")}${imgTag("gemini-color.svg", "g1")}</div>`
           : `<div class="icon">${imgTag(s.icons[0], "single")}</div>`;
 
@@ -204,9 +200,16 @@
     function toggleMore() {
       exp = !exp;
       const area = document.getElementById("moreArea");
-      const btn = document.getElementById("toggleBtn");
+      const btn  = document.getElementById("toggleBtn");
       area.setAttribute("aria-hidden", String(!exp));
       btn.textContent = exp ? "Less Icons" : "More Icons";
+
+      // ✅ 展开后滚到 EXTENDED（更像原生 App）
+      if (exp) {
+        requestAnimationFrame(() => {
+          area.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      }
     }
 
     function updateTheme(){
@@ -222,9 +225,13 @@
     }
 
     document.getElementById("toggleBtn").onclick = toggleMore;
+
+    // ✅ 空搜索不跳转，避免误触
     document.getElementById("searchForm").onsubmit = (e)=>{
       e.preventDefault();
-      window.open("https://www.google.com/search?q="+encodeURIComponent(document.getElementById("q").value.trim()), "_blank");
+      const q = document.getElementById("q").value.trim();
+      if (!q) return;
+      window.open("https://www.google.com/search?q=" + encodeURIComponent(q), "_blank");
     };
 
     updateTheme(); tick(); render();
