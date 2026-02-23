@@ -416,6 +416,39 @@
       box-shadow: 0 0 0 3px var(--focus);
       opacity: 1;
     }
+
+    /* =========================
+       Tap-to-wake highlight (touch)
+       ========================= */
+    .item.is-active .label { color: var(--text); }
+
+    .item.is-active .icon{
+      box-shadow:
+        0 1px 0 rgba(0,0,0,0.03),
+        0 16px 34px rgba(0,0,0,0.12);
+    }
+
+    .item.is-active .icon img.single{
+      filter: grayscale(0%) brightness(1) opacity(1) drop-shadow(0 6px 14px rgba(0,0,0,0.12)) !important;
+      transform: translateY(calc(var(--y, 0px) - 5px)) scale(var(--s, 1));
+    }
+
+    .item.is-active .icon.gemini img{
+      transform: translateY(calc(var(--y, 0px) - 5px)) scale(var(--s, 1));
+    }
+    .item.is-active .icon.gemini img.g0{ opacity: 0; }
+    .item.is-active .icon.gemini img.g1{ opacity: 1; }
+
+    .item.is-active .icon::after{
+      content:"";
+      position:absolute;
+      inset:-14px;
+      border-radius: 22px;
+      z-index:-1;
+      filter: blur(34px);
+      opacity: var(--glow-opacity);
+      background: radial-gradient(circle, var(--brand-color, #7C5CFF), transparent 72%);
+    }
   </style>
 </head>
 
@@ -667,6 +700,45 @@
         clearTimeout(timer);
       }
     }
+
+    // =========================
+    // Tap-to-wake for touch devices
+    // First tap: highlight, second tap: open
+    // =========================
+    (function enableTapWake(){
+      const isTouch = matchMedia("(hover: none) and (pointer: coarse)").matches;
+      if (!isTouch) return;
+
+      let activeEl = null;
+      let clearTimer = null;
+
+      const clearActive = ()=>{
+        if (activeEl) activeEl.classList.remove("is-active");
+        activeEl = null;
+        if (clearTimer) clearTimeout(clearTimer);
+        clearTimer = null;
+      };
+
+      document.addEventListener("click", (e)=>{
+        const a = e.target.closest("a.item");
+        if (!a) { clearActive(); return; }
+
+        // second tap on same icon -> allow navigation
+        if (a === activeEl) return;
+
+        // first tap -> prevent open, highlight instead
+        e.preventDefault();
+        e.stopPropagation();
+
+        clearActive();
+        a.classList.add("is-active");
+        activeEl = a;
+
+        clearTimer = setTimeout(clearActive, 1200);
+      }, { capture: true });
+
+      document.addEventListener("scroll", clearActive, { passive: true });
+    })();
 
     // Init
     document.getElementById("toggleBtn").addEventListener("click", toggleMore);
