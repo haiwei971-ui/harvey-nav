@@ -1,139 +1,155 @@
 // assets/app.js
 import { ICON_BASE, FALLBACK_ICON, QUOTES, SITES } from "./data.js";
 
-function $(id){ return document.getElementById(id); }
+/* ---------- helpers ---------- */
 
-function $(id){ return document.getElementById(id); }
+function $(id){
+  return document.getElementById(id);
+}
 
 function imgTag(src, cls){
-  const safe = ICON_BASE + encodeURIComponent(src);
-  return `<img class="${cls}" src="${safe}" loading="lazy" decoding="async"
-    onerror="this.onerror=null;this.src='${ICON_BASE}${FALLBACK_ICON}'">`;
+  const safe = ICON_BASE + encodeURIComponent(src || FALLBACK_ICON);
+  return `
+    <img class="${cls}" 
+         src="${safe}" 
+         onerror="this.onerror=null;this.src='${ICON_BASE + FALLBACK_ICON}'">
+  `;
 }
+
+/* ---------- render icons ---------- */
 
 function renderSites(){
   const ess = $("ess");
   const ext = $("ext");
-  if (!ess || !ext) return;
+  if(!ess || !ext) return;
 
   ess.innerHTML = "";
   ext.innerHTML = "";
 
-  SITES.forEach(s=>{
+  SITES.forEach(site => {
+
     const a = document.createElement("a");
-    a.className = `item ${s.whiteInvert ? "white-invert" : ""}`;
-    a.href = s.u;
+    a.className = "item";
+    a.href = site.u;
     a.target = "_blank";
     a.rel = "noopener noreferrer";
-    a.style.setProperty("--brand-color", s.c || "#7C5CFF");
-    if (s.s) a.style.setProperty("--s", String(s.s));
 
-    const iconHTML = s.gemini
-      ? `<div class="icon gemini">${imgTag("gemini.svg", "g0")}${imgTag("gemini-color.svg", "g1")}</div>`
-      : `<div class="icon">${imgTag((s.icons && s.icons[0]) ? s.icons[0] : FALLBACK_ICON, "single")}</div>`;
+    if(site.color){
+      a.style.setProperty("--brand-color", site.color);
+    }
 
-    a.innerHTML = `${iconHTML}<div class="label">${s.n}</div>`;
+    if(site.s){
+      a.style.setProperty("--s", site.s);
+    }
 
-    (s.r <= 2 ? ess : ext).appendChild(a);
+    const iconHTML = site.gemini
+      ? `<div class="icon gemini">${imgTag(site.icons?.[0], "")}</div>`
+      : `<div class="icon">${imgTag(site.icons?.[0], "")}</div>`;
+
+    a.innerHTML = `
+      ${iconHTML}
+      <div class="label">${site.n}</div>
+    `;
+
+    if(site.r === 1){
+      ess.appendChild(a);
+    } else {
+      ext.appendChild(a);
+    }
+
   });
 }
 
-function toggleMore(){
-  const area = $("moreArea");
-  const btn  = $("toggleBtn");
-  if (!area || !btn) return;
+/* ---------- greeting ---------- */
 
-  const expanded = area.getAttribute("aria-hidden") === "false";
-  area.setAttribute("aria-hidden", String(expanded));   // expanded=true -> hide
-  btn.textContent = expanded ? "More Icons" : "Less Icons";
-}
-
-function updateTheme(){
+function updateGreeting(){
   const h = new Date().getHours();
-  const night = (h >= 17 || h < 8);
-  document.body.classList.toggle("theme-night", night);
-
   const g = $("greet");
-  if (g){
-    g.textContent = night ? "Good night." : (h < 12 ? "Good morning." : "Good afternoon.");
+  if(!g) return;
+
+  if(h < 5) g.textContent = "Still awake?";
+  else if(h < 12) g.textContent = "Good morning.";
+  else if(h < 18) g.textContent = "Good afternoon.";
+  else g.textContent = "Good evening.";
+}
+
+/* ---------- clock ---------- */
+
+function startClock(){
+  const el = $("clock");
+  if(!el) return;
+
+  function tick(){
+    const d = new Date();
+    const hh = String(d.getHours()).padStart(2,"0");
+    const mm = String(d.getMinutes()).padStart(2,"0");
+    el.textContent = `${hh}:${mm}`;
   }
+
+  tick();
+  setInterval(tick, 1000);
 }
 
-function tick(){
-  const d = new Date();
-  const c = $("clock");
-  if (!c) return;
-  c.textContent = `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+/* ---------- quotes ---------- */
+
+function setRandomQuote(){
+  const q = $("quote");
+  const a = $("author");
+  if(!q || !a || !QUOTES?.length) return;
+
+  const item = QUOTES[Math.floor(Math.random()*QUOTES.length)];
+  q.textContent = `"${item.t}"`;
+  a.textContent = item.a;
 }
 
-function updateQuote(){
-  const qEl = $("quote");
-  const aEl = $("author");
-  if (!qEl || !aEl || !Array.isArray(QUOTES) || QUOTES.length === 0) return;
+/* ---------- search ---------- */
 
-  const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
-  qEl.textContent = `"${q.t}"`;
-  aEl.textContent = q.a;
-}
-
-async function updateWeather(){
-  // 你的页面里如果没放天气区域，也不会报错
-  const tempEl = $("temp");
-  const cityEl = $("city");
-  const condEl = $("condition");
-  if (!tempEl || !cityEl || !condEl) return;
-
-  try{
-    const res = await fetch(WEATHER?.url || "https://wttr.in/?format=j1", { cache: "no-store" });
-    const data = await res.json();
-    const current = data.current_condition?.[0];
-    const city = data.nearest_area?.[0]?.areaName?.[0]?.value;
-
-    if (!current || !city) throw new Error("Bad weather data");
-
-    tempEl.textContent = `${current.temp_C}°C`;
-    cityEl.textContent = String(city).toUpperCase();
-    condEl.textContent = current.weatherDesc?.[0]?.value || "";
-  }catch(e){
-    cityEl.textContent = "OFFLINE";
-    tempEl.textContent = "--";
-    condEl.textContent = "";
-  }
-}
-
-function bindSearch(){
+function initSearch(){
   const form = $("searchForm");
   const input = $("q");
-  if (!form || !input) return;
+  if(!form || !input) return;
 
-  form.onsubmit = (e)=>{
+  form.addEventListener("submit", e=>{
     e.preventDefault();
-    const q = input.value.trim();
-    if (!q) return;
-    window.open("https://www.google.com/search?q=" + encodeURIComponent(q), "_blank");
-  };
+    const v = input.value.trim();
+    if(!v) return;
+    window.location.href = `https://www.google.com/search?q=${encodeURIComponent(v)}`;
+  });
 }
 
-function init(){
-  // icons & sections
-  renderSites();
+/* ---------- more toggle ---------- */
 
-  // interactions
+function initToggle(){
   const btn = $("toggleBtn");
-  if (btn) btn.onclick = toggleMore;
+  const area = $("moreArea");
+  if(!btn || !area) return;
 
-  bindSearch();
+  btn.addEventListener("click", ()=>{
+    const hidden = area.getAttribute("aria-hidden") === "true";
+    area.setAttribute("aria-hidden", hidden ? "false" : "true");
+    btn.textContent = hidden ? "Less Icons" : "More Icons";
+  });
+}
 
-  // content
-  updateTheme();
-  tick();
-  updateQuote();
-  updateWeather();
+/* ---------- theme auto ---------- */
 
-  // timers
-  setInterval(tick, 1000);
-  setInterval(updateTheme, 60_000);
-  setInterval(updateWeather, WEATHER?.refreshMs || 600_000);
+function autoTheme(){
+  const h = new Date().getHours();
+  if(h >= 18 || h < 6){
+    document.body.classList.add("theme-night");
+  }
+}
+
+/* ---------- init ---------- */
+
+function init(){
+  renderSites();
+  updateGreeting();
+  startClock();
+  setRandomQuote();
+  initSearch();
+  initToggle();
+  autoTheme();
 }
 
 document.addEventListener("DOMContentLoaded", init);
