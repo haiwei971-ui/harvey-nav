@@ -4,14 +4,15 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
   <title>Harveyi</title>
+
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 
   <style>
     :root{
       --ease: cubic-bezier(0.16, 1, 0.3, 1);
-      /* 亮色模式：回归自然，不做任何多余反转 */
       --bg-top:#FFFFFF; --bg-bottom:#F5F5F7;
       --text:#1D1D1F; --muted:rgba(0,0,0,0.45);
       --hair:rgba(0,0,0,0.06); --search:rgba(0,0,0,0.03);
@@ -22,7 +23,6 @@
     }
 
     body.theme-night{
-      /* 深色模式：开启极致补光保护 */
       --bg-top:#09112A; --bg-bottom:#070A12;
       --text:rgba(255,255,255,0.92); --muted:rgba(255,255,255,0.55);
       --hair:rgba(255,255,255,0.08); --search:rgba(255,255,255,0.08);
@@ -76,13 +76,15 @@
     .icon img.single{
       width:36px; height:36px; object-fit:contain;
       transform: scale(var(--s, 1));
-      filter: grayscale(100%) brightness(var(--icon-brightness)) opacity(var(--icon-default-opacity)) drop-shadow(0 2px 4px var(--icon-shadow));
+      filter: grayscale(100%) brightness(var(--icon-brightness)) opacity(var(--icon-default-opacity))
+              drop-shadow(0 2px 4px var(--icon-shadow));
       transition: .35s var(--ease);
     }
 
-    /* ✅ 深色模式反转保护：黑夜里自动补光变白，白天由于没有 theme-night 类，会保持原色 */
-    body.theme-night .white-invert img {
-      filter: grayscale(100%) invert(1) brightness(1.8) opacity(var(--icon-default-opacity)) !important;
+    /* ✅ 夜间补光：只影响“单图标”的 img.single，避免误伤 */
+    body.theme-night .white-invert .icon img.single{
+      filter: grayscale(100%) invert(1) brightness(1.8) opacity(var(--icon-default-opacity))
+              drop-shadow(0 2px 4px var(--icon-shadow)) !important;
     }
 
     .item:hover .icon img.single{
@@ -90,10 +92,26 @@
       transform: translateY(-6px) scale(var(--s, 1));
     }
 
-    .icon.gemini img{ position:absolute; width:36px; height:36px; object-fit:contain; transform: scale(var(--s, 1)); transition:.38s var(--ease); }
-    body.theme-night .icon.gemini img.g0 { filter: grayscale(100%) invert(1) brightness(1.8) opacity(var(--icon-default-opacity)); }
-    .icon.gemini img.g0{ filter: grayscale(100%) brightness(var(--icon-brightness)) opacity(var(--icon-default-opacity)) drop-shadow(0 2px 4px var(--icon-shadow)); }
+    /* ✅ Gemini 双层：g0 灰、g1 彩 */
+    .icon.gemini img{
+      position:absolute;
+      width:36px; height:36px;
+      object-fit:contain;
+      transform: scale(var(--s, 1));
+      transition:.38s var(--ease);
+    }
+    .icon.gemini img.g0{
+      filter: grayscale(100%) brightness(var(--icon-brightness)) opacity(var(--icon-default-opacity))
+              drop-shadow(0 2px 4px var(--icon-shadow));
+    }
     .icon.gemini img.g1{ opacity:0; filter:none; }
+
+    /* ✅ Gemini 夜间补光（放在后面，避免被覆盖） */
+    body.theme-night .white-invert .icon.gemini img.g0{
+      filter: grayscale(100%) invert(1) brightness(1.8) opacity(var(--icon-default-opacity))
+              drop-shadow(0 2px 4px var(--icon-shadow)) !important;
+    }
+
     .item:hover .icon.gemini img{ transform: translateY(-6px) scale(var(--s, 1)); }
     .item:hover .icon.gemini img.g0{ opacity:0; }
     .item:hover .icon.gemini img.g1{ opacity:1; }
@@ -113,15 +131,23 @@
       padding:8px 24px; border-radius:999px; cursor:pointer; font-size:13px;
       opacity:.65; transition:.3s var(--ease); margin:28px auto 0; display:block;
     }
+    .morebtn:hover{ opacity:1; transform:scale(1.05); }
   </style>
 </head>
 
 <body>
   <div class="bg-flow"><div class="blob"></div></div>
+
   <div class="wrap">
-    <div class="top"><div id="greet">Hello.</div><div class="clock" id="clock">00:00</div></div>
-    <form class="search" id="searchForm" autocomplete="off"><input id="q" placeholder="Search..." autofocus /></form>
-    
+    <div class="top">
+      <div id="greet">Hello.</div>
+      <div class="clock" id="clock">00:00</div>
+    </div>
+
+    <form class="search" id="searchForm" autocomplete="off">
+      <input id="q" placeholder="Search..." autofocus />
+    </form>
+
     <div class="section">ESSENTIALS<div class="line"></div></div>
     <div id="ess" class="grid"></div>
 
@@ -129,7 +155,7 @@
       <div class="section" style="margin-top:18px;">EXTENDED<div class="line"></div></div>
       <div id="ext" class="grid"></div>
     </div>
-    
+
     <button class="morebtn" id="toggleBtn">More Icons</button>
   </div>
 
@@ -139,16 +165,17 @@
 
     function imgTag(src, cls){
       const safe = ICON_BASE + encodeURIComponent(src);
-      return `<img class="${cls}" src="${safe}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='${ICON_BASE}${FALLBACK}'">`;
+      return `<img class="${cls}" src="${safe}" loading="lazy" decoding="async"
+        onerror="this.onerror=null;this.src='${ICON_BASE}${FALLBACK}'">`;
     }
 
     const SITES = [
-      { n:"ChatGPT",      u:"https://chatgpt.com/",                  icons:["openai.svg"],                 c:"#10a37f", r:1, whiteInvert: true },
+      { n:"ChatGPT",      u:"https://chatgpt.com/",                  icons:["openai.svg"],                 c:"#10a37f", r:1, whiteInvert:true },
       { n:"Claude",       u:"https://claude.ai/",                    icons:["claude-color.svg"],           c:"#d97757", r:1 },
       { n:"Copilot",      u:"https://copilot.microsoft.com/",        icons:["copilot-color.svg"],          c:"#0078d4", r:1 },
-      { n:"Gemini",       u:"https://gemini.google.com/",            gemini:true, s:1.14,                  c:"#4e85ff", r:1, whiteInvert: true },
+      { n:"Gemini",       u:"https://gemini.google.com/",            gemini:true, s:1.14,                  c:"#4e85ff", r:1, whiteInvert:true },
       { n:"Cloudflare",   u:"https://dash.cloudflare.com/",          icons:["cloudflare-color.svg"],       c:"#f48120", r:1 },
-      { n:"GitHub",       u:"https://github.com/",                   icons:["github.svg"],                 c:"#ffffff", r:1, whiteInvert: true },
+      { n:"GitHub",       u:"https://github.com/",                   icons:["github.svg"],                 c:"#ffffff", r:1, whiteInvert:true },
 
       { n:"Gmail",        u:"https://mail.google.com/",              icons:["google-gmail.svg"],           c:"#ea4335", r:2 },
       { n:"Google",       u:"https://www.google.com/",               icons:["google-color.svg"],           c:"#4285f4", r:2 },
@@ -157,39 +184,47 @@
       { n:"Google Maps",  u:"https://maps.google.com/",              icons:["google-maps.svg"],            c:"#4285f4", r:2 },
       { n:"YouTube",      u:"https://youtube.com/",                  icons:["youtube_red.svg"],            c:"#ff0000", r:2 },
 
-      { n:"AWS",          u:"https://aws.amazon.com/",               icons:["aws.svg"],                    c:"#ff9900", r:3, whiteInvert: true },
-      // ✅ Azure, Bing, Netflix 全部加入深夜补光阵营
-      { n:"Azure",        u:"https://portal.azure.com/",             icons:["azure.svg"],                  c:"#0078d4", r:3, whiteInvert: true },
-      { n:"Bing",         u:"https://www.bing.com/",                 icons:["bing.svg"],                   c:"#008373", r:3, whiteInvert: true },
-      { n:"Microsoft",    u:"https://www.microsoft.com/",            icons:["microsoft.svg"],              c:"#ffffff", r:3, whiteInvert: true },
-      { n:"Netflix",      u:"https://www.netflix.com/",              icons:["netflix-icon.svg"],           c:"#e50914", r:3, whiteInvert: true },
+      { n:"AWS",          u:"https://aws.amazon.com/",               icons:["aws.svg"],                    c:"#ff9900", r:3, whiteInvert:true },
+      { n:"Azure",        u:"https://portal.azure.com/",             icons:["azure.svg"],                  c:"#0078d4", r:3, whiteInvert:true },
+      { n:"Bing",         u:"https://www.bing.com/",                 icons:["bing.svg"],                   c:"#008373", r:3, whiteInvert:true },
+      { n:"Microsoft",    u:"https://www.microsoft.com/",            icons:["microsoft.svg"],              c:"#ffffff", r:3, whiteInvert:true },
+      { n:"Netflix",      u:"https://www.netflix.com/",              icons:["netflix-icon.svg"],           c:"#e50914", r:3, whiteInvert:true },
       { n:"Spotify",      u:"https://spotify.com/",                  icons:["spotify-icon.svg"],           c:"#1db954", r:3 },
-      { n:"X",            u:"https://x.com/",                        icons:["x.svg"],                      c:"#ffffff", r:3, whiteInvert: true },
-      { n:"Reddit",       u:"https://www.reddit.com/",               icons:["reddit.svg"],                 c:"#ff4500", r:3, whiteInvert: true },
-      { n:"Telegram",     u:"https://web.telegram.org/",             icons:["telegram.svg"],               c:"#2aabee", r:3, whiteInvert: true },
-      { n:"Apple",        u:"https://www.apple.com/",                icons:["apple.svg"],                  c:"#ffffff", r:3, whiteInvert: true }
+      { n:"X",            u:"https://x.com/",                        icons:["x.svg"],                      c:"#ffffff", r:3, whiteInvert:true },
+      { n:"Reddit",       u:"https://www.reddit.com/",               icons:["reddit.svg"],                 c:"#ff4500", r:3, whiteInvert:true },
+      { n:"Telegram",     u:"https://web.telegram.org/",             icons:["telegram.svg"],               c:"#2aabee", r:3, whiteInvert:true },
+      { n:"Apple",        u:"https://www.apple.com/",                icons:["apple.svg"],                  c:"#ffffff", r:3, whiteInvert:true }
     ];
 
     let exp = false;
 
     function render(){
-      const ess = document.getElementById("ess"), ext = document.getElementById("ext");
+      const ess = document.getElementById("ess");
+      const ext = document.getElementById("ext");
       ess.innerHTML = ext.innerHTML = "";
+
       SITES.forEach(s=>{
         const a = document.createElement("a");
         a.className = `item ${s.whiteInvert ? "white-invert" : ""}`;
-        a.href = s.u; a.target = "_blank"; a.rel = "noopener noreferrer";
-        a.style.setProperty("--brand-color", s.c);
+        a.href = s.u;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        a.style.setProperty("--brand-color", s.c || "#7C5CFF");
         if (s.s) a.style.setProperty("--s", String(s.s));
-        const iconHTML = s.gemini 
-          ? `<div class="icon gemini">${imgTag("gemini.svg", "g0")}${imgTag("gemini-color.svg", "g1")}</div>`
+
+        const iconHTML = s.gemini
+          ? `<div class="icon gemini">
+              ${imgTag("gemini.svg", "g0")}
+              ${imgTag("gemini-color.svg", "g1")}
+            </div>`
           : `<div class="icon">${imgTag(s.icons[0], "single")}</div>`;
+
         a.innerHTML = `${iconHTML}<div class="label">${s.n}</div>`;
         (s.r <= 2 ? ess : ext).appendChild(a);
       });
     }
 
-    function toggleMore() {
+    function toggleMore(){
       exp = !exp;
       const area = document.getElementById("moreArea");
       const btn = document.getElementById("toggleBtn");
@@ -198,23 +233,30 @@
     }
 
     function updateTheme(){
-      const h = new Date().getHours(), b = document.body, g = document.getElementById("greet");
-      b.classList.toggle("theme-night", (h >= 17 || h < 8));
-      g.textContent = (h >= 17 || h < 8) ? "Good night." : (h < 12 ? "Good morning." : "Good afternoon.");
+      const h = new Date().getHours();
+      const night = (h >= 17 || h < 8);
+      document.body.classList.toggle("theme-night", night);
+      document.getElementById("greet").textContent =
+        night ? "Good night." : (h < 12 ? "Good morning." : "Good afternoon.");
     }
 
     function tick(){
       const d = new Date();
-      document.getElementById("clock").textContent = `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+      document.getElementById("clock").textContent =
+        `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
     }
 
     document.getElementById("toggleBtn").onclick = toggleMore;
     document.getElementById("searchForm").onsubmit = (e)=>{
-      e.preventDefault(); window.open("https://www.google.com/search?q="+encodeURIComponent(document.getElementById("q").value.trim()), "_blank");
+      e.preventDefault();
+      const v = document.getElementById("q").value.trim();
+      if(!v) return;
+      window.open("https://www.google.com/search?q="+encodeURIComponent(v), "_blank");
     };
 
     updateTheme(); tick(); render();
-    setInterval(tick, 1000); setInterval(updateTheme, 60000);
+    setInterval(tick, 1000);
+    setInterval(updateTheme, 60000);
   </script>
 </body>
 </html>
