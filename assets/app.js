@@ -1,4 +1,3 @@
-// assets/app.js
 import { SITES, QUOTES, ICON_BASE, FALLBACK_ICON } from './data.js';
 
 function imgTag(src, cls) {
@@ -18,7 +17,7 @@ function render() {
     a.style.setProperty("--brand-color", s.c || "#7C5CFF");
     if (s.s) a.style.setProperty("--s", String(s.s));
     
-    // ✅ 专用 Gemini 生成逻辑
+    // ✅ 专用双层逻辑：解决 Gemini 重叠的关键
     const iconHTML = s.gemini 
       ? `<div class="icon gemini">${imgTag("gemini.svg", "g0")}${imgTag("gemini-color.svg", "g1")}</div>`
       : `<div class="icon">${imgTag(s.icons[0], "single")}</div>`;
@@ -40,12 +39,9 @@ async function updateWeather() {
     const res = await fetch('https://wttr.in/?format=j1');
     const data = await res.json();
     const current = data.current_condition[0];
-    const tempEl = document.getElementById("temp");
-    const cityEl = document.getElementById("city");
-    const condEl = document.getElementById("condition");
+    const tempEl = document.getElementById("temp"), cityEl = document.getElementById("city");
     if (tempEl) tempEl.textContent = current.temp_C + "°C";
     if (cityEl) cityEl.textContent = data.nearest_area[0].areaName[0].value.toUpperCase();
-    if (condEl) condEl.textContent = current.weatherDesc[0].value;
   } catch (e) { console.warn("Weather fetch failed."); }
 }
 
@@ -57,13 +53,14 @@ function toggleMore() {
   btn.textContent = isHidden ? "Less Icons" : "More Icons";
 }
 
-// 初始化
+// 初始化 UI
 updateTheme(); render(); updateWeather();
 const btn = document.getElementById("toggleBtn");
 if (btn) btn.onclick = toggleMore;
 
-const qEl = document.getElementById("quote"), aEl = document.getElementById("author");
+// 励志语逻辑
 const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+const qEl = document.getElementById("quote"), aEl = document.getElementById("author");
 if (qEl) qEl.textContent = `"${q.t}"`;
 if (aEl) aEl.textContent = q.a;
 
