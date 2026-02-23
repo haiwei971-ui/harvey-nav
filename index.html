@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Harveyi</title>
 
-  <link rel="apple-touch-icon" href="https://harveyi.com/favicon.ico">
+  <link rel="apple-touch-icon" href="https://gemini.google.com/favicon.ico">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
@@ -17,99 +17,70 @@
     :root{
       --easeWave: cubic-bezier(0.16, 1, 0.3, 1);
       --ease2: cubic-bezier(.22,.61,.36,1);
-
-      /* 默认：白天 */
       --bg-top:#FFFFFF; --bg-bottom:#F5F5F7;
       --text:#1D1D1F; --text-muted:rgba(0,0,0,0.45);
       --hair:rgba(0,0,0,0.06); --search-bg:rgba(0,0,0,0.03);
-      --icon-opacity:0.44;
-
-      /* 白天光晕：更淡 */
-      --glow-opacity: 0.08;
-      --glow-blur: 32px;
+      --icon-opacity:0.42; --icon-color:#333; --accent:#a1c4fd;
+      --glow-opacity: 0.05;
     }
-    body.theme-night{
+
+    body.theme-night {
       --bg-top:#09112A; --bg-bottom:#070A12;
       --text:rgba(255,255,255,0.92); --text-muted:rgba(255,255,255,0.45);
       --hair:rgba(255,255,255,0.08); --search-bg:rgba(255,255,255,0.08);
-      --icon-opacity:0.52;
-
-      --glow-opacity: 0.30;
-      --glow-blur: 28px;
+      --icon-opacity:0.50; --icon-color:rgba(255,255,255,0.90); --accent:rgba(90,80,255,0.55);
+      --glow-opacity: 0.3;
     }
 
     *{ box-sizing:border-box; }
     html,body{ height:100%; margin:0; }
     body{
-      color:var(--text);
-      font-family: Inter, -apple-system, system-ui, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
+      color:var(--text); font-family: Inter, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
       background: linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
-      overflow-x:hidden;
-      transition: background 1.8s var(--easeWave), color 1.8s var(--easeWave);
+      overflow-x:hidden; transition: background 1.8s var(--easeWave), color 1.8s var(--easeWave);
     }
     body::before{
-      content:"";
-      position:fixed; inset:0;
-      opacity:.06;
-      pointer-events:none;
-      z-index:-1;
+      content:""; position:fixed; inset:0; opacity:.06; pointer-events:none; z-index:-1;
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
       mix-blend-mode: overlay;
     }
 
     .bg-flow{ position:fixed; inset:-20%; pointer-events:none; z-index:-3; filter:blur(120px); opacity:.38; }
-    .bg-flow .blob{
-      position:absolute; width:70vmax; height:70vmax; border-radius:999px;
-      background: radial-gradient(circle, rgba(161,196,253,0.9), transparent 60%);
-      animation: drift 60s var(--ease2) infinite alternate;
-    }
-    body.theme-night .bg-flow .blob{
-      background: radial-gradient(circle, rgba(90,80,255,0.55), transparent 60%);
-    }
+    .bg-flow .blob{ position:absolute; width:70vmax; height:70vmax; border-radius:999px; background: radial-gradient(circle, var(--accent), transparent 60%); animation: drift 60s var(--ease2) infinite alternate; }
     @keyframes drift{ from{transform:translate(-5%,-5%)} to{transform:translate(10%,10%)} }
 
     .wrap{ min-height:100%; display:flex; justify-content:center; padding:calc(60px + env(safe-area-inset-top)) 18px 60px; }
-    .shell{ width:min(980px, 100%); }
+    .shell{ width:min(980px, 100%); transition: .4s var(--ease2); }
 
     .topbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
     .greet{ font-size:18px; font-weight:500; opacity:.85; letter-spacing:.02em; }
     .clock{ font-family:"JetBrains Mono"; font-size:18px; font-weight:600; font-variant-numeric:tabular-nums; }
 
     .search{
-      display:flex; align-items:center; gap:12px;
-      padding:15px 22px;
-      border-radius:999px;
-      background: var(--search-bg);
+      display:flex; align-items:center; gap:12px; padding:15px 22px; border-radius:999px;
+      background: var(--search-bg); border:1px solid var(--hair); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+      box-shadow:0 10px 30px rgba(0,0,0,0.03); transition:.3s var(--easeWave); margin-bottom:48px;
+    }
+    .search:focus-within{ transform:scaleX(1.03); border-color: rgba(124,92,255,0.5); box-shadow: 0 20px 60px rgba(0,0,0,0.08), inset 0 0 0 1px rgba(124,92,255,0.2); }
+    .search input{ width:100%; border:0; outline:none; background:transparent; color:var(--text); font-size:18px; }
+
+    .hint{
+      display:flex; gap:10px; flex-wrap:wrap;
+      font-size:11px; letter-spacing:.02em;
+      color:var(--text-muted);
+      user-select:none;
+      white-space:nowrap;
+    }
+    .hint span{
+      padding:4px 8px; border-radius:999px;
       border:1px solid var(--hair);
-      backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-      box-shadow:0 10px 30px rgba(0,0,0,0.03);
-      transition:.3s var(--easeWave);
-      margin-bottom:48px;
-    }
-    .search:focus-within{
-      transform:scaleX(1.03);
-      border-color: rgba(124,92,255,0.5);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.08), inset 0 0 0 1px rgba(124,92,255,0.2);
-    }
-    .search input{
-      width:100%;
-      border:0; outline:none;
-      background:transparent;
-      color:var(--text);
-      font-size:18px;
+      background: rgba(0,0,0,0.02);
     }
 
-    .sectionbar{
-      display:flex; align-items:center; gap:15px;
-      margin:20px 0;
-      color: var(--text-muted);
-      font-size:11px;
-      letter-spacing:.2em;
-      text-transform:uppercase;
-      font-weight:600;
-    }
+    .dim-on-focus .grid, .dim-on-focus .sectionbar, .dim-on-focus .morebtn{ opacity:0.28; filter:blur(4px); transform:scale(0.985); }
+
+    .sectionbar{ display:flex; align-items:center; gap:15px; margin:20px 0; color: var(--text-muted); font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:600; }
     .dotline{ height:1px; flex:1; background: var(--hair); }
 
     .grid{ display:grid; grid-template-columns:repeat(6, 1fr); gap:32px 20px; transition:.4s var(--ease2); }
@@ -117,64 +88,65 @@
     @media (max-width: 520px){ .grid{grid-template-columns:repeat(3,1fr)} }
 
     .item{
-      position:relative;
-      display:flex; flex-direction:column; align-items:center; gap:14px;
-      text-decoration:none; outline:none;
+      position:relative; display:flex; flex-direction:column; align-items:center; gap:14px;
+      text-decoration:none; outline:none; min-height: 90px;
       --mx:0px; --my:0px;
       transform:translate3d(var(--mx), var(--my), 0);
       transition:transform .22s var(--easeWave);
     }
-    .item:active{
-      transform: scale(0.96) translate3d(var(--mx), var(--my), 0);
-      transition: transform 0.1s ease;
-    }
 
+    /* ===== ICON IMG (gray + color) ===== */
     .icon{
       width:54px; height:54px;
-      display:grid; place-items:center;
       position:relative;
+      display:grid;
+      place-items:center;
+      color: var(--icon-color);
       transition:.35s var(--easeWave);
+    }
+
+    .icon img{
+      position:absolute;
+      width:36px;
+      height:36px;
+      display:block;
+      transition: all .35s var(--easeWave);
+      transform: scale(var(--s, 1)) translateY(var(--ty, 0px));
+    }
+
+    .icon .icon-gray{
+      opacity: 1;
       filter: grayscale(100%) opacity(var(--icon-opacity));
     }
 
-    /* ✅ img 图标：确保看起来像“原厂” */
-    .icon img{
-      width:36px; height:36px;
-      display:block;
-      object-fit:contain;
-      image-rendering:auto;
-      -webkit-user-drag:none;
-      user-select:none;
+    .icon .icon-color{
+      opacity: 0;
     }
 
-    .item:hover .icon{
-      filter: grayscale(0%) opacity(1);
-      transform:translateY(-6px);
+    .item:hover .icon{ transform:translateY(-6px); }
+
+    .item:hover .icon .icon-gray{
+      opacity: 0;
+      filter: none;
     }
 
-    /* ✅ 通用光晕 */
+    .item:hover .icon .icon-color{
+      opacity: 1;
+    }
+
+    .icon .icon-color[data-missing="1"]{
+      display:none;
+    }
+
     .item:hover .icon::after{
-      content:"";
-      position:absolute; inset:-12px;
-      border-radius:50%;
-      z-index:-1;
-      filter: blur(var(--glow-blur));
-      opacity:var(--glow-opacity);
-      background: radial-gradient(circle, var(--glow), transparent 75%);
+      content:""; position:absolute; inset:-15px; border-radius:50%; z-index:-1;
+      filter:blur(40px); opacity:var(--glow-opacity);
+      background:radial-gradient(circle, var(--glow), transparent 75%);
       transform: translate(calc(var(--mx) * -0.8), calc(var(--my) * -0.8 + 4px));
     }
 
-    /* ✅ 白天模式：Gmail/Google 发光“降噪”更柔和 */
-    body:not(.theme-night) .item.gmail:hover .icon::after,
-    body:not(.theme-night) .item.google:hover .icon::after{
-      filter: blur(22px);
-      opacity: 0.18;
-      background: radial-gradient(circle, var(--glow), transparent 78%);
-    }
-
     .label{
-      font-size:13px;
-      color: var(--text-muted);
+      font-size:13px; color: var(--text-muted);
       transition:.25s var(--easeWave);
       --lx:0px; --ly:0px;
       transform: translate3d(var(--lx), var(--ly), 0);
@@ -182,129 +154,156 @@
     .item:hover .label{ color: var(--text); opacity:1; }
 
     .kbd{
-      position:absolute;
-      top:-4px; right:4px;
-      opacity:0;
-      font-family:"JetBrains Mono";
-      font-size:11px;
-      color:#fff;
-      background:rgba(0,0,0,.35);
-      backdrop-filter:blur(10px);
-      padding:3px 6px;
-      border-radius:8px;
+      position:absolute; top:-4px; right:4px; opacity:0;
+      font-family:"JetBrains Mono"; font-size:11px; color:#fff;
+      background:rgba(0,0,0,.35); backdrop-filter:blur(10px);
+      padding:3px 6px; border-radius:8px;
       border:1px solid rgba(255,255,255,.12);
       transition:.18s var(--easeWave);
-      pointer-events:none;
-      z-index:10;
+      pointer-events:none; z-index:10;
     }
     .show-hotkeys .kbd{ opacity:1; transform:translateY(6px); }
 
-    .reveal{ animation: rise .72s var(--easeWave) both; animation-delay: var(--d, 0ms); }
-    @keyframes rise{
-      from{ opacity:0; transform:translateY(20px) scale(.98); filter:blur(5px); }
-      to{ opacity:1; transform:translateY(0) scale(1); filter:blur(0); }
+    #moreArea[aria-hidden="true"]{ display:none; }
+
+    .morebtn{
+      background: var(--search-bg); border:1px solid var(--hair); color:var(--text);
+      padding:8px 24px; border-radius:99px; cursor:pointer;
+      font-size:13px; opacity:.65; transition:.3s var(--easeWave);
+      margin: 40px auto; display:block;
     }
 
-    #moreArea[aria-hidden="true"]{ display:none; }
-    .morebtn{
-      background: var(--search-bg);
-      border:1px solid var(--hair);
-      color:var(--text);
-      padding:8px 24px;
-      border-radius:99px;
-      cursor:pointer;
-      font-size:13px;
-      opacity:.65;
-      transition:.3s var(--easeWave);
-      margin: 40px auto;
-      display:block;
-    }
+    .reveal{ animation: rise .72s var(--easeWave) both; animation-delay: var(--d, 0ms); }
+    @keyframes rise{ from{ opacity:0; transform:translateY(20px) scale(.98); filter:blur(5px); } to{ opacity:1; transform:translateY(0) scale(1); filter:blur(0); } }
+
+    /* hover 文字色微调（可留可删） */
+    .item.chatgpt:hover .label{color:var(--text)}
+    .item.gemini:hover .label{color:var(--text)}
+    .item.claude:hover .label{color:var(--text)}
   </style>
 </head>
 <body>
   <div class="bg-flow"><div class="blob"></div></div>
-
-  <div class="wrap">
-    <div class="shell" id="app">
-      <div class="topbar">
-        <div class="greet" id="greet">Hello.</div>
-        <div class="clock" id="clock">00:00</div>
-      </div>
-
-      <form class="search" id="searchForm" autocomplete="off">
-        <input id="q" type="text" placeholder="Search..." autofocus />
-      </form>
-
-      <div class="sectionbar"><span>Essentials</span><div class="dotline"></div></div>
-      <div class="grid" id="gridEssentials"></div>
-
-      <div id="moreArea" aria-hidden="true">
-        <div class="sectionbar" style="margin-top:40px"><span>Extended</span><div class="dotline"></div></div>
-        <div class="grid" id="gridMore"></div>
-      </div>
-
-      <button class="morebtn" id="toggleBtn" type="button">More Icons</button>
+  <div class="wrap"><div class="shell" id="app">
+    <div class="topbar">
+      <div class="greet" id="greet">Hello.</div>
+      <div class="clock" id="clock">00:00</div>
     </div>
-  </div>
+
+    <form class="search" id="searchForm" autocomplete="off">
+      <input id="q" type="text" placeholder="Search..." autofocus />
+      <div class="hint"><span>/g Google</span><span>/y YouTube</span><span>/c ChatGPT</span></div>
+    </form>
+
+    <div class="sectionbar"><span>Essentials</span><div class="dotline"></div></div>
+    <div class="grid" id="gridEssentials"></div>
+
+    <div id="moreArea" aria-hidden="true">
+      <div class="sectionbar" style="margin-top:40px"><span>Extended</span><div class="dotline"></div></div>
+      <div class="grid" id="gridMore"></div>
+    </div>
+
+    <button class="morebtn" id="toggleBtn" type="button">More Icons</button>
+  </div></div>
 
   <script>
-    /**
-     * ✅ IMG 方案说明（你不用改逻辑就能换图标）：
-     * - 每个站点给一个 icon 字段（URL 指向 PNG/ICO/SVG 都行）
-     * - 默认灰度，hover 还原原厂彩色（靠 CSS filter）
-     * - 你想“更原厂”：就把 icon 指向你自己保存的官方 SVG/PNG（建议放你自己的域名 /assets/icons/ 下）
-     */
+    const ICONS_BASE = "./icons/";
+
+    function slugify(str){
+      return (str || "")
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g,'-')
+        .replace(/[^\w\-]/g,'');
+    }
+
+    function withIcons(site){
+      const slug = slugify(site.cls || site.name);
+      return {
+        ...site,
+        iconGray: ICONS_BASE + slug + ".svg",
+        iconColor: ICONS_BASE + slug + "-color.svg",
+      };
+    }
 
     const ALL_SITES = [
-      { name:"ChatGPT",   url:"https://chatgpt.com/",                     key:"C", glow:"#10A37F", icon:"https://chatgpt.com/favicon.ico",                     rank:1,   cls:"chatgpt" },
-      { name:"Gemini",    url:"https://gemini.google.com/",               key:"G", glow:"#9B72F3", icon:"https://gemini.google.com/favicon.ico",               rank:1,   cls:"gemini" },
-      { name:"Claude",    url:"https://claude.ai/",                       key:"L", glow:"#D97757", icon:"https://claude.ai/favicon.ico",                       rank:1,   cls:"claude" },
-      { name:"Copilot",   url:"https://copilot.microsoft.com/",           key:"P", glow:"#0078D4", icon:"https://copilot.microsoft.com/favicon.ico",           rank:1,   cls:"copilot" },
+      { name:"ChatGPT",   url:"https://chatgpt.com/",                     key:"C", glow:"#10A37F", rank:1,   scale:0.96, cls:"chatgpt" },
+      { name:"Gemini",    url:"https://gemini.google.com/",               key:"G", glow:"#4E85FF", rank:1,   scale:1.08, cls:"gemini" },
+      { name:"Claude",    url:"https://claude.ai/",                       key:"L", glow:"#D97757", rank:1,   scale:0.85, cls:"claude" },
+      { name:"Copilot",   url:"https://copilot.microsoft.com/",           key:"P", glow:"#0078D4", rank:1,   scale:1.02, cls:"copilot" },
+      { name:"Reddit",    url:"https://www.reddit.com/",                  key:"U", glow:"#FF4500", rank:1.5, scale:1.00, cls:"reddit" },
+      { name:"Wikipedia", url:"https://www.wikipedia.org/",               key:"W", glow:"#888888", rank:1.5, scale:1.00, cls:"wiki" },
+      { name:"Google",    url:"https://www.google.com/",                  key:"O", glow:"#4285F4", rank:2,   scale:0.98, cls:"google" },
+      { name:"Gmail",     url:"https://mail.google.com/",                 key:"M", glow:"#EA4335", rank:2,   scale:1.02, cls:"gmail" },
+      { name:"YouTube",   url:"https://www.youtube.com/",                 key:"Y", glow:"#FF0000", rank:2,   scale:1.02, cls:"youtube" },
+      { name:"GitHub",    url:"https://github.com/",                      key:"H", glow:"#666666", rank:2,   scale:0.90, cls:"github" },
+      { name:"Cloudflare",url:"https://dash.cloudflare.com/",             key:"F", glow:"#F48120", rank:2,   scale:1.06, cls:"cloudflare" },
+      { name:"Netflix",   url:"https://www.netflix.com/",                 key:"N", glow:"#E50914", rank:3,   scale:1.10, cls:"netflix" },
+      { name:"Discord",   url:"https://discord.com/app",                  key:"I", glow:"#5865F2", rank:4,   scale:0.98, cls:"discord" },
+      { name:"Telegram",  url:"https://web.telegram.org/",                key:"T", glow:"#2AABEE", rank:4,   scale:1.02, cls:"telegram" },
+      { name:"Vultr",     url:"https://my.vultr.com/",                    key:"V", glow:"#007BFC", rank:9,   scale:0.96, cls:"vultr" },
+      { name:"Oracle",    url:"https://cloud.oracle.com/",                key:"J", glow:"#FF3B30", rank:9,   scale:0.90, ty:-0.5, cls:"oracle" },
+      { name:"RackNerd",  url:"https://my.racknerd.com/",                 key:"R", glow:"#7C5CFF", rank:9,   scale:1.06, cls:"racknerd" },
+      { name:"DMIT",      url:"https://www.dmit.io/clientarea.php",       key:"D", glow:"#0052cc", rank:9,   scale:1.05, cls:"dmit" },
+      { name:"BWG",       url:"https://bandwagonhost.com/clientarea.php", key:"B", glow:"#e67e22", rank:9,   scale:1.02, cls:"bwg" }
+    ].map(withIcons);
 
-      { name:"Reddit",    url:"https://www.reddit.com/",                  key:"U", glow:"#FF4500", icon:"https://www.reddit.com/favicon.ico",                 rank:1.5, cls:"reddit" },
-      { name:"Wikipedia", url:"https://www.wikipedia.org/",               key:"W", glow:"#888888", icon:"https://www.wikipedia.org/static/favicon/wikipedia.ico", rank:1.5, cls:"wiki" },
-
-      { name:"Google",    url:"https://www.google.com/",                  key:"O", glow:"#4285F4", icon:"https://www.google.com/favicon.ico",                 rank:2,   cls:"google" },
-      { name:"Gmail",     url:"https://mail.google.com/",                 key:"M", glow:"#EA4335", icon:"https://mail.google.com/favicon.ico",                rank:2,   cls:"gmail" },
-      { name:"YouTube",   url:"https://www.youtube.com/",                 key:"Y", glow:"#FF0000", icon:"https://www.youtube.com/favicon.ico",                rank:2,   cls:"youtube" },
-      { name:"GitHub",    url:"https://github.com/",                      key:"H", glow:"#666666", icon:"https://github.githubassets.com/favicons/favicon.png", rank:2,  cls:"github" },
-      { name:"Cloudflare",url:"https://dash.cloudflare.com/",             key:"F", glow:"#F48120", icon:"https://dash.cloudflare.com/favicon.ico",            rank:2,   cls:"cloudflare" },
-      { name:"Netflix",   url:"https://www.netflix.com/",                 key:"N", glow:"#E50914", icon:"https://www.netflix.com/favicon.ico",                rank:3,   cls:"netflix" },
-
-      { name:"Discord",   url:"https://discord.com/app",                  key:"I", glow:"#5865F2", icon:"https://discord.com/favicon.ico",                    rank:4,   cls:"discord" },
-      { name:"Telegram",  url:"https://web.telegram.org/",                key:"T", glow:"#2AABEE", icon:"https://telegram.org/favicon.ico",                   rank:4,   cls:"telegram" },
-
-      { name:"Vultr",     url:"https://my.vultr.com/",                    key:"V", glow:"#007BFC", icon:"https://www.vultr.com/favicon.ico",                  rank:9,   cls:"vultr" },
-      { name:"Oracle",    url:"https://cloud.oracle.com/",                key:"J", glow:"#FF3B30", icon:"https://www.oracle.com/favicon.ico",                 rank:9,   cls:"oracle" },
-      { name:"RackNerd",  url:"https://my.racknerd.com/",                 key:"R", glow:"#7C5CFF", icon:"https://my.racknerd.com/favicon.ico",                rank:9,   cls:"racknerd" },
-      { name:"DMIT",      url:"https://www.dmit.io/clientarea.php",       key:"D", glow:"#0052cc", icon:"https://www.dmit.io/favicon.ico",                    rank:9,   cls:"dmit" },
-      { name:"BWG",       url:"https://bandwagonhost.com/clientarea.php", key:"B", glow:"#e67e22", icon:"https://bandwagonhost.com/favicon.ico",              rank:9,   cls:"bwg" }
-    ];
+    function applyVars(v){
+      const r=document.documentElement;
+      for(const [k,val] of Object.entries(v)) r.style.setProperty(k,val);
+    }
 
     function updateTheme(){
-      const h = new Date().getHours();
-      const b = document.body;
-      const g = document.getElementById("greet");
-
-      b.classList.remove("theme-night");
-      if (h >= 20 || h < 8){
+      const h=new Date().getHours(), b=document.body, g=document.getElementById("greet");
+      b.classList.remove("theme-dawn","theme-day","theme-twilight","theme-night");
+      if(h>=5&&h<8){
+        b.classList.add("theme-dawn");
+        applyVars({
+          "--bg-top":"#FDFCFB","--bg-bottom":"#E2D1C3","--text":"#1F2937",
+          "--text-muted":"rgba(31,41,55,0.55)","--hair":"rgba(31,41,55,0.1)",
+          "--search-bg":"rgba(255,255,255,0.62)","--icon-opacity":"0.52",
+          "--icon-color":"#2b2b2b","--accent":"#ff9a9e"
+        });
+        g.textContent="Good morning, Dawn.";
+      }
+      else if(h>=8&&h<17){
+        b.classList.add("theme-day");
+        applyVars({
+          "--bg-top":"#FFFFFF","--bg-bottom":"#F5F5F7","--text":"#1D1D1F",
+          "--text-muted":"rgba(0,0,0,0.45)","--hair":"rgba(0,0,0,0.06)",
+          "--search-bg":"rgba(0,0,0,0.03)","--icon-opacity":"0.45",
+          "--icon-color":"#333","--accent":"#a1c4fd"
+        });
+        g.textContent=(h<12)?"Good morning.":"Good afternoon.";
+      }
+      else if(h>=17&&h<20){
+        b.classList.add("theme-twilight");
+        applyVars({
+          "--bg-top":"#2D1B4D","--bg-bottom":"#1A0B2E","--text":"#FDEBD0",
+          "--text-muted":"rgba(253,235,208,0.58)","--hair":"rgba(253,235,208,0.16)",
+          "--search-bg":"rgba(253,235,208,0.08)","--icon-opacity":"0.55",
+          "--icon-color":"rgba(253,235,208,0.92)","--accent":"#fad0c4"
+        });
+        g.textContent="Good evening, Twilight.";
+      }
+      else{
         b.classList.add("theme-night");
-        g.textContent = "Good night.";
-      } else {
-        g.textContent = (h < 12) ? "Good morning." : "Good afternoon.";
+        applyVars({
+          "--bg-top":"#09112A","--bg-bottom":"#070A12","--text":"rgba(255,255,255,0.92)",
+          "--text-muted":"rgba(255,255,255,0.45)","--hair":"rgba(255,255,255,0.08)",
+          "--search-bg":"rgba(255,255,255,0.08)","--icon-opacity":"0.50",
+          "--icon-color":"rgba(255,255,255,0.9)","--accent":"rgba(90,80,255,0.55)"
+        });
+        g.textContent="Good night.";
       }
     }
 
-    function getCols(){
-      const w = window.innerWidth;
-      return w <= 520 ? 3 : w <= 860 ? 4 : 6;
-    }
+    function getCols(){ const w=window.innerWidth; return w<=520?3:w<=860?4:6; }
 
     function computeLayout(){
-      const cols = getCols();
-      const maxEss = cols * 2;
-      const sorted = [...ALL_SITES].sort((a,b)=>(a.rank-b.rank)||a.name.localeCompare(b.name));
-      return { essentials: sorted.slice(0, maxEss), more: sorted.slice(maxEss) };
+      const cols=getCols(), maxEss=cols*2;
+      const sorted=[...ALL_SITES].sort((a,b)=>(a.rank-b.rank)||a.name.localeCompare(b.name));
+      return { essentials:sorted.slice(0,maxEss), more:sorted.slice(maxEss) };
     }
 
     function waveDelay(i,seed){
@@ -313,53 +312,48 @@
     }
 
     function makeItem(s,i,seed){
-      const d = waveDelay(i, seed);
-      const key = s.key || "";
-      const iconHTML = `<img src="${s.icon}" alt="${s.name}" loading="lazy" decoding="async" referrerpolicy="no-referrer">`;
-
+      const d=waveDelay(i,seed);
       return `
-        <a class="item reveal ${s.cls || ""}" href="${s.url}" target="_blank" rel="noopener noreferrer"
-           style="--glow:${s.glow}; --d:${d}ms;">
-          <span class="kbd">${key}</span>
-          <div class="icon">${iconHTML}</div>
-          <div class="label">${s.name}</div>
-        </a>`;
+      <a class="item reveal ${s.cls||""}" href="${s.url}" target="_blank" rel="noopener noreferrer"
+         style="--glow:${s.glow};--d:${d}ms;">
+        <span class="kbd">${s.key||""}</span>
+        <div class="icon" style="--s:${s.scale??1};--ty:${s.ty??0}px">
+          <img class="icon-gray" src="${s.iconGray}" alt="">
+          <img class="icon-color" src="${s.iconColor}" alt=""
+               onerror="this.dataset.missing=1; this.style.display='none';">
+        </div>
+        <div class="label">${s.name}</div>
+      </a>`;
     }
 
-    let exp = false;
+    let exp=false, _lastMin="";
+
     function render(){
-      const { essentials, more } = computeLayout();
-      const seed = (Date.now()/1000)|0;
+      const {essentials,more}=computeLayout(), seed=(Date.now()/1000)|0;
+      document.getElementById("gridEssentials").innerHTML=essentials.map((s,i)=>makeItem(s,i,seed)).join("");
+      document.getElementById("gridMore").innerHTML=more.map((s,i)=>makeItem(s,i+essentials.length,seed)).join("");
 
-      document.getElementById("gridEssentials").innerHTML =
-        essentials.map((s,i)=>makeItem(s,i,seed)).join("");
+      const btn=document.getElementById("toggleBtn");
+      btn.style.display=more.length?"block":"none";
 
-      document.getElementById("gridMore").innerHTML =
-        more.map((s,i)=>makeItem(s,i+essentials.length,seed)).join("");
-
-      const btn = document.getElementById("toggleBtn");
-      btn.style.display = more.length ? "block" : "none";
-
-      if (!more.length){
+      if(!more.length){
         document.getElementById("moreArea").setAttribute("aria-hidden","true");
-        btn.textContent = "More Icons";
-        exp = false;
-      } else {
+        btn.textContent="More Icons";
+        exp=false;
+      }else{
         document.getElementById("moreArea").setAttribute("aria-hidden",(!exp).toString());
-        btn.textContent = exp ? "Less Icons" : "More Icons";
+        btn.textContent=exp?"Less Icons":"More Icons";
       }
 
       bindMagnetic();
     }
 
     function bindMagnetic(){
-      if (matchMedia("(pointer: coarse)").matches) return;
+      if(matchMedia("(pointer: coarse)").matches) return;
       document.querySelectorAll(".item").forEach(el=>{
         if(el.__magBound) return; el.__magBound=true;
-
         let tx=0,ty=0,x=0,y=0,anim=0;
         const label=el.querySelector(".label");
-
         const step=()=>{
           x+=(tx-x)*0.18; y+=(ty-y)*0.18;
           el.style.setProperty("--mx",x.toFixed(2)+"px");
@@ -368,30 +362,23 @@
             label.style.setProperty("--lx",(x*0.45).toFixed(2)+"px");
             label.style.setProperty("--ly",(y*0.45).toFixed(2)+"px");
           }
-          if(Math.abs(tx-x)+Math.abs(ty-y)<0.02){anim=0;return;}
+          if(Math.abs(tx-x)+Math.abs(ty-y)<0.02){ anim=0; return; }
           anim=requestAnimationFrame(step);
         };
-
         el.addEventListener("mousemove",e=>{
           const r=el.getBoundingClientRect();
           const dx=e.clientX-(r.left+r.width/2);
           const dy=e.clientY-(r.top+r.height/2);
           const dist=Math.hypot(dx,dy);
-
           if(dist>Math.max(r.width,r.height)/2+20){ tx=0; ty=0; }
           else { tx=(dx/(r.width/2+20))*3; ty=(dy/(r.height/2+20))*3; }
-
           if(!anim) anim=requestAnimationFrame(step);
         });
-
-        el.addEventListener("mouseleave",()=>{
-          tx=0; ty=0;
-          if(!anim) anim=requestAnimationFrame(step);
-        });
+        el.addEventListener("mouseleave",()=>{ tx=0; ty=0; if(!anim) anim=requestAnimationFrame(step); });
       });
     }
 
-    window.addEventListener("resize",()=>{ clearTimeout(window.__rt); window.__rt=setTimeout(render,90); });
+    window.addEventListener("resize",()=>{ clearTimeout(window.rT); window.rT=setTimeout(render,90); });
     document.getElementById("toggleBtn").onclick=()=>{ exp=!exp; render(); };
 
     window.addEventListener("keydown",e=>{
@@ -400,6 +387,7 @@
       if(typing) return;
 
       if(e.key==="/"){ e.preventDefault(); document.getElementById("q").focus({preventScroll:true}); return; }
+
       if(e.altKey){ document.body.classList.add("show-hotkeys"); }
 
       const k=e.key.toUpperCase();
@@ -414,31 +402,30 @@
       if(!v) return;
 
       const engines={
-        "/g":"https://www.google.com/search?q=",
-        "/y":"https://www.youtube.com/results?search_query=",
-        "/c":"https://chatgpt.com/?q="
+        "/g":"https://google.com/search?q=",
+        "/y":"https://youtube.com/results?search_query=",
+        "/c":"https://chatgpt.com/"
       };
       const prefix=v.slice(0,2);
 
       if(engines[prefix]){
-        const q = v.slice(3);
-        window.open(engines[prefix] + encodeURIComponent(q), "_blank");
+        if(prefix==="/c") window.open(engines["/c"],"_blank");
+        else window.open(engines[prefix]+encodeURIComponent(v.slice(3)),"_blank");
       }else{
-        window.open("https://www.google.com/search?q=" + encodeURIComponent(v), "_blank");
+        window.open("https://google.com/search?q="+encodeURIComponent(v),"_blank");
       }
     };
 
+    document.getElementById("q").onfocus=()=>document.getElementById("app").classList.add("dim-on-focus");
+    document.getElementById("q").onblur=()=>document.getElementById("app").classList.remove("dim-on-focus");
+
     function tick(){
-      const d=new Date();
-      const h=d.getHours(), m=d.getMinutes();
-      document.getElementById("clock").textContent =
-        `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
+      const d=new Date(), h=d.getHours(), m=d.getMinutes(), k=`${h}:${m}`;
+      document.getElementById("clock").textContent=`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
+      if(k!==_lastMin){ _lastMin=k; updateTheme(); }
     }
 
-    updateTheme();
-    tick();
-    setInterval(()=>{ tick(); updateTheme(); }, 1000);
-    render();
+    tick(); setInterval(tick, 1000); render();
   </script>
 </body>
 </html>
