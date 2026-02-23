@@ -1,7 +1,7 @@
 /* ================= ROOT ================= */
 
 :root{
-  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease:cubic-bezier(0.16,1,0.3,1);
 
   --bg-top:#FFFFFF;
   --bg-bottom:#F5F5F7;
@@ -36,11 +36,11 @@ body.theme-night{
 
 body{
   margin:0;
-  font-family: Inter, -apple-system, sans-serif;
+  font-family:Inter,-apple-system,sans-serif;
   color:var(--text);
   background:linear-gradient(180deg,var(--bg-top),var(--bg-bottom));
   min-height:100vh;
-  transition:background 1.5s var(--ease), color 1.5s var(--ease);
+  transition:background 1.5s var(--ease),color 1.5s var(--ease);
   overflow-x:hidden;
 }
 
@@ -60,65 +60,11 @@ body{
   opacity:.86;
 }
 
-.top-left .greet{
-  font-size:22px;
-  font-weight:600;
-}
-
-.top-left .weather{
-  font-size:13px;
-  color:var(--muted);
-  display:flex;
-  gap:8px;
-}
-
 .clock{
   font-family:"JetBrains Mono";
   font-weight:600;
   font-size:24px;
   letter-spacing:-1px;
-}
-
-.quote-area{
-  margin:20px 0 28px;
-  padding-left:10px;
-  border-left:2px solid var(--hair);
-}
-
-.quote-text{
-  font-size:15px;
-  font-style:italic;
-  color:var(--muted);
-  line-height:1.5;
-  max-width:600px;
-}
-
-.quote-author{
-  font-size:11px;
-  text-transform:uppercase;
-  letter-spacing:.1em;
-  margin-top:6px;
-  opacity:.6;
-}
-
-.search{
-  display:flex;
-  align-items:center;
-  background:var(--search);
-  border:1px solid var(--hair);
-  padding:13px 18px;
-  border-radius:999px;
-  margin-bottom:18px;
-  backdrop-filter:blur(20px);
-}
-
-.search input{
-  flex:1;
-  border:0;
-  outline:none;
-  background:transparent;
-  font-size:18px;
-  color:var(--text);
 }
 
 .section{
@@ -169,7 +115,7 @@ body{
 }
 
 .item:active{
-  transform:scale(.95);
+  transform:scale(.97);
 }
 
 /* ================= ICON ================= */
@@ -180,10 +126,8 @@ body{
   display:grid;
   place-items:center;
   position:relative;
-  transition:.35s var(--ease);
 }
 
-/* icon img */
 .icon img{
   width:36px;
   height:36px;
@@ -203,7 +147,7 @@ body{
          drop-shadow(0 2px 4px var(--icon-shadow));
 }
 
-/* 双图逻辑 */
+/* 双图结构 */
 .icon img.active{ opacity:0; }
 .icon img.base{ opacity:1; }
 
@@ -215,7 +159,6 @@ body{
   transform:translate(-50%,-50%) scale(var(--s,1));
 }
 
-/* 默认隐藏彩色层 */
 .icon.gemini img.g1{ opacity:0; }
 
 /* ===== 夜间补光 ===== */
@@ -230,47 +173,31 @@ body.theme-night .white-invert .icon.gemini img.g0{
          drop-shadow(0 2px 4px var(--icon-shadow));
 }
 
-/* ================= 唤醒动画 ================= */
+/* ================================================= */
+/* ============== 唤醒（不位移版） ================= */
+/* ================================================= */
 
-/* 关键：位移写在 icon 容器上，不再写在 img 上（彻底解决下沉） */
+/* ===== iOS 二次点击唤醒 ===== */
 
-.item:hover .icon,
-.item.awake .icon{
-  transform:translateY(-6px);
-}
-
-/* 单图去灰 */
-.item:hover .icon img.single,
-.item.awake .icon img.single{
+.item.awake .icon img.single,
+.item.awake .icon img.base{
   filter:grayscale(0%) brightness(1) opacity(1) !important;
 }
 
-/* 双图切换 */
-.item:hover .icon img.base,
-.item.awake .icon img.base{
-  opacity:0;
-}
+.item.awake .icon img.base{ opacity:0; }
 
-.item:hover .icon img.active,
 .item.awake .icon img.active{
   opacity:1;
   filter:none !important;
 }
 
-/* Gemini 切换 */
-.item:hover .icon.gemini img.g0,
-.item.awake .icon.gemini img.g0{
-  opacity:0;
-}
-
-.item:hover .icon.gemini img.g1,
+.item.awake .icon.gemini img.g0{ opacity:0; }
 .item.awake .icon.gemini img.g1{
   opacity:1;
   filter:none !important;
 }
 
-/* glow */
-.item:hover .icon::after,
+/* 光晕 */
 .item.awake .icon::after{
   content:"";
   position:absolute;
@@ -283,17 +210,48 @@ body.theme-night .white-invert .icon.gemini img.g0{
 }
 
 /* label */
-.label{
-  font-size:13px;
-  transition:.25s var(--ease);
-}
-
-.item:hover .label,
 .item.awake .label{
   color:var(--text);
 }
 
-/* more */
+/* ===== 桌面 hover ===== */
+@media (hover:hover) and (pointer:fine){
+
+  .item:hover .icon img.single,
+  .item:hover .icon img.base{
+    filter:grayscale(0%) brightness(1) opacity(1) !important;
+  }
+
+  .item:hover .icon img.base{ opacity:0; }
+  .item:hover .icon img.active{
+    opacity:1;
+    filter:none !important;
+  }
+
+  .item:hover .icon.gemini img.g0{ opacity:0; }
+  .item:hover .icon.gemini img.g1{
+    opacity:1;
+    filter:none !important;
+  }
+
+  .item:hover .icon::after{
+    content:"";
+    position:absolute;
+    inset:-10px;
+    border-radius:50%;
+    z-index:-1;
+    filter:blur(35px);
+    opacity:var(--glow-opacity);
+    background:radial-gradient(circle,var(--brand-color,#7C5CFF),transparent 75%);
+  }
+
+  .item:hover .label{
+    color:var(--text);
+  }
+}
+
+/* ================= MORE ================= */
+
 #moreArea[aria-hidden="true"]{
   display:none;
 }
