@@ -591,7 +591,6 @@
       document.getElementById("author").textContent = q.a;
     }
 
-    // Greeting + optional time-based theme-night class
     function updateTheme(){
       const h = new Date().getHours();
       const b = document.body;
@@ -603,7 +602,6 @@
       g.textContent = night ? "Good night." : (h < 12 ? "Good morning." : "Good afternoon.");
     }
 
-    // Clock: update only when minute changes
     function tick(){
       const d = new Date();
       const hhmm = `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
@@ -611,7 +609,6 @@
       if (el.textContent !== hhmm) el.textContent = hhmm;
     }
 
-    // Search
     document.getElementById("searchForm").onsubmit = (e)=>{
       e.preventDefault();
       const q = document.getElementById("q").value.trim();
@@ -619,7 +616,6 @@
       window.open("https://www.google.com/search?q=" + encodeURIComponent(q), "_blank");
     };
 
-    // --- Weather (Open-Meteo, no API key) ---
     async function updateWeather(){
       const tempEl = document.getElementById("temp");
       const cityEl = document.getElementById("city");
@@ -702,11 +698,12 @@
     }
 
     // =========================
-    // Tap-to-wake for touch devices
+    // Tap-to-wake (iPad safe)
     // First tap: highlight, second tap: open
     // =========================
     (function enableTapWake(){
-      const isTouch = matchMedia("(hover: none) and (pointer: coarse)").matches;
+      // iPad-safe touch detection (matchMedia is flaky on iPadOS)
+      const isTouch = (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) || ("ontouchstart" in window);
       if (!isTouch) return;
 
       let activeEl = null;
@@ -719,25 +716,36 @@
         clearTimer = null;
       };
 
-      document.addEventListener("click", (e)=>{
-        const a = e.target.closest("a.item");
-        if (!a) { clearActive(); return; }
-
-        // second tap on same icon -> allow navigation
-        if (a === activeEl) return;
-
-        // first tap -> prevent open, highlight instead
-        e.preventDefault();
-        e.stopPropagation();
-
+      // Core wake function
+      const wake = (a)=>{
         clearActive();
         a.classList.add("is-active");
         activeEl = a;
-
         clearTimer = setTimeout(clearActive, 1200);
-      }, { capture: true });
+      };
 
-      document.addEventListener("scroll", clearActive, { passive: true });
+      // Touchstart: reliably fires on iOS Safari
+      document.addEventListener("touchstart", (e)=>{
+        const a = e.target.closest("a.item");
+        if (!a) { clearActive(); return; }
+        // first touch: wake only
+        if (a !== activeEl){
+          e.preventDefault();
+          wake(a);
+        }
+      }, { passive:false, capture:true });
+
+      // Click: for second tap (open), and for non-touch fallbacks
+      document.addEventListener("click", (e)=>{
+        const a = e.target.closest("a.item");
+        if (!a) { clearActive(); return; }
+        if (a === activeEl) return; // allow open on second tap
+        e.preventDefault();
+        e.stopPropagation();
+        wake(a);
+      }, { capture:true });
+
+      document.addEventListener("scroll", clearActive, { passive:true });
     })();
 
     // Init
