@@ -1,56 +1,168 @@
 // assets/data.js
-// 只要改这个文件，就能增删图标/改链接/改分组
 
 export const ICON_BASE = "icons/";
 export const FALLBACK_ICON = "openai.svg";
 
-// Quotes（英文）
+// Quotes
 export const QUOTES = [
   { t: "Stay hungry, stay foolish.", a: "Steve Jobs" },
   { t: "Simplicity is the ultimate sophistication.", a: "Leonardo da Vinci" },
-  { t: "The best way to predict the future is to invent it.", a: "Alan Kay" },
   { t: "Design is not just what it looks like and feels like. Design is how it works.", a: "Steve Jobs" },
-  { t: "Everything is designed. Few things are designed well.", a: "Brian Reed" },
-  { t: "Code is like humor. When you have to explain it, it’s bad.", a: "Cory House" },
-  { t: "Innovation distinguishes between a leader and a follower.", a: "Steve Jobs" }
+  { t: "Innovation distinguishes between a leader and a follower.", a: "Steve Jobs" },
+  { t: "Everything is designed. Few things are designed well.", a: "Brian Reed" }
 ];
 
-/**
- * r:
- * 1/2 -> ESSENTIALS
- * 3   -> EXTENDED
- *
- * icons: ["xxx.svg"]  普通图标
- * gemini: true        Gemini 特效（灰->彩）
- * s: 1.14             图标视觉补偿
- * whiteInvert: true   夜间把“黑色图标”反相补光
- */
+/*
+r:
+1,2 = ESSENTIALS
+3   = EXTENDED
+*/
+
 export const SITES = [
-  // ===== ESSENTIALS (r:1) =====
-  { n:"ChatGPT",    u:"https://chatgpt.com/",           icons:["openai.svg"],        c:"#10a37f", r:1, whiteInvert:true },
-  { n:"Claude",     u:"https://claude.ai/",             icons:["fireworks.svg"],     c:"#d97757", r:1, whiteInvert:true }, // 你目录里有 fireworks.svg
-  { n:"Copilot",    u:"https://copilot.microsoft.com/", icons:["copilot-color.svg"], c:"#0078d4", r:1 },
-  { n:"Gemini",     u:"https://gemini.google.com/",     gemini:true, s:1.14,         c:"#4e85ff", r:1, whiteInvert:true },
-  { n:"Cloudflare", u:"https://dash.cloudflare.com/",   icons:["cloudflare.svg"],    c:"#f48120", r:1, whiteInvert:true }, // ✅ 修正：只有 cloudflare.svg
-  { n:"GitHub",     u:"https://github.com/",            icons:["github.svg"],        c:"#ffffff", r:1, whiteInvert:true },
 
-  // ===== ESSENTIALS (r:2) =====
-  { n:"Gmail",        u:"https://mail.google.com/",          icons:["google-gmail.svg"],       c:"#ea4335", r:2 },
-  { n:"Google",       u:"https://www.google.com/",           icons:["google-color.svg"],       c:"#4285f4", r:2 },
-  { n:"Google Cloud", u:"https://console.cloud.google.com/", icons:["googlecloud-color.svg"],  c:"#4285f4", r:2 }, // ✅ 修正
-  { n:"Google Drive", u:"https://drive.google.com/",         icons:["google-drive.svg"],       c:"#34a853", r:2 },
-  { n:"Google Maps",  u:"https://www.google.com/maps",       icons:["google-maps.svg"],        c:"#4285f4", r:2 },
-  { n:"YouTube",      u:"https://www.youtube.com/",          icons:["youtube_red.svg"],        c:"#ff0000", r:2 }, // ✅ 修正：你目录里是 youtube_red.svg
+  // =========================
+  // ESSENTIALS
+  // =========================
 
-  // ===== EXTENDED (r:3) =====
-  // 下面这些你仓库里大概率也有；如果某个仍然错，就按“icons文件名”再对一下
-  { n:"Microsoft", u:"https://www.microsoft.com/", icons:["microsoft.svg"],      c:"#ffffff", r:3, whiteInvert:true },
-  { n:"Netflix",   u:"https://www.netflix.com/",   icons:["netflix-icon.svg"],   c:"#e50914", r:3, whiteInvert:true },
-  { n:"Spotify",   u:"https://open.spotify.com/",  icons:["spotify-icon.svg"],   c:"#1db954", r:3 },
-  { n:"X",         u:"https://x.com/",             icons:["x.svg"],              c:"#ffffff", r:3, whiteInvert:true },
-  { n:"Reddit",    u:"https://www.reddit.com/",    icons:["reddit.svg"],         c:"#ff4500", r:3, whiteInvert:true },
-  { n:"Telegram",  u:"https://web.telegram.org/",  icons:["telegram.svg"],       c:"#2aabee", r:3, whiteInvert:true },
+  { n:"ChatGPT",
+    u:"https://chatgpt.com/",
+    r:1,
+    icons:["openai.svg"],
+    whiteInvert:true
+  },
 
-  // 如果你后面还有 AWS/Azure/Bing/Apple 等，保持原来写法即可；
-  // 若显示错误：去 icons/ 里找到真实文件名，按同样方式把 icons:["xxx.svg"] 改成一致。
+  { n:"Claude",
+    u:"https://claude.ai/",
+    r:1,
+    icons:["anthropic.svg"],
+    whiteInvert:true
+  },
+
+  { n:"Copilot",
+    u:"https://copilot.microsoft.com/",
+    r:1,
+    icons:["copilot-color.svg"]
+  },
+
+  { n:"Gemini",
+    u:"https://gemini.google.com/",
+    r:1,
+    icons:["gemini.svg","gemini-color.svg"],
+    gemini:true
+  },
+
+  { n:"Cloudflare",
+    u:"https://dash.cloudflare.com/",
+    r:1,
+    icons:["cloudflare.svg"],
+    whiteInvert:true
+  },
+
+  { n:"GitHub",
+    u:"https://github.com/",
+    r:1,
+    icons:["github.svg"],
+    whiteInvert:true
+  },
+
+  // 第二行 Essentials
+  { n:"Gmail",
+    u:"https://mail.google.com/",
+    r:2,
+    icons:["google-gmail.svg"]
+  },
+
+  { n:"Google",
+    u:"https://www.google.com/",
+    r:2,
+    icons:["google-color.svg"]
+  },
+
+  { n:"Google Cloud",
+    u:"https://console.cloud.google.com/",
+    r:2,
+    icons:["googlecloud-color.svg"]
+  },
+
+  { n:"Google Drive",
+    u:"https://drive.google.com/",
+    r:2,
+    icons:["google-drive.svg"]
+  },
+
+  { n:"Google Maps",
+    u:"https://maps.google.com/",
+    r:2,
+    icons:["google-maps.svg"]
+  },
+
+  { n:"YouTube",
+    u:"https://www.youtube.com/",
+    r:2,
+    icons:["youtube_red.svg"]
+  },
+
+  // =========================
+  // EXTENDED
+  // =========================
+
+  { n:"AWS",
+    u:"https://aws.amazon.com/",
+    r:3,
+    icons:["aws.svg"],
+    whiteInvert:true
+  },
+
+  { n:"Azure",
+    u:"https://portal.azure.com/",
+    r:3,
+    icons:["azure-color.svg"]
+  },
+
+  { n:"Bing",
+    u:"https://www.bing.com/",
+    r:3,
+    icons:["bing.svg"],
+    whiteInvert:true
+  },
+
+  { n:"Microsoft",
+    u:"https://www.microsoft.com/",
+    r:3,
+    icons:["microsoft-color.svg"]
+  },
+
+  { n:"Netflix",
+    u:"https://www.netflix.com/",
+    r:3,
+    icons:["netflix-icon.svg"]
+  },
+
+  { n:"Spotify",
+    u:"https://open.spotify.com/",
+    r:3,
+    icons:["spotify-icon.svg"]
+  },
+
+  { n:"X",
+    u:"https://x.com/",
+    r:3,
+    icons:["x.svg"],
+    whiteInvert:true
+  },
+
+  { n:"Reddit",
+    u:"https://www.reddit.com/",
+    r:3,
+    icons:["reddit.svg"],
+    whiteInvert:true
+  },
+
+  { n:"Telegram",
+    u:"https://web.telegram.org/",
+    r:3,
+    icons:["telegram.svg"],
+    whiteInvert:true
+  }
+
 ];
