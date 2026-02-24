@@ -4,14 +4,17 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
   <title>Harveyi</title>
+  <meta name="apple-mobile-web-app-title" content="Harveyi">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 
   <style>
     :root{
       --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      /* Day Theme */
       --bg-top:#FFFFFF; --bg-bottom:#F5F5F7;
       --text:#1D1D1F; --muted:rgba(0,0,0,0.52);
       --hair:rgba(0,0,0,0.08); --surface: rgba(255,255,255,0.56);
@@ -25,7 +28,7 @@
       --bg-top:#0B0F18; --bg-bottom:#070A12;
       --text:rgba(255,255,255,0.92); --muted:rgba(255,255,255,0.58);
       --hair:rgba(255,255,255,0.12); --surface: rgba(18,22,32,0.58);
-      --surface-strong: rgba(255,255,255,0.05); /* 夜间基座极暗，防止抢戏 */
+      --surface-strong: rgba(255,255,255,0.05);
       --search: rgba(255,255,255,0.09);
       --icon-default-opacity: 0.90; --icon-brightness: 1.5;
       --glow-opacity:0.25; --focus: rgba(10,132,255,0.36);
@@ -34,7 +37,7 @@
     *{ box-sizing:border-box }
     html,body{ height:100% }
     body{
-      margin:0; font-family: Inter, -apple-system, sans-serif;
+      margin:0; font-family: Inter, -apple-system, system-ui, sans-serif;
       color:var(--text); background: linear-gradient(180deg,var(--bg-top),var(--bg-bottom));
       min-height:100vh; transition: background 900ms var(--ease), color 900ms var(--ease);
       overflow-x:hidden; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
@@ -81,33 +84,30 @@
 
     .icon{ width: 56px; height: 56px; display:grid; place-items:center; position:relative; border-radius: 16px; background: var(--surface-strong); border: 1px solid var(--hair); box-shadow: 0 8px 20px rgba(0,0,0,0.06); transition: .25s var(--ease); overflow:hidden; }
 
-    /* =========================
-       ✅ 核心滤镜重构：防御图标消失
-       ========================= */
+    /* ✅ 修复图标隐身：默认态 */
     .icon img{
       width: 36px; height: 36px; object-fit: contain; transform: translateY(var(--y, 0px)) scale(var(--s, 1));
-      /* 初始状态：只灰度，不降亮度 */
       filter: grayscale(100%) opacity(var(--icon-default-opacity));
       transition: .35s var(--ease);
       will-change: filter, transform;
     }
 
-    /* 修复夜间模式白色图标不可见问题 */
+    /* 夜间模式白色图标反转 */
     body.theme-night .white-invert .icon img {
       filter: grayscale(100%) invert(1) brightness(2) opacity(1);
     }
 
-    /* 唤醒态：绝对优先级，撤销所有干扰滤镜 */
+    /* ✅ 唤醒态：强制撤销所有滤镜，确保彩色展现 */
     .item:hover .icon img, 
     .item.is-active .icon img {
       filter: grayscale(0%) invert(0%) brightness(1) opacity(1) !important;
       transform: translateY(calc(var(--y, 0px) - 6px)) scale(var(--s, 1));
     }
 
-    /* Gemini 特殊层逻辑 */
+    /* Gemini 特殊处理 */
     .icon.gemini img.g1 { position:absolute; opacity: 0; transition: .38s var(--ease); }
     .item:hover .icon.gemini img.g0, .item.is-active .icon.gemini img.g0 { opacity: 0; }
-    .item:hover .icon.gemini img.g1, .item.is-active .icon.gemini img.g1 { opacity: 1; }
+    .item:hover .icon.gemini img.g1, .item.is-active .icon.gemini img.g1 { opacity: 1; transform: translateY(calc(var(--y, 0px) - 6px)) scale(var(--s, 1)); }
 
     .item:hover .icon::after, .item.is-active .icon::after {
       content:""; position:absolute; inset:-14px; border-radius: 22px; z-index:-1;
@@ -129,18 +129,16 @@
     <div class="top">
       <div class="top-left">
         <div id="greet" class="greet">Hello.</div>
-        <div class="weather">
-          <span id="temp">…</span><span id="city">WEATHER</span>
-        </div>
+        <div class="weather"><span id="temp">…</span><span id="city">WEATHER</span></div>
       </div>
       <div class="clock" id="clock">00:00</div>
     </div>
     <div class="quote-area"><div id="quote" class="quote-text"></div><div id="author" class="quote-author"></div></div>
-    <form class="search" id="searchForm" autocomplete="off" role="search">
-      <input id="q" type="search" placeholder="Search..." autofocus />
-    </form>
+    <form class="search" id="searchForm" autocomplete="off"><input id="q" type="search" placeholder="Search..." autofocus /></form>
+    
     <div class="section">ESSENTIALS<div class="line"></div></div>
     <div id="ess" class="grid"></div>
+
     <div id="moreArea" aria-hidden="true">
       <div class="section" style="margin-top:18px;">EXTENDED<div class="line"></div></div>
       <div id="ext" class="grid"></div>
@@ -157,20 +155,36 @@
       { t: "Make it simple, but significant.", a: "Don Draper" }
     ];
 
+    // ✅ 补全后的全量 24 个图标列表
     const SITES = [
-      { n:"ChatGPT", u:"https://chatgpt.com/", i:"openai.svg", c:"#10a37f", r:1, w:true },
-      { n:"Claude", u:"https://claude.ai/", i:"claude-color.svg", c:"#d97757", r:1 },
-      { n:"Copilot", u:"https://copilot.microsoft.com/", i:"copilot-color.svg", c:"#0078d4", r:1 },
-      { n:"Gemini", u:"https://gemini.google.com/", gem:true, c:"#4e85ff", r:1, s:1.14, w:true },
-      { n:"GitHub", u:"https://github.com/", i:"github.svg", c:"#ffffff", r:1, w:true },
-      { n:"Cloudflare", u:"https://dash.cloudflare.com/", i:"cloudflare-color.svg", c:"#f48120", r:1 },
-      { n:"Gmail", u:"https://mail.google.com/", i:"google-gmail.svg", c:"#ea4335", r:2 },
-      { n:"Google", u:"https://www.google.com/", i:"google-color.svg", c:"#4285f4", r:2 },
-      { n:"Google Cloud", u:"https://console.cloud.google.com/", i:"googlecloud-color.svg", c:"#4285f4", r:2 },
-      { n:"YouTube", u:"https://www.youtube.com/", i:"youtube_red.svg", c:"#ff0000", r:2 },
-      { n:"X", u:"https://x.com/", i:"x.svg", c:"#ffffff", r:3, w:true },
-      { n:"Reddit", u:"https://www.reddit.com/", i:"reddit.svg", c:"#ff4500", r:3, w:true },
-      { n:"Apple", u:"https://www.apple.com/", i:"apple.svg", c:"#ffffff", r:3, w:true }
+      // Essentials (r:1, r:2)
+      { n:"ChatGPT",      u:"https://chatgpt.com/",                  i:"openai.svg",           c:"#10a37f", r:1, w:true },
+      { n:"Claude",       u:"https://claude.ai/",                    i:"claude-color.svg",     c:"#d97757", r:1 },
+      { n:"Copilot",      u:"https://copilot.microsoft.com/",        i:"copilot-color.svg",    c:"#0078d4", r:1 },
+      { n:"Gemini",       u:"https://gemini.google.com/",            gem:true, s:1.14,         c:"#4e85ff", r:1, w:true },
+      { n:"GitHub",       u:"https://github.com/",                   i:"github.svg",           c:"#ffffff", r:1, w:true },
+      { n:"Cloudflare",   u:"https://dash.cloudflare.com/",          i:"cloudflare-color.svg", c:"#f48120", r:1 },
+
+      { n:"Gmail",        u:"https://mail.google.com/",              i:"google-gmail.svg",     c:"#ea4335", r:2 },
+      { n:"Google",       u:"https://www.google.com/",               i:"google-color.svg",     c:"#4285f4", r:2 },
+      { n:"Google Cloud", u:"https://console.cloud.google.com/",     i:"googlecloud-color.svg",c:"#4285f4", r:2 },
+      { n:"Google Drive", u:"https://drive.google.com/",             i:"google-drive.svg",     c:"#34a853", r:2 },
+      { n:"Google Maps",  u:"http://googleusercontent.com/maps.google.com/0",           i:"google-maps.svg",      c:"#4285f4", r:2 },
+      { n:"YouTube",      u:"https://youtube.com/results?search_query=",              i:"youtube_red.svg",      c:"#ff0000", r:2 },
+
+      // Extended (r:3)
+      { n:"AWS",          u:"https://aws.amazon.com/",               i:"aws.svg",              c:"#ff9900", r:3, w:true },
+      { n:"Azure",        u:"https://portal.azure.com/",             i:"azure.svg",            c:"#0078d4", r:3, w:true },
+      { n:"Microsoft",    u:"https://www.microsoft.com/",            i:"microsoft.svg",        c:"#ffffff", r:3, w:true },
+      { n:"Bing",         u:"https://www.bing.com/",                 i:"bing.svg",             c:"#008373", r:3, w:true },
+      { n:"Netflix",      u:"https://netflix.com/",                  i:"netflix-icon.svg",     c:"#e50914", r:3, w:true },
+      { n:"Spotify",      u:"http://googleusercontent.com/spotify.com/3",             i:"spotify-icon.svg",     c:"#1db954", r:3 },
+      { n:"X",            u:"https://x.com/",                        i:"x.svg",                c:"#ffffff", r:3, w:true },
+      { n:"Reddit",       u:"https://www.reddit.com/",               i:"reddit.svg",           c:"#ff4500", r:3, w:true },
+      { n:"Telegram",     u:"https://web.telegram.org/",             i:"telegram.svg",         c:"#2aabee", r:3, w:true },
+      { n:"Apple",        u:"https://www.apple.com/",                i:"apple.svg",            c:"#ffffff", r:3, w:true },
+      { n:"Meta",         u:"https://about.meta.com/",               i:"meta-color.svg",       c:"#0EA5E9", r:3 },
+      { n:"Wikipedia",    u:"https://www.wikipedia.org/",            i:"wiki.svg",             c:"#999999", r:3, w:true }
     ];
 
     function imgTag(src, cls){
@@ -183,7 +197,7 @@
       SITES.forEach(s=>{
         const a = document.createElement("a");
         a.className = `item ${s.w ? "white-invert" : ""}`;
-        a.href = s.u; a.target = "_blank";
+        a.href = s.u; a.target = "_blank"; a.rel = "noopener noreferrer";
         a.style.setProperty("--brand-color", s.c);
         if (s.s) a.style.setProperty("--s", s.s);
         const iconHTML = s.gem 
