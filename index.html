@@ -21,17 +21,17 @@
       --surface-strong: rgba(255,255,255,0.75);
       --search: rgba(0,0,0,0.035);
       --icon-default-opacity: 0.70; --glow-opacity:0.12;
-      --focus: rgba(0,122,255,0.32);
+      --focus: rgba(0,122,255,0.32); --focus-border: rgba(0,122,255,0.42);
     }
 
     body.theme-night{
       --bg-top:#0B0F18; --bg-bottom:#070A12;
       --text:rgba(255,255,255,0.92); --muted:rgba(255,255,255,0.58);
       --hair:rgba(255,255,255,0.12); --surface: rgba(18,22,32,0.58);
-      --surface-strong: rgba(255,255,255,0.03); /* 夜间基座极暗，透明玻璃感 */
+      --surface-strong: rgba(255,255,255,0.04); /* 夜间基座变暗，深空感 */
       --search: rgba(255,255,255,0.09);
       --icon-default-opacity: 0.85; --glow-opacity:0.25;
-      --focus: rgba(10,132,255,0.36);
+      --focus: rgba(10,132,255,0.36); --focus-border: rgba(10,132,255,0.46);
     }
 
     *{ box-sizing:border-box }
@@ -53,10 +53,10 @@
 
     .wrap{ max-width: 1040px; margin: auto; padding: calc(22px + env(safe-area-inset-top)) 20px 58px; }
 
-    .top{ display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 10px; opacity: .92; }
-    .top-left .greet{ font-size: 22px; font-weight: 650; margin-bottom: 2px; }
+    .top{ display:flex; justify-content:space-between; align-items:flex-end; gap:14px; margin-bottom: 10px; opacity: .92; }
+    .top-left .greet{ font-size: 22px; font-weight: 650; margin-bottom: 2px; letter-spacing: -0.2px; }
     .top-left .weather{ font-size: 13px; color: var(--muted); display:flex; gap: 8px; align-items:center; min-height: 18px; }
-    .clock{ font-family:"JetBrains Mono"; font-weight: 600; font-size: 24px; letter-spacing: -1px; }
+    .clock{ font-family:"JetBrains Mono"; font-weight: 600; font-size: 24px; letter-spacing: -1px; white-space:nowrap; }
 
     .quote-area{ margin: 14px 0 18px; padding: 0 10px; border-left: 2px solid var(--hair); opacity: .78; }
     .quote-text{ font-size: 14px; font-style: italic; color: var(--muted); line-height: 1.55; max-width: 640px; }
@@ -66,11 +66,11 @@
       display:flex; align-items:center; gap: 12px; background: var(--surface);
       border: 1px solid var(--hair); padding: 14px 18px; border-radius: 999px;
       margin-bottom: 18px; backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
-      transition: transform .28s var(--ease), box-shadow .28s var(--ease);
+      transition: transform .28s var(--ease), box-shadow .28s var(--ease), border-color .28s var(--ease);
       box-shadow: 0 10px 30px rgba(0,0,0,0.06);
     }
-    .search:focus-within{ transform: scale(1.01); border-color: var(--focus); box-shadow: 0 14px 38px rgba(0,0,0,0.10); }
-    .search input{ flex:1; background: transparent; border: 0; outline: none; color: var(--text); font-size: 17px; }
+    .search:focus-within{ transform: scale(1.01); border-color: var(--focus-border); box-shadow: 0 14px 38px rgba(0,0,0,0.10); }
+    .search input{ flex:1; width:100%; background: transparent; border: 0; outline: none; color: var(--text); font-size: 17px; }
 
     .section{ margin: 16px 0 10px; display:flex; align-items:center; gap: 12px; color: var(--muted); font-size: 11px; letter-spacing: .20em; text-transform: uppercase; font-weight: 650; }
     .section .line{ flex:1; height:1px; background: var(--hair); }
@@ -79,38 +79,38 @@
     @media (max-width:760px){ .grid{ grid-template-columns: repeat(4, 1fr); } }
     @media (max-width:520px){ .grid{ grid-template-columns: repeat(3, 1fr); } }
 
-    .item{ position:relative; display:flex; flex-direction:column; align-items:center; gap: 10px; text-decoration:none; color: var(--muted); transition: transform .22s var(--ease); min-height: 92px; -webkit-tap-highlight-color: transparent; }
+    .item{ position:relative; display:flex; flex-direction:column; align-items:center; gap: 10px; text-decoration:none; color: var(--muted); transition: transform .22s var(--ease); min-height: 92px; -webkit-tap-highlight-color: transparent; border-radius: 18px; padding: 6px 4px 8px; isolation: isolate; }
     .item:active{ transform: scale(0.96); transition: transform .08s; }
 
     .icon{ width: 56px; height: 56px; display:grid; place-items:center; position:relative; border-radius: 16px; background: var(--surface-strong); border: 1px solid var(--hair); box-shadow: 0 8px 20px rgba(0,0,0,0.06); transition: .25s var(--ease); overflow:hidden; }
 
     /* =========================
-       ✅ 终极三态滤镜重构 (修复图41-45彩色变灰问题)
+       ✅ 核心滤镜重构：防御图标隐身
        ========================= */
     .icon img {
       width: 36px; height: 36px; object-fit: contain; transform: translateY(var(--y, 0px)) scale(var(--s, 1));
-      /* 初始态：彩色图标降饱和度&不透明度，实现“融入感”而非“压抑感” */
+      /* 基础态：降饱和度融入背景，而非全灰 */
       filter: saturate(0.6) opacity(var(--icon-default-opacity));
       transition: transform .35s var(--ease), filter .35s var(--ease), opacity .35s var(--ease);
       will-change: filter, transform;
     }
 
-    /* 夜间态反转：仅针对 whiteInvert 的单色图标 (GitHub/X等) */
+    /* 夜间静态反转：仅针对标记 white-invert 的单色图标 (GitHub/X/ChatGPT等) */
     body.theme-night .white-invert .icon img,
     body.theme-night .white-invert .icon.gemini img.g0 {
       filter: grayscale(100%) invert(1) brightness(1.8) opacity(0.9) !important;
     }
 
-    /* 唤醒态 (Hover/Tap)：强制还原 100% 原始色彩 */
+    /* 唤醒态 (Hover/Touch)：强制撤销干扰，恢复原厂色彩 */
     .item:hover .icon img, 
     .item.is-active .icon img {
       filter: saturate(1) opacity(1) grayscale(0%) invert(0%) brightness(1) !important;
       transform: translateY(calc(var(--y, 0px) - 6px)) scale(var(--s, 1));
     }
 
-    /* Gemini 双层同步 */
+    /* Gemini 特殊层逻辑 */
     .icon.gemini img.g0 { filter: saturate(0.6) opacity(var(--icon-default-opacity)); }
-    .icon.gemini img.g1 { position:absolute; opacity: 0; transition: .38s var(--ease); filter: none !important; }
+    .icon.gemini img.g1 { position:absolute; width: 36px; height: 36px; opacity: 0; transition: .38s var(--ease); filter: none !important; }
     .item:hover .icon.gemini img.g0, .item.is-active .icon.gemini img.g0 { opacity: 0; }
     .item:hover .icon.gemini img.g1, .item.is-active .icon.gemini img.g1 { opacity: 1; transform: translateY(calc(var(--y, 0px) - 6px)) scale(var(--s, 1)); }
 
@@ -120,11 +120,11 @@
       background: radial-gradient(circle, var(--brand-color, #7C5CFF), transparent 72%);
     }
 
-    .label{ font-size: 13px; text-align:center; white-space: nowrap; transition: color .25s var(--ease); }
+    .label{ font-size: 13px; text-align:center; white-space: nowrap; transition: color .25s var(--ease); letter-spacing: -0.12px; }
     .item:hover .label, .item.is-active .label { color: var(--text); }
 
     #moreArea[aria-hidden="true"]{ display:none; }
-    .morebtn{ background: var(--surface); border: 1px solid var(--hair); color: var(--text); padding: 9px 24px; border-radius: 999px; cursor:pointer; font-size: 13px; opacity: .72; transition: .25s var(--ease); margin: 26px auto 0; display:block; backdrop-filter: blur(18px); }
+    .morebtn{ background: var(--surface); border: 1px solid var(--hair); color: var(--text); padding: 9px 24px; border-radius: 999px; cursor:pointer; font-size: 13px; opacity: .72; transition: .25s var(--ease); margin: 26px auto 0; display:block; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
   </style>
 </head>
 
@@ -134,7 +134,9 @@
     <div class="top">
       <div class="top-left">
         <div id="greet" class="greet">Hello.</div>
-        <div class="weather"><span id="temp">…</span><span id="city">WEATHER</span></div>
+        <div class="weather">
+          <span id="temp">…</span><span id="city">WEATHER</span>
+        </div>
       </div>
       <div class="clock" id="clock">00:00</div>
     </div>
@@ -159,38 +161,40 @@
       { t: "Stay hungry, stay foolish.", a: "Steve Jobs" },
       { t: "Simplicity is the ultimate sophistication.", a: "Leonardo da Vinci" },
       { t: "Design is how it works.", a: "Steve Jobs" },
-      { t: "The details are not the details. They make the design.", a: "Charles Eames" }
+      { t: "Make it simple, but significant.", a: "Don Draper" }
     ];
 
+    // ✅ 全量补全：确保图标充满网格
     const SITES = [
-      // row 1-2: Essentials (12)
-      { n:"ChatGPT",      u:"https://chatgpt.com/",                  i:"openai.svg",           c:"#10a37f", r:1, w:true },
-      { n:"Claude",       u:"https://claude.ai/",                    i:"claude-color.svg",     c:"#d97757", r:1 },
-      { n:"Copilot",      u:"https://copilot.microsoft.com/",        i:"copilot-color.svg",    c:"#0078d4", r:1 },
-      { n:"Gemini",       u:"https://gemini.google.com/",            gem:true, s:1.14,         c:"#4e85ff", r:1, w:true },
-      { n:"GitHub",       u:"https://github.com/",                   i:"github.svg",           c:"#ffffff", r:1, w:true },
-      { n:"Cloudflare",   u:"https://dash.cloudflare.com/",          i:"cloudflare-color.svg", c:"#f48120", r:1 },
-      { n:"Gmail",        u:"https://mail.google.com/",              i:"google-gmail.svg",     c:"#ea4335", r:2 },
-      { n:"Google",       u:"https://www.google.com/",               i:"google-color.svg",     c:"#4285f4", r:2 },
-      { n:"Google Cloud", u:"https://console.cloud.google.com/",     i:"googlecloud-color.svg",c:"#4285f4", r:2 },
-      { n:"Google Drive", u:"https://drive.google.com/",             i:"google-drive.svg",     c:"#34a853", r:2 },
-      { n:"Google Maps",  u:"http://googleusercontent.com/maps.google.com/0",           i:"google-maps.svg",      c:"#4285f4", r:2 },
-      { n:"YouTube",      u:"https://youtube.com/results?search_query=",              i:"youtube_red.svg",      c:"#ff0000", r:2 },
-      // row 3: Extended (补齐至满屏)
-      { n:"AWS",          u:"https://aws.amazon.com/",               i:"aws.svg",              c:"#ff9900", r:3, w:true },
-      { n:"Azure",        u:"https://portal.azure.com/",             i:"azure.svg",            c:"#0078d4", r:3, w:true },
-      { n:"X",            u:"https://x.com/",                        i:"x.svg",                c:"#ffffff", r:3, w:true },
-      { n:"Reddit",       u:"https://www.reddit.com/",               i:"reddit.svg",           c:"#ff4500", r:3, w:true },
-      { n:"Telegram",     u:"https://web.telegram.org/",             i:"telegram.svg",         c:"#2aabee", r:3, w:true },
-      { n:"Netflix",      u:"https://netflix.com/",                  i:"netflix-icon.svg",     c:"#e50914", r:3, w:true },
-      { n:"Spotify",      u:"https://open.spotify.com/",             i:"spotify-icon.svg",     c:"#1db954", r:3 },
-      { n:"Apple",        u:"https://www.apple.com/",                i:"apple.svg",            c:"#ffffff", r:3, w:true },
-      { n:"Meta",         u:"https://about.meta.com/",               i:"meta-color.svg",       c:"#0EA5E9", r:3 },
-      { n:"Wikipedia",    u:"https://www.wikipedia.org/",            i:"wiki.svg",             c:"#999999", r:3, w:true }
+      { n:"ChatGPT",      u:"https://chatgpt.com/",                  icons:["openai.svg"],                 c:"#10a37f", r:1, w:true },
+      { n:"Claude",       u:"https://claude.ai/",                    icons:["claude-color.svg"],           c:"#d97757", r:1 },
+      { n:"Copilot",      u:"https://copilot.microsoft.com/",        icons:["copilot-color.svg"],          c:"#0078d4", r:1 },
+      { n:"Gemini",       u:"https://gemini.google.com/",            gem:true, s:1.14,                     c:"#4e85ff", r:1, w:true },
+      { n:"GitHub",       u:"https://github.com/",                   icons:["github.svg"],                 c:"#ffffff", r:1, w:true },
+      { n:"Cloudflare",   u:"https://dash.cloudflare.com/",          icons:["cloudflare-color.svg"],       c:"#f48120", r:1 },
+
+      { n:"Gmail",        u:"https://mail.google.com/",              icons:["google-gmail.svg"],           c:"#ea4335", r:2 },
+      { n:"Google",       u:"https://www.google.com/",               icons:["google-color.svg"],           c:"#4285f4", r:2 },
+      { n:"Google Cloud", u:"https://console.cloud.google.com/",     icons:["googlecloud-color.svg"],      c:"#4285f4", r:2 },
+      { n:"Google Drive", u:"https://drive.google.com/",             icons:["google-drive.svg"],           c:"#34a853", r:2 },
+      { n:"Google Maps",  u:"https://maps.google.com/",               icons:["google-maps.svg"],            c:"#4285f4", r:2 },
+      { n:"YouTube",      u:"https://youtube.com/",                  icons:["youtube_red.svg"],            c:"#ff0000", r:2 },
+
+      { n:"AWS",          u:"https://aws.amazon.com/",               icons:["aws.svg"],                    c:"#ff9900", r:3, w:true },
+      { n:"Azure",        u:"https://portal.azure.com/",             icons:["azure.svg"],                  c:"#0078d4", r:3, w:true },
+      { n:"Microsoft",    u:"https://www.microsoft.com/",            icons:["microsoft.svg"],              c:"#ffffff", r:3, w:true },
+      { n:"Netflix",      u:"https://netflix.com/",                  icons:["netflix-icon.svg"],           c:"#e50914", r:3, w:true },
+      { n:"X",            u:"https://x.com/",                        icons:["x.svg"],                      c:"#ffffff", r:3, w:true },
+      { n:"Reddit",       u:"https://www.reddit.com/",               icons:["reddit.svg"],                 c:"#ff4500", r:3, w:true },
+      { n:"Telegram",     u:"https://web.telegram.org/",             icons:["telegram.svg"],               c:"#2aabee", r:3, w:true },
+      { n:"Apple",        u:"https://www.apple.com/",                icons:["apple.svg"],                  c:"#ffffff", r:3, w:true },
+      { n:"Spotify",      u:"https://spotify.com/",                  icons:["spotify-icon.svg"],           c:"#1db954", r:3 },
+      { n:"Meta",         u:"https://about.meta.com/",               icons:["meta-color.svg"],             c:"#0EA5E9", r:3 },
+      { n:"Wikipedia",    u:"https://wikipedia.org/",                icons:["wiki.svg"],                   c:"#999999", r:3, w:true }
     ];
 
-    function imgTag(src, cls){
-      return `<img class="${cls}" src="${ICON_BASE}${encodeURIComponent(src)}" onerror="this.src='${ICON_BASE}${FALLBACK}'">`;
+    function imgTag(src, cls=""){
+      return `<img class="${cls}" src="${ICON_BASE}${encodeURIComponent(src)}" loading="lazy" onerror="this.src='${ICON_BASE}${FALLBACK}'">`;
     }
 
     function render(){
@@ -204,7 +208,7 @@
         if (s.s) a.style.setProperty("--s", s.s);
         const iconHTML = s.gem 
           ? `<div class="icon gemini">${imgTag("gemini.svg","g0")}${imgTag("gemini-color.svg","g1")}</div>`
-          : `<div class="icon">${imgTag(s.i,"single")}</div>`;
+          : `<div class="icon">${imgTag(s.icons[0],"single")}</div>`;
         a.innerHTML = `${iconHTML}<div class="label">${s.n}</div>`;
         (s.r <= 2 ? ess : ext).appendChild(a);
       });
@@ -212,8 +216,8 @@
 
     async function updateWeather(){
       try {
-        const res = await fetch("https://ipapi.co/json/");
-        const ip = await res.json();
+        const ipRes = await fetch("https://ipapi.co/json/");
+        const ip = await ipRes.json();
         const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${ip.latitude}&longitude=${ip.longitude}&current=temperature_2m`);
         const w = await wRes.json();
         document.getElementById("temp").textContent = `${Math.round(w.current.temperature_2m)}°C`;
@@ -246,8 +250,7 @@
         const a = e.target.closest("a.item");
         if (!a) { if(activeEl) activeEl.classList.remove("is-active"); activeEl=null; return; }
         if (a !== activeEl){ 
-          e.preventDefault(); 
-          if(activeEl) activeEl.classList.remove("is-active"); 
+          e.preventDefault(); if(activeEl) activeEl.classList.remove("is-active"); 
           a.classList.add("is-active"); activeEl=a; 
           clearTimeout(timer); timer=setTimeout(()=>{a.classList.remove("is-active"); activeEl=null;}, 850); 
         }
