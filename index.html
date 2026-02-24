@@ -20,18 +20,18 @@
       --hair:rgba(0,0,0,0.08); --surface: rgba(255,255,255,0.56);
       --surface-strong: rgba(255,255,255,0.75);
       --search: rgba(0,0,0,0.035);
-      --icon-default-opacity: 0.70; --icon-brightness: 1.05;
-      --glow-opacity:0.12; --focus: rgba(0,122,255,0.32);
+      --icon-default-opacity: 0.70; --glow-opacity:0.12;
+      --focus: rgba(0,122,255,0.32);
     }
 
     body.theme-night{
       --bg-top:#0B0F18; --bg-bottom:#070A12;
       --text:rgba(255,255,255,0.92); --muted:rgba(255,255,255,0.58);
       --hair:rgba(255,255,255,0.12); --surface: rgba(18,22,32,0.58);
-      --surface-strong: rgba(255,255,255,0.05); /* 夜间基座极暗 */
+      --surface-strong: rgba(255,255,255,0.03); /* 夜间基座极暗，透明玻璃感 */
       --search: rgba(255,255,255,0.09);
-      --icon-default-opacity: 0.92; --icon-brightness: 1.45;
-      --glow-opacity:0.25; --focus: rgba(10,132,255,0.36);
+      --icon-default-opacity: 0.85; --glow-opacity:0.25;
+      --focus: rgba(10,132,255,0.36);
     }
 
     *{ box-sizing:border-box }
@@ -85,29 +85,31 @@
     .icon{ width: 56px; height: 56px; display:grid; place-items:center; position:relative; border-radius: 16px; background: var(--surface-strong); border: 1px solid var(--hair); box-shadow: 0 8px 20px rgba(0,0,0,0.06); transition: .25s var(--ease); overflow:hidden; }
 
     /* =========================
-       ✅ 核心滤镜重构：防御图标隐身
+       ✅ 终极三态滤镜重构 (修复图41-45彩色变灰问题)
        ========================= */
-    .icon img{
+    .icon img {
       width: 36px; height: 36px; object-fit: contain; transform: translateY(var(--y, 0px)) scale(var(--s, 1));
-      filter: grayscale(100%) opacity(var(--icon-default-opacity));
+      /* 初始态：彩色图标降饱和度&不透明度，实现“融入感”而非“压抑感” */
+      filter: saturate(0.6) opacity(var(--icon-default-opacity));
       transition: transform .35s var(--ease), filter .35s var(--ease), opacity .35s var(--ease);
       will-change: filter, transform;
     }
 
-    /* 1. 夜间静态态：白色图标反转 (GitHub, X, ChatGPT等) */
+    /* 夜间态反转：仅针对 whiteInvert 的单色图标 (GitHub/X等) */
     body.theme-night .white-invert .icon img,
     body.theme-night .white-invert .icon.gemini img.g0 {
-      filter: grayscale(100%) invert(1) brightness(1.8) opacity(var(--icon-default-opacity)) !important;
+      filter: grayscale(100%) invert(1) brightness(1.8) opacity(0.9) !important;
     }
 
-    /* 2. 激活态：全彩展现 (Hover & Tap) */
+    /* 唤醒态 (Hover/Tap)：强制还原 100% 原始色彩 */
     .item:hover .icon img, 
     .item.is-active .icon img {
-      filter: grayscale(0%) invert(0%) brightness(1) opacity(1) !important;
+      filter: saturate(1) opacity(1) grayscale(0%) invert(0%) brightness(1) !important;
       transform: translateY(calc(var(--y, 0px) - 6px)) scale(var(--s, 1));
     }
 
-    /* Gemini 特殊层逻辑 */
+    /* Gemini 双层同步 */
+    .icon.gemini img.g0 { filter: saturate(0.6) opacity(var(--icon-default-opacity)); }
     .icon.gemini img.g1 { position:absolute; opacity: 0; transition: .38s var(--ease); filter: none !important; }
     .item:hover .icon.gemini img.g0, .item.is-active .icon.gemini img.g0 { opacity: 0; }
     .item:hover .icon.gemini img.g1, .item.is-active .icon.gemini img.g1 { opacity: 1; transform: translateY(calc(var(--y, 0px) - 6px)) scale(var(--s, 1)); }
@@ -132,9 +134,7 @@
     <div class="top">
       <div class="top-left">
         <div id="greet" class="greet">Hello.</div>
-        <div class="weather">
-          <span id="temp">…</span><span id="city">WEATHER</span>
-        </div>
+        <div class="weather"><span id="temp">…</span><span id="city">WEATHER</span></div>
       </div>
       <div class="clock" id="clock">00:00</div>
     </div>
@@ -142,8 +142,10 @@
     <form class="search" id="searchForm" autocomplete="off" role="search">
       <input id="q" type="search" placeholder="Search..." autofocus />
     </form>
+    
     <div class="section">ESSENTIALS<div class="line"></div></div>
     <div id="ess" class="grid"></div>
+
     <div id="moreArea" aria-hidden="true">
       <div class="section" style="margin-top:18px;">EXTENDED<div class="line"></div></div>
       <div id="ext" class="grid"></div>
@@ -157,35 +159,31 @@
       { t: "Stay hungry, stay foolish.", a: "Steve Jobs" },
       { t: "Simplicity is the ultimate sophistication.", a: "Leonardo da Vinci" },
       { t: "Design is how it works.", a: "Steve Jobs" },
-      { t: "Make it simple, but significant.", a: "Don Draper" }
+      { t: "The details are not the details. They make the design.", a: "Charles Eames" }
     ];
 
     const SITES = [
-      // Essentials (Row 1-2)
+      // row 1-2: Essentials (12)
       { n:"ChatGPT",      u:"https://chatgpt.com/",                  i:"openai.svg",           c:"#10a37f", r:1, w:true },
       { n:"Claude",       u:"https://claude.ai/",                    i:"claude-color.svg",     c:"#d97757", r:1 },
       { n:"Copilot",      u:"https://copilot.microsoft.com/",        i:"copilot-color.svg",    c:"#0078d4", r:1 },
       { n:"Gemini",       u:"https://gemini.google.com/",            gem:true, s:1.14,         c:"#4e85ff", r:1, w:true },
       { n:"GitHub",       u:"https://github.com/",                   i:"github.svg",           c:"#ffffff", r:1, w:true },
       { n:"Cloudflare",   u:"https://dash.cloudflare.com/",          i:"cloudflare-color.svg", c:"#f48120", r:1 },
-
       { n:"Gmail",        u:"https://mail.google.com/",              i:"google-gmail.svg",     c:"#ea4335", r:2 },
       { n:"Google",       u:"https://www.google.com/",               i:"google-color.svg",     c:"#4285f4", r:2 },
       { n:"Google Cloud", u:"https://console.cloud.google.com/",     i:"googlecloud-color.svg",c:"#4285f4", r:2 },
       { n:"Google Drive", u:"https://drive.google.com/",             i:"google-drive.svg",     c:"#34a853", r:2 },
       { n:"Google Maps",  u:"http://googleusercontent.com/maps.google.com/0",           i:"google-maps.svg",      c:"#4285f4", r:2 },
       { n:"YouTube",      u:"https://youtube.com/results?search_query=",              i:"youtube_red.svg",      c:"#ff0000", r:2 },
-
-      // Extended (Row 3-4)
+      // row 3: Extended (补齐至满屏)
       { n:"AWS",          u:"https://aws.amazon.com/",               i:"aws.svg",              c:"#ff9900", r:3, w:true },
       { n:"Azure",        u:"https://portal.azure.com/",             i:"azure.svg",            c:"#0078d4", r:3, w:true },
-      { n:"Microsoft",    u:"https://www.microsoft.com/",            i:"microsoft.svg",        c:"#ffffff", r:3, w:true },
-      { n:"Bing",         u:"https://www.bing.com/",                 i:"bing.svg",             c:"#008373", r:3, w:true },
-      { n:"Netflix",      u:"https://netflix.com/",                  i:"netflix-icon.svg",     c:"#e50914", r:3, w:true },
-      { n:"Spotify",      u:"http://googleusercontent.com/spotify.com/3",             i:"spotify-icon.svg",     c:"#1db954", r:3 },
       { n:"X",            u:"https://x.com/",                        i:"x.svg",                c:"#ffffff", r:3, w:true },
       { n:"Reddit",       u:"https://www.reddit.com/",               i:"reddit.svg",           c:"#ff4500", r:3, w:true },
       { n:"Telegram",     u:"https://web.telegram.org/",             i:"telegram.svg",         c:"#2aabee", r:3, w:true },
+      { n:"Netflix",      u:"https://netflix.com/",                  i:"netflix-icon.svg",     c:"#e50914", r:3, w:true },
+      { n:"Spotify",      u:"https://open.spotify.com/",             i:"spotify-icon.svg",     c:"#1db954", r:3 },
       { n:"Apple",        u:"https://www.apple.com/",                i:"apple.svg",            c:"#ffffff", r:3, w:true },
       { n:"Meta",         u:"https://about.meta.com/",               i:"meta-color.svg",       c:"#0EA5E9", r:3 },
       { n:"Wikipedia",    u:"https://www.wikipedia.org/",            i:"wiki.svg",             c:"#999999", r:3, w:true }
