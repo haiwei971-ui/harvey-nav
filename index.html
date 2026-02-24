@@ -4,762 +4,240 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
   <title>Harveyi</title>
-
+  <meta name="apple-mobile-web-app-title" content="Harveyi">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 
   <style>
     :root{
       --ease: cubic-bezier(0.16, 1, 0.3, 1);
-
-      /* Apple-ish neutrals */
-      --bg-top:#FFFFFF;
-      --bg-bottom:#F5F5F7;
-      --text:#1D1D1F;
-      --muted:rgba(0,0,0,0.52);
-
-      /* Hairlines & surfaces */
-      --hair:rgba(0,0,0,0.08);
-      --surface: rgba(255,255,255,0.56);
+      /* Day Theme */
+      --bg-top:#FFFFFF; --bg-bottom:#F5F5F7;
+      --text:#1D1D1F; --muted:rgba(0,0,0,0.52);
+      --hair:rgba(0,0,0,0.08); --surface: rgba(255,255,255,0.56);
       --surface-strong: rgba(255,255,255,0.72);
-
-      /* Icon optics */
-      --icon-default-opacity: 0.70;
-      --icon-brightness: 1.05;
-      --icon-shadow: rgba(0,0,0,0.06);
-
-      /* Glow (subtle) */
-      --glow-opacity:0.12;
-
-      /* Focus ring (system-ish) */
-      --focus: rgba(0,122,255,0.32);
-      --focus-border: rgba(0,122,255,0.42);
+      --search: rgba(0,0,0,0.035);
+      --icon-default-opacity: 0.70; --icon-brightness: 1.05;
+      --glow-opacity:0.12; --focus: rgba(0,122,255,0.32);
     }
 
-    /* Dark: follow system unless user forces .theme-day */
-    @media (prefers-color-scheme: dark){
-      body:not(.theme-day){
-        --bg-top:#0B0F18;
-        --bg-bottom:#070A12;
-        --text:rgba(255,255,255,0.92);
-        --muted:rgba(255,255,255,0.58);
-
-        --hair:rgba(255,255,255,0.10);
-        --surface: rgba(18,22,32,0.58);
-        --surface-strong: rgba(18,22,32,0.70);
-
-        --icon-default-opacity: 0.92;
-        --icon-brightness: 1.45;
-        --icon-shadow: rgba(0,0,0,0.0);
-
-        --glow-opacity:0.22;
-
-        --focus: rgba(10,132,255,0.36);
-        --focus-border: rgba(10,132,255,0.46);
-      }
-    }
-
-    /* Optional time-based class; colors mostly follow system */
     body.theme-night{
-      --bg-top:#0B0F18;
-      --bg-bottom:#070A12;
-      --text:rgba(255,255,255,0.92);
-      --muted:rgba(255,255,255,0.58);
-
-      --hair:rgba(255,255,255,0.10);
-      --surface: rgba(18,22,32,0.58);
-      --surface-strong: rgba(18,22,32,0.70);
-
-      --icon-default-opacity: 0.92;
-      --icon-brightness: 1.45;
-      --icon-shadow: rgba(0,0,0,0.0);
-
-      --glow-opacity:0.22;
-
-      --focus: rgba(10,132,255,0.36);
-      --focus-border: rgba(10,132,255,0.46);
+      --bg-top:#0B0F18; --bg-bottom:#070A12;
+      --text:rgba(255,255,255,0.92); --muted:rgba(255,255,255,0.58);
+      --hair:rgba(255,255,255,0.12); --surface: rgba(18,22,32,0.58);
+      --surface-strong: rgba(255,255,255,0.05); /* 夜间基座变暗 */
+      --search: rgba(255,255,255,0.09);
+      --icon-default-opacity: 0.92; --icon-brightness: 1.45;
+      --glow-opacity:0.25; --focus: rgba(10,132,255,0.36);
     }
 
     *{ box-sizing:border-box }
     html,body{ height:100% }
     body{
-      margin:0;
-      font-family: Inter, -apple-system, system-ui, sans-serif;
-      color:var(--text);
-      background: linear-gradient(180deg,var(--bg-top),var(--bg-bottom));
-      min-height:100vh;
-      transition: background 900ms var(--ease), color 900ms var(--ease);
-      overflow-x:hidden;
-      -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
+      margin:0; font-family: Inter, -apple-system, system-ui, sans-serif;
+      color:var(--text); background: linear-gradient(180deg,var(--bg-top),var(--bg-bottom));
+      min-height:100vh; transition: background 900ms var(--ease), color 900ms var(--ease);
+      overflow-x:hidden; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
     }
 
-    /* Subtle animated blob background */
-    .bg-flow{
-      position:fixed; inset:-20%;
-      pointer-events:none; z-index:-3;
-      filter:blur(120px); opacity:.26;
-    }
+    .bg-flow{ position:fixed; inset:-20%; pointer-events:none; z-index:-3; filter:blur(120px); opacity:.26; }
     .bg-flow .blob{
       position:absolute; width:70vmax; height:70vmax; border-radius:999px;
       background: radial-gradient(circle, var(--brand-color, #a1c4fd), transparent 62%);
       animation: drift 70s cubic-bezier(.45, 0, .55, 1) infinite alternate;
-      transform: translate(-5%,-6%);
     }
-    @keyframes drift{
-      from{ transform:translate(-8%,-8%) }
-      to{ transform:translate(10%,10%) }
-    }
+    @keyframes drift{ from{ transform:translate(-8%,-8%) } to{ transform:translate(10%,10%) } }
 
-    /* Reduced motion */
-    @media (prefers-reduced-motion: reduce){
-      *{ animation:none !important; transition:none !important; }
-      .bg-flow{ display:none; }
-    }
+    .wrap{ max-width: 1040px; margin: auto; padding: calc(22px + env(safe-area-inset-top)) 20px 58px; }
 
-    .wrap{
-      max-width: 1040px;
-      margin: auto;
-      padding: calc(22px + env(safe-area-inset-top)) 20px 58px;
-    }
+    .top{ display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 10px; opacity: .92; }
+    .top-left .greet{ font-size: 22px; font-weight: 650; margin-bottom: 2px; }
+    .top-left .weather{ font-size: 13px; color: var(--muted); display:flex; gap: 8px; align-items:center; min-height: 18px; }
+    .clock{ font-family:"JetBrains Mono"; font-weight: 600; font-size: 24px; letter-spacing: -1px; }
 
-    /* Header */
-    .top{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-end;
-      gap: 16px;
-      margin-bottom: 10px;
-      opacity: .92;
-    }
-    .top-left .greet{
-      font-size: 22px;
-      font-weight: 650;
-      margin-bottom: 2px;
-      letter-spacing: -0.2px;
-    }
-    .top-left .weather{
-      font-size: 13px;
-      color: var(--muted);
-      display:flex;
-      gap: 8px;
-      align-items:center;
-      min-height: 18px;
-    }
-    .clock{
-      font-family:"JetBrains Mono";
-      font-weight: 600;
-      font-size: 24px;
-      letter-spacing: -1px;
-      white-space:nowrap;
-    }
+    .quote-area{ margin: 14px 0 18px; padding: 0 10px; border-left: 2px solid var(--hair); opacity: .78; }
+    .quote-text{ font-size: 14px; font-style: italic; color: var(--muted); line-height: 1.55; max-width: 640px; }
+    .quote-author{ font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 6px; opacity: 0.62; }
 
-    /* Quote */
-    .quote-area{
-      margin: 14px 0 18px;
-      padding: 0 10px;
-      border-left: 2px solid var(--hair);
-      opacity: .78;
-    }
-    .quote-text{
-      font-size: 14px;
-      font-style: italic;
-      color: var(--muted);
-      line-height: 1.55;
-      max-width: 640px;
-    }
-    .quote-author{
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-top: 6px;
-      opacity: 0.62;
-    }
-
-    /* Search */
     .search{
-      display:flex;
-      align-items:center;
-      gap: 12px;
-      background: var(--surface);
-      border: 1px solid color-mix(in srgb, var(--hair) 75%, transparent);
-      padding: 14px 18px;
-      border-radius: 999px;
-      margin-bottom: 18px;
-      backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
-      transition: transform .28s var(--ease), box-shadow .28s var(--ease), border-color .28s var(--ease);
+      display:flex; align-items:center; gap: 12px; background: var(--surface);
+      border: 1px solid var(--hair); padding: 14px 18px; border-radius: 999px;
+      margin-bottom: 18px; backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+      transition: transform .28s var(--ease), box-shadow .28s var(--ease);
       box-shadow: 0 10px 30px rgba(0,0,0,0.06);
     }
-    .search:focus-within{
-      transform: scale(1.01);
-      border-color: var(--focus-border);
-      box-shadow: 0 14px 38px rgba(0,0,0,0.10);
-    }
-    .search input{
-      flex:1;
-      width:100%;
-      background: transparent;
-      border: 0;
-      outline: none;
-      color: var(--text);
-      font-size: 17px;
-      letter-spacing: -0.15px;
-    }
-    .search input::placeholder{
-      color: color-mix(in srgb, var(--muted) 85%, transparent);
+    .search:focus-within{ transform: scale(1.01); border-color: var(--focus); box-shadow: 0 14px 38px rgba(0,0,0,0.10); }
+    .search input{ flex:1; background: transparent; border: 0; outline: none; color: var(--text); font-size: 17px; }
+
+    .section{ margin: 16px 0 10px; display:flex; align-items:center; gap: 12px; color: var(--muted); font-size: 11px; letter-spacing: .20em; text-transform: uppercase; font-weight: 650; }
+    .section .line{ flex:1; height:1px; background: var(--hair); }
+
+    .grid{ display:grid; gap: 26px 18px; grid-template-columns: repeat(6, 1fr); }
+    @media (max-width:760px){ .grid{ grid-template-columns: repeat(4, 1fr); } }
+    @media (max-width:520px){ .grid{ grid-template-columns: repeat(3, 1fr); } }
+
+    .item{ position:relative; display:flex; flex-direction:column; align-items:center; gap: 10px; text-decoration:none; color: var(--muted); transition: transform .22s var(--ease); min-height: 92px; -webkit-tap-highlight-color: transparent; }
+    .item:active{ transform: scale(0.96); transition: transform .08s; }
+
+    .icon{ width: 56px; height: 56px; display:grid; place-items:center; position:relative; border-radius: 16px; background: var(--surface-strong); border: 1px solid var(--hair); box-shadow: 0 8px 20px rgba(0,0,0,0.06); transition: .25s var(--ease); overflow:hidden; }
+
+    /* ✅ 基础滤镜逻辑：统一灰度 */
+    .icon img.single, .icon.gemini img.g0 {
+      width: 36px; height: 36px; object-fit: contain; transform: translateY(var(--y, 0px)) scale(var(--s, 1));
+      filter: grayscale(100%) brightness(var(--icon-brightness)) opacity(var(--icon-default-opacity));
+      transition: .35s var(--ease);
     }
 
-    /* Sections */
-    .section{
-      margin: 16px 0 10px;
-      display:flex;
-      align-items:center;
-      gap: 12px;
-      color: var(--muted);
-      font-size: 11px;
-      letter-spacing: .20em;
-      text-transform: uppercase;
-      font-weight: 650;
-      user-select:none;
-    }
-    .section .line{
-      flex:1; height:1px; background: var(--hair);
+    /* ✅ 夜间模式针对性反转 (静默态) */
+    body.theme-night .white-invert .icon img.single,
+    body.theme-night .white-invert .icon.gemini img.g0 {
+      filter: grayscale(100%) invert(1) brightness(1.8) opacity(var(--icon-default-opacity)) !important;
     }
 
-    /* Grid */
-    .grid{
-      display:grid;
-      gap: 26px 18px;
-      grid-template-columns: repeat(6, 1fr);
-    }
-    @media (min-width:1100px){
-      .grid{ grid-template-columns: repeat(8, 1fr); }
-    }
-    @media (max-width:1099px){
-      .grid{ grid-template-columns: repeat(6, 1fr); }
-    }
-    @media (max-width:760px){
-      .grid{ grid-template-columns: repeat(4, 1fr); }
-    }
-    @media (max-width:520px){
-      .grid{ grid-template-columns: repeat(3, 1fr); }
+    /* ✅ 激活态：撤销所有反转和灰度 (Hover & Touch) */
+    .item:hover .icon img.single, .item.is-active .icon img.single {
+      filter: grayscale(0%) invert(0%) brightness(1) opacity(1) !important;
+      transform: translateY(calc(var(--y, 0px) - 6px)) scale(var(--s, 1));
     }
 
-    /* Items */
-    .item{
-      position:relative;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap: 10px;
-      text-decoration:none;
-      color: var(--muted);
-      transition: transform .22s var(--ease);
-      min-height: 92px;
-      -webkit-tap-highlight-color: transparent;
-      isolation: isolate;
-      border-radius: 18px;
-      padding: 6px 4px 8px;
-    }
-    .item:active{
-      transform: scale(0.96);
-      transition: transform .08s;
-    }
+    .icon.gemini img.g1{ position:absolute; width: 36px; height: 36px; opacity: 0; transition:.38s var(--ease); }
+    .item:hover .icon.gemini img.g0, .item.is-active .icon.gemini img.g0{ opacity: 0; }
+    .item:hover .icon.gemini img.g1, .item.is-active .icon.gemini img.g1{ opacity: 1; transform: translateY(calc(var(--y, 0px) - 6px)) scale(var(--s, 1)); }
 
-    /* Keyboard focus */
-    .item:focus-visible{ outline:none; }
-    .item:focus-visible .icon{
-      box-shadow:
-        0 0 0 3px var(--focus),
-        0 12px 28px rgba(0,0,0,0.10);
-      border-color: var(--focus-border);
-    }
-    .item:focus-visible .label{ color: var(--text); }
-
-    /* Icon baseplate: cleaner iOS-like */
-    .icon{
-      width: 56px;
-      height: 56px;
-      display:grid;
-      place-items:center;
-      position:relative;
-      border-radius: 16px;
-
-      background: color-mix(in srgb, #fff 78%, var(--surface-strong));
-      border: 1px solid color-mix(in srgb, var(--hair) 92%, transparent);
-
-      box-shadow:
-        0 1px 0 rgba(0,0,0,0.03),
-        0 10px 24px rgba(0,0,0,0.08);
-
-      transition: transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);
-      overflow:hidden;
-    }
-    /* Subtle highlight */
-    .icon::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background: linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0));
-      opacity: .35;
-      pointer-events:none;
-    }
-
-    /* Icon image optics */
-    .icon img.single{
-      width: 36px;
-      height: 36px;
-      object-fit: contain;
-      transform: translateY(var(--y, 0px)) scale(var(--s, 1));
-      filter: grayscale(100%) brightness(var(--icon-brightness)) opacity(var(--icon-default-opacity))
-              drop-shadow(0 2px 4px var(--icon-shadow));
-      transition: transform .35s var(--ease), filter .35s var(--ease), opacity .35s var(--ease);
-      will-change: transform, filter;
-    }
-
-    /* Gemini */
-    .icon.gemini img{
-      position:absolute;
-      width: 36px;
-      height: 36px;
-      object-fit:contain;
-      transform: translateY(var(--y, 0px)) scale(var(--s, 1));
-      transition: transform .38s var(--ease), opacity .38s var(--ease);
-      will-change: transform, opacity;
-    }
-    .icon.gemini img.g0{
-      filter: grayscale(100%) brightness(var(--icon-brightness)) opacity(var(--icon-default-opacity))
-              drop-shadow(0 2px 4px var(--icon-shadow));
-    }
-    .icon.gemini img.g1{
-      opacity: 0;
-      filter: none;
-    }
-
-    /* Hover (pointer devices only) */
-    @media (hover:hover) and (pointer:fine){
-      .item:hover{ transform: translateY(-2px); }
-      .item:hover .icon{
-        box-shadow:
-          0 1px 0 rgba(0,0,0,0.03),
-          0 16px 34px rgba(0,0,0,0.12);
-      }
-      .item:hover .icon img.single{
-        filter: grayscale(0%) brightness(1) opacity(1) drop-shadow(0 6px 14px rgba(0,0,0,0.12));
-        transform: translateY(calc(var(--y, 0px) - 5px)) scale(var(--s, 1));
-      }
-      .item:hover .icon.gemini img{
-        transform: translateY(calc(var(--y, 0px) - 5px)) scale(var(--s, 1));
-      }
-      .item:hover .icon.gemini img.g0{ opacity: 0; }
-      .item:hover .icon.gemini img.g1{ opacity: 1; }
-
-      .item:hover .icon::after{
-        content:"";
-        position:absolute;
-        inset:-14px;
-        border-radius: 22px;
-        z-index:-1;
-        filter: blur(34px);
-        opacity: var(--glow-opacity);
-        background: radial-gradient(circle, var(--brand-color, #7C5CFF), transparent 72%);
-      }
-
-      .item:hover .label{ color: var(--text); }
-    }
-
-    /* Dark invert for selected monochrome marks */
-    @media (prefers-color-scheme: dark){
-      body:not(.theme-day) .white-invert .icon img.single{
-        filter: grayscale(100%) invert(1) brightness(1.85) opacity(var(--icon-default-opacity))
-                drop-shadow(0 2px 4px rgba(0,0,0,0)) !important;
-      }
-    }
-    body.theme-night .white-invert .icon img.single{
-      filter: grayscale(100%) invert(1) brightness(1.85) opacity(var(--icon-default-opacity))
-              drop-shadow(0 2px 4px rgba(0,0,0,0)) !important;
-    }
-
-    .label{
-      font-size: 13px;
-      text-align:center;
-      white-space: nowrap;
-      transition: color .25s var(--ease);
-      letter-spacing: -0.12px;
-    }
-
-    /* More section */
-    #moreArea[aria-hidden="true"]{ display:none; }
-
-    .morebtn{
-      background: var(--surface);
-      border: 1px solid color-mix(in srgb, var(--hair) 75%, transparent);
-      color: var(--text);
-      padding: 9px 24px;
-      border-radius: 999px;
-      cursor:pointer;
-      font-size: 13px;
-      opacity: .72;
-      transition: transform .25s var(--ease), opacity .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);
-      margin: 26px auto 0;
-      display:block;
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-    }
-    .morebtn:hover{ opacity:1; transform: scale(1.03); }
-    .morebtn:focus-visible{
-      outline:none;
-      border-color: var(--focus-border);
-      box-shadow: 0 0 0 3px var(--focus);
-      opacity: 1;
-    }
-
-    /* =========================
-       Tap-to-wake highlight (touch)
-       ========================= */
-    .item.is-active .label { color: var(--text); }
-
-    .item.is-active .icon{
-      box-shadow:
-        0 1px 0 rgba(0,0,0,0.03),
-        0 16px 34px rgba(0,0,0,0.12);
-    }
-
-    .item.is-active .icon img.single{
-      filter: grayscale(0%) brightness(1) opacity(1) drop-shadow(0 6px 14px rgba(0,0,0,0.12)) !important;
-      transform: translateY(calc(var(--y, 0px) - 5px)) scale(var(--s, 1));
-    }
-
-    .item.is-active .icon.gemini img{
-      transform: translateY(calc(var(--y, 0px) - 5px)) scale(var(--s, 1));
-    }
-    .item.is-active .icon.gemini img.g0{ opacity: 0; }
-    .item.is-active .icon.gemini img.g1{ opacity: 1; }
-
-    .item.is-active .icon::after{
-      content:"";
-      position:absolute;
-      inset:-14px;
-      border-radius: 22px;
-      z-index:-1;
-      filter: blur(34px);
-      opacity: var(--glow-opacity);
+    .item:hover .icon::after, .item.is-active .icon::after{
+      content:""; position:absolute; inset:-14px; border-radius: 22px; z-index:-1;
+      filter: blur(34px); opacity: var(--glow-opacity);
       background: radial-gradient(circle, var(--brand-color, #7C5CFF), transparent 72%);
     }
+
+    .label{ font-size: 13px; text-align:center; white-space: nowrap; transition: color .25s var(--ease); }
+    .item:hover .label, .item.is-active .label{ color: var(--text); }
+
+    #moreArea[aria-hidden="true"]{ display:none; }
+    .morebtn{ background: var(--surface); border: 1px solid var(--hair); color: var(--text); padding: 9px 24px; border-radius: 999px; cursor:pointer; font-size: 13px; opacity: .72; transition: .25s var(--ease); margin: 26px auto 0; display:block; backdrop-filter: blur(18px); }
   </style>
 </head>
 
 <body>
   <div class="bg-flow"><div class="blob"></div></div>
-
   <div class="wrap">
     <div class="top">
       <div class="top-left">
         <div id="greet" class="greet">Hello.</div>
-        <div class="weather" aria-live="polite">
-          <span id="temp">…</span>
-          <span id="city">WEATHER</span>
-          <span id="condition"></span>
+        <div class="weather">
+          <span id="temp">…</span><span id="city">WEATHER</span><span id="condition"></span>
         </div>
       </div>
-      <div class="clock" id="clock" aria-label="Current time">00:00</div>
+      <div class="clock" id="clock">00:00</div>
     </div>
-
-    <div class="quote-area" aria-hidden="true">
-      <div id="quote" class="quote-text">"Simplicity is the ultimate sophistication."</div>
-      <div id="author" class="quote-author">Leonardo da Vinci</div>
-    </div>
-
-    <form class="search" id="searchForm" autocomplete="off" role="search" aria-label="Search the web">
-      <input id="q" type="search" inputmode="search" autocomplete="off"
-             autocapitalize="none" spellcheck="false"
-             placeholder="Search..." autofocus />
+    <div class="quote-area"><div id="quote" class="quote-text"></div><div id="author" class="quote-author"></div></div>
+    <form class="search" id="searchForm" autocomplete="off" role="search">
+      <input id="q" type="search" placeholder="Search..." autofocus />
     </form>
-
     <div class="section">ESSENTIALS<div class="line"></div></div>
-    <div id="ess" class="grid" role="list"></div>
-
+    <div id="ess" class="grid"></div>
     <div id="moreArea" aria-hidden="true">
       <div class="section" style="margin-top:18px;">EXTENDED<div class="line"></div></div>
-      <div id="ext" class="grid" role="list"></div>
+      <div id="ext" class="grid"></div>
     </div>
-
-    <button class="morebtn" id="toggleBtn" aria-expanded="false" aria-controls="moreArea" type="button">
-      More Icons
-    </button>
+    <button class="morebtn" id="toggleBtn">More Icons</button>
   </div>
 
   <script>
-    const ICON_BASE = "icons/";
-    const FALLBACK  = "openai.svg";
-
+    const ICON_BASE = "icons/", FALLBACK = "openai.svg";
     const QUOTES = [
       { t: "Stay hungry, stay foolish.", a: "Steve Jobs" },
       { t: "Simplicity is the ultimate sophistication.", a: "Leonardo da Vinci" },
       { t: "Design is how it works.", a: "Steve Jobs" },
-      { t: "Make it simple, but significant.", a: "Don Draper" },
-      { t: "Details matter. It’s worth waiting to get it right.", a: "Steve Jobs" }
+      { t: "Make it simple, but significant.", a: "Don Draper" }
+    ];
+
+    const SITES = [
+      { n:"ChatGPT", u:"https://chatgpt.com/", i:["openai.svg"], c:"#10a37f", r:1, w:true },
+      { n:"Claude", u:"https://claude.ai/", i:["claude-color.svg"], c:"#d97757", r:1 },
+      { n:"Copilot", u:"https://copilot.microsoft.com/", i:["copilot-color.svg"], c:"#0078d4", r:1 },
+      { n:"Gemini", u:"https://gemini.google.com/", gem:true, c:"#4e85ff", r:1, s:1.14, w:true },
+      { n:"GitHub", u:"https://github.com/", i:["github.svg"], c:"#ffffff", r:1, w:true },
+      { n:"Cloudflare", u:"https://dash.cloudflare.com/", i:["cloudflare-color.svg"], c:"#f48120", r:1 },
+      { n:"Gmail", u:"https://mail.google.com/", i:["google-gmail.svg"], c:"#ea4335", r:2 },
+      { n:"Google", u:"https://www.google.com/", i:["google-color.svg"], c:"#4285f4", r:2 },
+      { n:"Google Cloud", u:"https://console.cloud.google.com/", i:["googlecloud-color.svg"], c:"#4285f4", r:2 },
+      { n:"YouTube", u:"https://youtube.com/", i:["youtube_red.svg"], c:"#ff0000", r:2 },
+      { n:"Netflix", u:"https://netflix.com/", i:["netflix-icon.svg"], c:"#e50914", r:3, w:true },
+      { n:"X", u:"https://x.com/", i:["x.svg"], c:"#ffffff", r:3, w:true },
+      { n:"Reddit", u:"https://reddit.com/", i:["reddit.svg"], c:"#ff4500", r:3, w:true },
+      { n:"Telegram", u:"https://web.telegram.org/", i:["telegram.svg"], c:"#2aabee", r:3, w:true }
     ];
 
     function imgTag(src, cls){
-      const safe = ICON_BASE + encodeURIComponent(src);
-      return `<img class="${cls}" src="${safe}" loading="lazy" decoding="async" alt="" onerror="this.onerror=null;this.src='${ICON_BASE}${FALLBACK}'">`;
+      return `<img class="${cls}" src="${ICON_BASE}${encodeURIComponent(src)}" onerror="this.src='${ICON_BASE}${FALLBACK}'">`;
     }
 
-    // s: scale, y: vertical optical adjustment in px
-    // whiteInvert: only for logos that need invert in dark mode
-    const SITES = [
-      { n:"ChatGPT", u:"https://chatgpt.com/", icons:["openai.svg"], c:"#10a37f", r:1, s:1.00, y:0 },
-      { n:"Claude", u:"https://claude.ai/", icons:["claude-color.svg"], c:"#d97757", r:1, s:1.02, y:0 },
-      { n:"Copilot", u:"https://copilot.microsoft.com/", icons:["copilot-color.svg"], c:"#0078d4", r:1, s:1.02, y:0 },
-      { n:"Gemini", u:"https://gemini.google.com/", gemini:true, c:"#4e85ff", r:1, s:1.14, y:0 },
-
-      { n:"Cloudflare", u:"https://dash.cloudflare.com/", icons:["cloudflare-color.svg"], c:"#f48120", r:1, s:1.03, y:0 },
-      { n:"GitHub", u:"https://github.com/", icons:["github.svg"], c:"#ffffff", r:1, whiteInvert:true, s:1.02, y:0 },
-
-      { n:"Gmail", u:"https://mail.google.com/", icons:["google-gmail.svg"], c:"#ea4335", r:2, s:1.06, y:0 },
-      { n:"Google", u:"https://www.google.com/", icons:["google-color.svg"], c:"#4285f4", r:2, s:1.05, y:0 },
-      { n:"Google Cloud", u:"https://console.cloud.google.com/", icons:["googlecloud-color.svg"], c:"#4285f4", r:2, s:1.05, y:0 },
-      { n:"Google Drive", u:"https://drive.google.com/", icons:["google-drive.svg"], c:"#34a853", r:2, s:1.06, y:0 },
-      { n:"Google Maps", u:"https://www.google.com/maps", icons:["google-maps.svg"], c:"#4285f4", r:2, s:1.06, y:0 },
-      { n:"YouTube", u:"https://www.youtube.com", icons:["youtube_red.svg"], c:"#ff0000", r:2, s:1.08, y:0 },
-
-      { n:"AWS", u:"https://aws.amazon.com/", icons:["aws.svg"], c:"#ff9900", r:3, whiteInvert:true, s:1.06, y:0 },
-      { n:"Azure", u:"https://portal.azure.com/", icons:["azure.svg"], c:"#0078d4", r:3, whiteInvert:true, s:1.05, y:0 },
-      { n:"Bing", u:"https://www.bing.com/", icons:["bing.svg"], c:"#008373", r:3, whiteInvert:true, s:1.04, y:0 },
-
-      { n:"Microsoft", u:"https://www.microsoft.com/", icons:["microsoft.svg"], c:"#ffffff", r:3, whiteInvert:true, s:1.06, y:0 },
-      { n:"Netflix", u:"https://www.netflix.com/", icons:["netflix-icon.svg"], c:"#e50914", r:3, whiteInvert:true, s:1.06, y:0 },
-      { n:"Spotify", u:"https://open.spotify.com", icons:["spotify-icon.svg"], c:"#1db954", r:3, s:1.06, y:0 },
-
-      { n:"X", u:"https://x.com/", icons:["x.svg"], c:"#ffffff", r:3, whiteInvert:true, s:1.06, y:0 },
-      { n:"Reddit", u:"https://www.reddit.com/", icons:["reddit.svg"], c:"#ff4500", r:3, whiteInvert:true, s:1.05, y:0 },
-      { n:"Telegram", u:"https://web.telegram.org/", icons:["telegram.svg"], c:"#2aabee", r:3, whiteInvert:true, s:1.05, y:0 },
-      { n:"Apple", u:"https://www.apple.com/", icons:["apple.svg"], c:"#ffffff", r:3, whiteInvert:true, s:1.08, y:0 }
-    ];
-
     function render(){
-      const ess = document.getElementById("ess");
-      const ext = document.getElementById("ext");
+      const ess = document.getElementById("ess"), ext = document.getElementById("ext");
       ess.innerHTML = ext.innerHTML = "";
-
       SITES.forEach(s=>{
         const a = document.createElement("a");
-        a.className = `item ${s.whiteInvert ? "white-invert" : ""}`;
-        a.href = s.u;
-        a.target = "_blank";
-        a.rel = "noopener noreferrer";
-        a.setAttribute("role","listitem");
-
-        const id = "lab_" + s.n.replace(/\s+/g,"_").toLowerCase();
-        a.setAttribute("aria-labelledby", id);
-
-        a.style.setProperty("--brand-color", s.c || "#7C5CFF");
-        if (s.s) a.style.setProperty("--s", String(s.s));
-        if (typeof s.y === "number") a.style.setProperty("--y", `${s.y}px`);
-
-        const iconHTML = s.gemini
-          ? `<div class="icon gemini" aria-hidden="true">
-              ${imgTag("gemini.svg", "g0")}
-              ${imgTag("gemini-color.svg", "g1")}
-            </div>`
-          : `<div class="icon" aria-hidden="true">
-              ${imgTag(s.icons[0], "single")}
-            </div>`;
-
-        a.innerHTML = `${iconHTML}<div class="label" id="${id}">${s.n}</div>`;
+        a.className = `item ${s.w ? "white-invert" : ""}`;
+        a.href = s.u; a.target = "_blank";
+        a.style.setProperty("--brand-color", s.c);
+        if (s.s) a.style.setProperty("--s", s.s);
+        const iconHTML = s.gem 
+          ? `<div class="icon gemini">${imgTag("gemini.svg","g0")}${imgTag("gemini-color.svg","g1")}</div>`
+          : `<div class="icon">${imgTag(s.i[0],"single")}</div>`;
+        a.innerHTML = `${iconHTML}<div class="label">${s.n}</div>`;
         (s.r <= 2 ? ess : ext).appendChild(a);
       });
     }
 
-    function toggleMore(){
-      const more = document.getElementById("moreArea");
-      const btn  = document.getElementById("toggleBtn");
-      const isOpen = more.getAttribute("aria-hidden") === "false";
-
-      more.setAttribute("aria-hidden", String(isOpen)); // close->true, open->false
-      btn.setAttribute("aria-expanded", String(!isOpen));
-      btn.textContent = isOpen ? "More Icons" : "Less Icons";
-    }
-
-    function updateQuote(){
-      const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
-      document.getElementById("quote").textContent = `"${q.t}"`;
-      document.getElementById("author").textContent = q.a;
+    async function updateWeather(){
+      try {
+        const res = await fetch("https://ipapi.co/json/");
+        const ip = await res.json();
+        const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${ip.latitude}&longitude=${ip.longitude}&current=temperature_2m,weather_code`);
+        const w = await wRes.json();
+        document.getElementById("temp").textContent = `${Math.round(w.current.temperature_2m)}°C`;
+        document.getElementById("city").textContent = ip.city.toUpperCase();
+      } catch(e) { document.getElementById("city").textContent = "WEATHER ERROR"; }
     }
 
     function updateTheme(){
-      const h = new Date().getHours();
-      const b = document.body;
-      const g = document.getElementById("greet");
-
+      const h = new Date().getHours(), b = document.body;
       const night = h >= 17 || h < 8;
       b.classList.toggle("theme-night", night);
-
-      g.textContent = night ? "Good night." : (h < 12 ? "Good morning." : "Good afternoon.");
+      document.getElementById("greet").textContent = night ? "Good night." : (h < 12 ? "Good morning." : "Good afternoon.");
     }
 
     function tick(){
       const d = new Date();
-      const hhmm = `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
-      const el = document.getElementById("clock");
-      if (el.textContent !== hhmm) el.textContent = hhmm;
+      document.getElementById("clock").textContent = `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
     }
 
-    document.getElementById("searchForm").onsubmit = (e)=>{
-      e.preventDefault();
-      const q = document.getElementById("q").value.trim();
-      if (!q) return;
-      window.open("https://www.google.com/search?q=" + encodeURIComponent(q), "_blank");
+    document.getElementById("toggleBtn").onclick = ()=>{
+      const m = document.getElementById("moreArea"), b = document.getElementById("toggleBtn");
+      const open = m.getAttribute("aria-hidden") === "false";
+      m.setAttribute("aria-hidden", !open);
+      b.textContent = open ? "More Icons" : "Less Icons";
     };
 
-    async function updateWeather(){
-      const tempEl = document.getElementById("temp");
-      const cityEl = document.getElementById("city");
-      const condEl = document.getElementById("condition");
-
-      const ctrl = new AbortController();
-      const timer = setTimeout(()=>ctrl.abort(), 3500);
-
-      const setUnavailable = ()=>{
-        tempEl.textContent = "";
-        cityEl.textContent = "WEATHER UNAVAILABLE";
-        condEl.textContent = "";
-      };
-
-      const wx = (code)=>{
-        const map = {
-          0:"Clear", 1:"Mainly clear", 2:"Partly cloudy", 3:"Overcast",
-          45:"Fog", 48:"Fog",
-          51:"Drizzle", 53:"Drizzle", 55:"Drizzle",
-          61:"Rain", 63:"Rain", 65:"Heavy rain",
-          66:"Freezing rain", 67:"Freezing rain",
-          71:"Snow", 73:"Snow", 75:"Heavy snow",
-          77:"Snow grains",
-          80:"Rain showers", 81:"Rain showers", 82:"Violent showers",
-          85:"Snow showers", 86:"Snow showers",
-          95:"Thunderstorm", 96:"Thunderstorm", 99:"Thunderstorm"
-        };
-        return map[code] || "Weather";
-      };
-
-      const getGeo = () => new Promise((resolve, reject)=>{
-        if (!navigator.geolocation) return reject(new Error("no geolocation"));
-        navigator.geolocation.getCurrentPosition(
-          (p)=>resolve({ lat: p.coords.latitude, lon: p.coords.longitude, precise:true }),
-          (e)=>reject(e),
-          { enableHighAccuracy:false, timeout: 2000, maximumAge: 10 * 60 * 1000 }
-        );
-      });
-
-      try{
-        let geo;
-        try{
-          geo = await getGeo();
-        }catch{
-          const ipRes = await fetch("https://ipapi.co/json/", { signal: ctrl.signal, cache:"no-store" });
-          const ip = await ipRes.json();
-          if (!ip || !ip.latitude || !ip.longitude) throw new Error("ip location failed");
-          geo = { lat: ip.latitude, lon: ip.longitude, precise:false, city: ip.city };
-        }
-
-        const wUrl = `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(geo.lat)}&longitude=${encodeURIComponent(geo.lon)}&current=temperature_2m,weather_code&temperature_unit=celsius`;
-        const wRes = await fetch(wUrl, { signal: ctrl.signal, cache:"no-store" });
-        const w = await wRes.json();
-
-        const t = w?.current?.temperature_2m;
-        const code = w?.current?.weather_code;
-        if (typeof t !== "number") throw new Error("bad weather data");
-
-        let city = geo.city;
-        if (!city){
-          const nUrl = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(geo.lat)}&lon=${encodeURIComponent(geo.lon)}`;
-          const nRes = await fetch(nUrl, {
-            signal: ctrl.signal,
-            cache:"no-store",
-            headers: { "Accept":"application/json" }
-          });
-          const n = await nRes.json();
-          const addr = n?.address || {};
-          city = addr.city || addr.town || addr.village || addr.state || "LOCAL";
-        }
-
-        tempEl.textContent = `${Math.round(t)}°C`;
-        cityEl.textContent = String(city).toUpperCase();
-        condEl.textContent = wx(code);
-      }catch(e){
-        setUnavailable();
-      }finally{
-        clearTimeout(timer);
-      }
-    }
-
-    // =========================
-    // Tap-to-wake (iPad safe)
-    // First tap: highlight, second tap: open
-    // =========================
     (function enableTapWake(){
-      // iPad-safe touch detection (matchMedia is flaky on iPadOS)
-      const isTouch = (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) || ("ontouchstart" in window);
-      if (!isTouch) return;
-
-      let activeEl = null;
-      let clearTimer = null;
-
-      const clearActive = ()=>{
-        if (activeEl) activeEl.classList.remove("is-active");
-        activeEl = null;
-        if (clearTimer) clearTimeout(clearTimer);
-        clearTimer = null;
-      };
-
-      // Core wake function
-      const wake = (a)=>{
-        clearActive();
-        a.classList.add("is-active");
-        activeEl = a;
-        clearTimer = setTimeout(clearActive, 1200);
-      };
-
-      // Touchstart: reliably fires on iOS Safari
+      let activeEl = null, timer = null;
       document.addEventListener("touchstart", (e)=>{
         const a = e.target.closest("a.item");
-        if (!a) { clearActive(); return; }
-        // first touch: wake only
-        if (a !== activeEl){
-          e.preventDefault();
-          wake(a);
-        }
-      }, { passive:false, capture:true });
-
-      // Click: for second tap (open), and for non-touch fallbacks
-      document.addEventListener("click", (e)=>{
-        const a = e.target.closest("a.item");
-        if (!a) { clearActive(); return; }
-        if (a === activeEl) return; // allow open on second tap
-        e.preventDefault();
-        e.stopPropagation();
-        wake(a);
-      }, { capture:true });
-
-      document.addEventListener("scroll", clearActive, { passive:true });
+        if (!a) { if(activeEl) activeEl.classList.remove("is-active"); activeEl=null; return; }
+        if (a !== activeEl){ e.preventDefault(); if(activeEl) activeEl.classList.remove("is-active"); a.classList.add("is-active"); activeEl=a; clearTimeout(timer); timer=setTimeout(()=>{a.classList.remove("is-active"); activeEl=null;}, 800); }
+      }, {passive:false});
     })();
 
-    // Init
-    document.getElementById("toggleBtn").addEventListener("click", toggleMore);
+    const q = QUOTES[Math.floor(Math.random()*QUOTES.length)];
+    document.getElementById("quote").textContent = `"${q.t}"`;
+    document.getElementById("author").textContent = q.a;
 
-    updateTheme();
-    tick();
-    render();
-    updateWeather();
-    updateQuote();
-
-    setInterval(tick, 1000);
-    setInterval(updateTheme, 60000);
-    setInterval(updateWeather, 600000);
+    updateTheme(); tick(); render(); updateWeather();
+    setInterval(tick, 1000); setInterval(updateTheme, 60000);
   </script>
 </body>
 </html>
