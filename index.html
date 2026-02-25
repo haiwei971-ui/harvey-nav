@@ -274,44 +274,33 @@
 
     // Full list (ESSENTIALS: r<=2, EXTENDED: r>=3)
     // s: scale, y: vertical adjust px, w: whiteInvert, gem: gemini dual-layer
-    const SITES = [
-  // Essentials row 1
+   const SITES = [
+  // Essentials row 1（保持不动）
   { n:"ChatGPT", u:"https://chatgpt.com/", icons:["openai.svg"], c:"#10a37f", r:1, s:1.00, y:0, w:true },
   { n:"Claude", u:"https://claude.ai/", icons:["claude-color.svg"], c:"#d97757", r:1, s:1.02, y:0 },
   { n:"Copilot", u:"https://copilot.microsoft.com/", icons:["copilot-color.svg"], c:"#0078d4", r:1, s:1.02, y:0 },
   { n:"Gemini", u:"https://gemini.google.com/", gem:true, c:"#4e85ff", r:1, s:1.14, y:0, w:true },
-
-  // ✅ 交换位置：Cloudflare ↔ X（把 X 放到这里）
   { n:"X", u:"https://x.com/", icons:["x.svg"], c:"#ffffff", r:1, s:1.06, y:0, w:true },
-
   { n:"GitHub", u:"https://github.com/", icons:["github.svg"], c:"#ffffff", r:1, s:1.02, y:0, w:true },
 
-  // Essentials row 2
+  // Essentials row 2（把 Notion / Reddit / Telegram 提上来）
   { n:"Gmail", u:"https://mail.google.com/", icons:["google-gmail.svg"], c:"#ea4335", r:2, s:1.06, y:0 },
   { n:"Google", u:"https://www.google.com/", icons:["google-color.svg"], c:"#4285f4", r:2, s:1.05, y:0 },
-  { n:"Google Cloud", u:"https://console.cloud.google.com/", icons:["googlecloud-color.svg"], c:"#4285f4", r:2, s:1.05, y:0 },
-  { n:"Google Drive", u:"https://drive.google.com/", icons:["google-drive.svg"], c:"#34a853", r:2, s:1.06, y:0 },
-  { n:"Google Maps", u:"https://www.google.com/maps", icons:["google-maps.svg"], c:"#4285f4", r:2, s:1.06, y:0 },
+  { n:"Notion", u:"https://www.notion.so/", icons:["notion.svg"], c:"#ffffff", r:2, s:1.06, y:0, w:true },
+  { n:"Reddit", u:"https://www.reddit.com/", icons:["reddit.svg"], c:"#ff4500", r:2, s:1.05, y:0, w:true },
+  { n:"Telegram", u:"https://web.telegram.org/", icons:["telegram.svg"], c:"#2aabee", r:2, s:1.05, y:0, w:true },
   { n:"YouTube", u:"https://www.youtube.com/", icons:["youtube_red.svg"], c:"#ff0000", r:2, s:1.08, y:0 },
 
   // Extended
   { n:"AWS", u:"https://aws.amazon.com/", icons:["aws.svg"], c:"#ff9900", r:3, s:1.06, y:0, w:true },
 
-  // ✅ Azure -> Notion（链接+图标）
-  { n:"Notion", u:"https://www.notion.so/", icons:["notion.svg"], c:"#ffffff", r:3, s:1.06, y:0, w:true },
+  // LinkedIn → Oracle
+  { n:"Oracle", u:"https://www.oracle.com/", icons:["oracle.svg"], c:"#f80000", r:3, s:1.06, y:0 },
 
   { n:"Bing", u:"https://www.bing.com/", icons:["bing.svg"], c:"#008373", r:3, s:1.04, y:0, w:true },
   { n:"Microsoft", u:"https://www.microsoft.com/", icons:["microsoft.svg"], c:"#ffffff", r:3, s:1.06, y:0, w:true },
   { n:"Netflix", u:"https://www.netflix.com/", icons:["netflix-icon.svg"], c:"#e50914", r:3, s:1.06, y:0, w:true },
-
-  // ✅ Spotify -> LinkedIn（链接+图标）
-  { n:"LinkedIn", u:"https://www.linkedin.com/", icons:["linkedin.svg"], c:"#0a66c2", r:3, s:1.06, y:0 },
-
-  // ✅ 交换位置：Cloudflare ↔ X（把 Cloudflare 放到这里）
   { n:"Cloudflare", u:"https://dash.cloudflare.com/", icons:["cloudflare-color.svg"], c:"#f48120", r:3, s:1.03, y:0 },
-
-  { n:"Reddit", u:"https://www.reddit.com/", icons:["reddit.svg"], c:"#ff4500", r:3, s:1.05, y:0, w:true },
-  { n:"Telegram", u:"https://web.telegram.org/", icons:["telegram.svg"], c:"#2aabee", r:3, s:1.05, y:0, w:true },
   { n:"Apple", u:"https://www.apple.com/", icons:["apple.svg"], c:"#ffffff", r:3, s:1.08, y:0, w:true }
 ];
 
