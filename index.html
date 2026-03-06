@@ -1,221 +1,355 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Harveyi</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#ffffff" />
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
 
   <style>
     :root{
       --ease: cubic-bezier(0.16, 1, 0.3, 1);
-      --bg-top:#FFFFFF; --bg-bottom:#F5F5F7;
-      --text:#1D1D1F; --muted:rgba(0,0,0,0.52);
+      --bg-top:#FFFFFF;
+      --bg-bottom:#F5F5F7;
+      --text:#1D1D1F;
+      --muted:rgba(0,0,0,0.52);
       --hair:rgba(0,0,0,0.08);
-      --surface: rgba(255,255,255,0.56);
-      --surface-strong: rgba(255,255,255,0.75);
-      --icon-default-opacity: 0.65;
+      --surface:rgba(255,255,255,0.56);
+      --surface-strong:rgba(255,255,255,0.75);
+      --icon-default-opacity:0.65;
       --glow-opacity:0.12;
-      --focus: rgba(0,122,255,0.32);
-      --focus-border: rgba(0,122,255,0.42);
+      --focus:rgba(0,122,255,0.32);
+      --focus-border:rgba(0,122,255,0.42);
+      --shadow-soft:0 10px 30px rgba(0,0,0,0.06);
     }
 
     body.theme-night{
-      --bg-top:#0B0F18; --bg-bottom:#070A12;
-      --text:rgba(255,255,255,0.92); --muted:rgba(255,255,255,0.58);
+      --bg-top:#0B0F18;
+      --bg-bottom:#070A12;
+      --text:rgba(255,255,255,0.92);
+      --muted:rgba(255,255,255,0.58);
       --hair:rgba(255,255,255,0.12);
-      --surface: rgba(18,22,32,0.58);
-      --surface-strong: rgba(255,255,255,0.05);
-      --icon-default-opacity: 0.90;
+      --surface:rgba(18,22,32,0.58);
+      --surface-strong:rgba(255,255,255,0.05);
+      --icon-default-opacity:0.90;
       --glow-opacity:0.25;
-      --focus: rgba(10,132,255,0.36);
-      --focus-border: rgba(10,132,255,0.46);
+      --focus:rgba(10,132,255,0.36);
+      --focus-border:rgba(10,132,255,0.46);
+      --shadow-soft:0 14px 36px rgba(0,0,0,0.22);
     }
 
-    *{ box-sizing:border-box }
-    html,body{ height:100% }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
     body{
-      margin:0; font-family: Inter, -apple-system, system-ui, sans-serif;
+      margin:0;
+      font-family:Inter, -apple-system, system-ui, sans-serif;
       color:var(--text);
-      background: linear-gradient(180deg,var(--bg-top),var(--bg-bottom));
+      background:linear-gradient(180deg,var(--bg-top),var(--bg-bottom));
       min-height:100vh;
-      transition: background 900ms var(--ease), color 900ms var(--ease);
       overflow-x:hidden;
-      -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+      transition:background 900ms var(--ease), color 900ms var(--ease);
     }
 
-    .bg-flow{ position:fixed; inset:-20%; pointer-events:none; z-index:-3; filter:blur(120px); opacity:.26; }
-    .bg-flow .blob{
-      position:absolute; width:70vmax; height:70vmax; border-radius:999px;
-      background: radial-gradient(circle, var(--brand-color, #a1c4fd), transparent 62%);
-      animation: drift 70s cubic-bezier(.45, 0, .55, 1) infinite alternate;
+    .bg-flow{
+      position:fixed;
+      inset:-20%;
+      pointer-events:none;
+      z-index:-3;
+      filter:blur(120px);
+      opacity:.26;
     }
-    @keyframes drift{ from{ transform:translate(-8%,-8%) } to{ transform:translate(10%,10%) } }
+    .bg-flow .blob{
+      position:absolute;
+      width:70vmax;
+      height:70vmax;
+      border-radius:999px;
+      background:radial-gradient(circle, var(--brand-color, #a1c4fd), transparent 62%);
+      animation:drift 70s cubic-bezier(.45, 0, .55, 1) infinite alternate;
+    }
+    @keyframes drift{
+      from{ transform:translate(-8%,-8%); }
+      to{ transform:translate(10%,10%); }
+    }
 
     @media (prefers-reduced-motion: reduce){
-      *{ animation:none !important; transition:none !important; }
+      *{ animation:none !important; transition:none !important; scroll-behavior:auto !important; }
       .bg-flow{ display:none; }
     }
 
-    .wrap{ max-width: 1040px; margin:auto; padding: calc(22px + env(safe-area-inset-top)) 20px 58px; }
+    .wrap{
+      max-width:1040px;
+      margin:auto;
+      padding:calc(22px + env(safe-area-inset-top)) 20px 58px;
+    }
 
-    .top{ display:flex; justify-content:space-between; align-items:flex-end; gap:14px; margin-bottom: 10px; opacity:.92; }
-    .top-left .greet{ font-size:22px; font-weight:650; margin-bottom:2px; letter-spacing:-.2px; }
-    .top-left .weather{ font-size:13px; color:var(--muted); display:flex; gap:8px; align-items:center; min-height:18px; }
-    .clock{ font-family:"JetBrains Mono"; font-weight:600; font-size:24px; letter-spacing:-1px; white-space:nowrap; }
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:14px;
+      margin-bottom:10px;
+      opacity:.92;
+    }
+    .top-left .greet{
+      font-size:22px;
+      font-weight:650;
+      margin-bottom:2px;
+      letter-spacing:-.2px;
+    }
+    .top-left .weather{
+      font-size:13px;
+      color:var(--muted);
+      display:flex;
+      gap:8px;
+      align-items:center;
+      min-height:18px;
+      flex-wrap:wrap;
+    }
+    .clock{
+      font-family:"JetBrains Mono", ui-monospace, monospace;
+      font-weight:600;
+      font-size:24px;
+      letter-spacing:-1px;
+      white-space:nowrap;
+    }
 
-    .quote-area{ margin:14px 0 18px; padding:0 10px; border-left:2px solid var(--hair); opacity:.78; }
-    .quote-text{ font-size:14px; font-style:italic; color:var(--muted); line-height:1.55; max-width:640px; }
-    .quote-author{ font-size:11px; text-transform:uppercase; letter-spacing:.12em; margin-top:6px; opacity:.62; }
+    .quote-area{
+      margin:14px 0 18px;
+      padding:0 10px;
+      border-left:2px solid var(--hair);
+      opacity:.78;
+    }
+    .quote-text{
+      font-size:14px;
+      font-style:italic;
+      color:var(--muted);
+      line-height:1.55;
+      max-width:640px;
+    }
+    .quote-author{
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      margin-top:6px;
+      opacity:.62;
+    }
 
     .search{
-      display:flex; align-items:center; gap:12px;
-      background: var(--surface);
+      display:flex;
+      align-items:center;
+      gap:12px;
+      background:var(--surface);
       border:1px solid var(--hair);
-      padding:14px 18px; border-radius:999px;
+      padding:10px 12px 10px 18px;
+      border-radius:999px;
       margin-bottom:18px;
-      backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
-      transition: transform .28s var(--ease), box-shadow .28s var(--ease), border-color .28s var(--ease);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+      backdrop-filter:blur(20px);
+      -webkit-backdrop-filter:blur(20px);
+      transition:transform .28s var(--ease), box-shadow .28s var(--ease), border-color .28s var(--ease);
+      box-shadow:var(--shadow-soft);
     }
     .search:focus-within{
-      transform: scale(1.01);
-      border-color: var(--focus-border);
-      box-shadow: 0 14px 38px rgba(0,0,0,0.10);
+      transform:scale(1.01);
+      border-color:var(--focus-border);
+      box-shadow:0 0 0 3px var(--focus), var(--shadow-soft);
     }
     .search input{
-      flex:1; width:100%;
-      background:transparent; border:0; outline:none;
-      color:var(--text); font-size:17px; letter-spacing:-.15px;
+      flex:1;
+      width:100%;
+      background:transparent;
+      border:0;
+      outline:none;
+      color:var(--text);
+      font-size:17px;
+      letter-spacing:-.15px;
+      min-width:0;
+    }
+    .search button{
+      display:grid;
+      place-items:center;
+      width:40px;
+      height:40px;
+      border-radius:999px;
+      border:1px solid transparent;
+      background:transparent;
+      color:var(--muted);
+      cursor:pointer;
+      flex:none;
+      transition:transform .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease), background .2s var(--ease);
+    }
+    .search button:hover,
+    .search button:focus-visible{
+      color:var(--text);
+      background:var(--surface-strong);
+      border-color:var(--focus-border);
+      outline:none;
+      transform:scale(1.03);
     }
 
     .section{
       margin:16px 0 10px;
-      display:flex; align-items:center; gap:12px;
+      display:flex;
+      align-items:center;
+      gap:12px;
       color:var(--muted);
-      font-size:11px; letter-spacing:.20em; text-transform:uppercase; font-weight:650;
+      font-size:11px;
+      letter-spacing:.20em;
+      text-transform:uppercase;
+      font-weight:650;
       user-select:none;
     }
     .section .line{ flex:1; height:1px; background:var(--hair); }
 
-    .grid{ display:grid; gap:26px 18px; grid-template-columns: repeat(6, 1fr); }
-    @media (max-width:760px){ .grid{ grid-template-columns: repeat(4, 1fr); } }
-    @media (max-width:520px){ .grid{ grid-template-columns: repeat(3, 1fr); } }
+    .grid{
+      display:grid;
+      gap:26px 18px;
+      grid-template-columns:repeat(auto-fit, minmax(96px, 1fr));
+    }
 
     .item{
       position:relative;
-      display:flex; flex-direction:column; align-items:center; gap:10px;
-      text-decoration:none; color:var(--muted);
-      transition: transform .22s var(--ease);
-      min-height: 92px;
-      -webkit-tap-highlight-color: transparent;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:10px;
+      text-decoration:none;
+      color:var(--muted);
+      transition:transform .22s var(--ease);
+      min-height:92px;
+      -webkit-tap-highlight-color:transparent;
       border-radius:18px;
       padding:6px 4px 8px;
       isolation:isolate;
     }
-    .item:active{ transform: scale(0.96); transition: transform .08s; }
+    .item:active{ transform:scale(0.96); transition:transform .08s; }
     .item:focus-visible{ outline:none; }
     .item:focus-visible .icon{
-      border-color: var(--focus-border);
-      box-shadow: 0 0 0 3px var(--focus), 0 14px 30px rgba(0,0,0,0.10);
+      border-color:var(--focus-border);
+      box-shadow:0 0 0 3px var(--focus), 0 14px 30px rgba(0,0,0,0.10);
     }
     .item:focus-visible .label{ color:var(--text); }
 
     .icon{
-      width:56px; height:56px;
-      display:grid; place-items:center;
+      width:56px;
+      height:56px;
+      display:grid;
+      place-items:center;
       position:relative;
       border-radius:16px;
-      background: var(--surface-strong);
+      background:var(--surface-strong);
       border:1px solid var(--hair);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
-      transition: transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);
+      box-shadow:0 8px 20px rgba(0,0,0,0.06);
+      transition:transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);
       overflow:hidden;
     }
-
-    /* ===== 图标滤镜：默认灰度，唤醒/hover 全彩 ===== */
     .icon img{
-      width:36px; height:36px; object-fit:contain;
-      transform: translateY(var(--y, 0px)) scale(var(--s, 1));
-      filter: grayscale(100%) opacity(var(--icon-default-opacity));
-      transition: transform .35s var(--ease), filter .35s var(--ease), opacity .35s var(--ease);
-      will-change: filter, transform, opacity;
+      width:36px;
+      height:36px;
+      object-fit:contain;
+      transform:translateY(var(--y, 0px)) scale(var(--s, 1));
+      filter:grayscale(100%) opacity(var(--icon-default-opacity));
+      transition:transform .35s var(--ease), filter .35s var(--ease), opacity .35s var(--ease);
+      will-change:filter, transform, opacity;
     }
-
-    /* 夜间：需要反白的 logo */
     body.theme-night .white-invert .icon img{
-      filter: grayscale(100%) invert(1) brightness(2) opacity(1);
+      filter:grayscale(100%) invert(1) brightness(2) opacity(1);
     }
 
-    /* Gemini 双层 */
     .icon.gemini img.g1{ position:absolute; opacity:0; }
     .item:hover .icon.gemini img.g0,
     .item.is-active .icon.gemini img.g0{ opacity:0; }
     .item:hover .icon.gemini img.g1,
     .item.is-active .icon.gemini img.g1{ opacity:1; }
 
-    /* hover：仅桌面设备用（手机不依赖 hover） */
     @media (hover:hover) and (pointer:fine){
-      .item:hover{ transform: translateY(-2px); }
-      .item:hover .icon{ box-shadow: 0 16px 34px rgba(0,0,0,0.12); }
+      .item:hover{ transform:translateY(-2px); }
+      .item:hover .icon{ box-shadow:0 16px 34px rgba(0,0,0,0.12); }
       .item:hover .icon img{
-        filter: grayscale(0%) invert(0%) brightness(1) opacity(1) !important;
-        transform: translateY(calc(var(--y, 0px) - 6px)) scale(var(--s, 1));
+        filter:grayscale(0%) invert(0%) brightness(1) opacity(1) !important;
+        transform:translateY(calc(var(--y, 0px) - 6px)) scale(var(--s, 1));
       }
       .item:hover .icon::after{
-        content:""; position:absolute; inset:-14px; border-radius:22px; z-index:-1;
-        filter: blur(34px); opacity: var(--glow-opacity);
-        background: radial-gradient(circle, var(--brand-color, #7C5CFF), transparent 72%);
+        content:"";
+        position:absolute;
+        inset:-14px;
+        border-radius:22px;
+        z-index:-1;
+        filter:blur(34px);
+        opacity:var(--glow-opacity);
+        background:radial-gradient(circle, var(--brand-color, #7C5CFF), transparent 72%);
       }
       .item:hover .label{ color:var(--text); }
     }
 
-    /* ===== Tap-to-wake：手机/平板靠 is-active ===== */
     .item.is-active .label{ color:var(--text); }
-    .item.is-active .icon{ box-shadow: 0 16px 34px rgba(0,0,0,0.12); }
+    .item.is-active .icon{ box-shadow:0 16px 34px rgba(0,0,0,0.12); }
     .item.is-active .icon img{
-      filter: grayscale(0%) invert(0%) brightness(1) opacity(1) !important;
-      transform: translateY(calc(var(--y, 0px) - 6px)) scale(var(--s, 1));
+      filter:grayscale(0%) invert(0%) brightness(1) opacity(1) !important;
+      transform:translateY(calc(var(--y, 0px) - 6px)) scale(var(--s, 1));
     }
     .item.is-active .icon::after{
-      content:""; position:absolute; inset:-14px; border-radius:22px; z-index:-1;
-      filter: blur(34px); opacity: var(--glow-opacity);
-      background: radial-gradient(circle, var(--brand-color, #7C5CFF), transparent 72%);
+      content:"";
+      position:absolute;
+      inset:-14px;
+      border-radius:22px;
+      z-index:-1;
+      filter:blur(34px);
+      opacity:var(--glow-opacity);
+      background:radial-gradient(circle, var(--brand-color, #7C5CFF), transparent 72%);
     }
 
-    .label{ font-size:13px; text-align:center; white-space:nowrap; transition: color .25s var(--ease); letter-spacing:-.12px; }
+    .label{
+      font-size:13px;
+      text-align:center;
+      transition:color .25s var(--ease);
+      letter-spacing:-.12px;
+      width:100%;
+      max-width:100%;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
 
-    #moreArea[aria-hidden="true"]{ display:none; }
+    #moreArea[hidden]{ display:none; }
     .morebtn{
-      background: var(--surface);
-      border: 1px solid var(--hair);
-      color: var(--text);
-      padding: 9px 24px;
-      border-radius: 999px;
+      background:var(--surface);
+      border:1px solid var(--hair);
+      color:var(--text);
+      padding:9px 24px;
+      border-radius:999px;
       cursor:pointer;
-      font-size: 13px;
-      opacity: .72;
-      transition: transform .25s var(--ease), opacity .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);
-      margin: 26px auto 0;
+      font-size:13px;
+      opacity:.72;
+      transition:transform .25s var(--ease), opacity .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);
+      margin:26px auto 0;
       display:block;
-      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      backdrop-filter:blur(18px);
+      -webkit-backdrop-filter:blur(18px);
     }
-    .morebtn:hover{ opacity:1; transform: scale(1.03); }
+    .morebtn:hover{ opacity:1; transform:scale(1.03); }
     .morebtn:focus-visible{
       outline:none;
-      border-color: var(--focus-border);
-      box-shadow: 0 0 0 3px var(--focus);
-      opacity: 1;
+      border-color:var(--focus-border);
+      box-shadow:0 0 0 3px var(--focus);
+      opacity:1;
+    }
+
+    @media (max-width:520px){
+      .wrap{ padding-left:16px; padding-right:16px; }
+      .top{ align-items:flex-start; }
+      .clock{ font-size:22px; }
     }
   </style>
 </head>
-
 <body>
-  <div class="bg-flow"><div class="blob"></div></div>
+  <div class="bg-flow" aria-hidden="true"><div class="blob"></div></div>
 
   <div class="wrap">
     <div class="top">
@@ -230,7 +364,7 @@
       <div class="clock" id="clock" aria-label="Current time">00:00</div>
     </div>
 
-    <div class="quote-area" aria-hidden="true">
+    <div class="quote-area">
       <div id="quote" class="quote-text"></div>
       <div id="author" class="quote-author"></div>
     </div>
@@ -238,13 +372,19 @@
     <form class="search" id="searchForm" autocomplete="off" role="search" aria-label="Search the web">
       <input id="q" type="search" inputmode="search" autocomplete="off"
              autocapitalize="none" spellcheck="false"
-             placeholder="Search..." autofocus />
+             placeholder="Search..." />
+      <button type="submit" aria-label="Search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+      </button>
     </form>
 
     <div class="section">ESSENTIALS<div class="line"></div></div>
     <div id="ess" class="grid" role="list"></div>
 
-    <div id="moreArea" aria-hidden="true">
+    <div id="moreArea" hidden>
       <div class="section" style="margin-top:18px;">EXTENDED<div class="line"></div></div>
       <div id="ext" class="grid" role="list"></div>
     </div>
@@ -256,200 +396,376 @@
 
   <script>
     const ICON_BASE = "icons/";
-    const FALLBACK  = "openai.svg";
+    const WEATHER_REFRESH_MS = 10 * 60 * 1000;
+    const LOCATION_CACHE_MS = 30 * 60 * 1000;
+    const FALLBACK_ICON = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72">
+        <defs>
+          <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stop-color="#8bb3ff"/>
+            <stop offset="100%" stop-color="#7c5cff"/>
+          </linearGradient>
+        </defs>
+        <rect x="6" y="6" width="60" height="60" rx="18" fill="url(#g)" opacity=".18"/>
+        <circle cx="36" cy="36" r="18" fill="url(#g)" opacity=".9"/>
+      </svg>
+    `);
 
     const QUOTES = [
-      { t: "Stay hungry, stay foolish.", a: "Steve Jobs" },
-      { t: "Simplicity is the ultimate sophistication.", a: "Leonardo da Vinci" },
-      { t: "Design is how it works.", a: "Steve Jobs" },
-      { t: "Make it simple, but significant.", a: "Don Draper" },
-      { t: "Details matter. It’s worth waiting to get it right.", a: "Steve Jobs" }
+      { text: "Stay hungry, stay foolish.", author: "Steve Jobs" },
+      { text: "Simplicity is the ultimate sophistication.", author: "Leonardo da Vinci" },
+      { text: "Design is how it works.", author: "Steve Jobs" },
+      { text: "Make it simple, but significant.", author: "Don Draper" },
+      { text: "Details matter. It’s worth waiting to get it right.", author: "Steve Jobs" }
     ];
 
-    function imgTag(src, extraClass=""){
-      const safe = ICON_BASE + encodeURIComponent(src);
-      return `<img class="${extraClass}" src="${safe}" loading="lazy" decoding="async" alt=""
-              onerror="this.onerror=null;this.src='${ICON_BASE}${FALLBACK}'">`;
+    const WEATHER_TEXT = {
+      0: "Clear",
+      1: "Mainly clear",
+      2: "Partly cloudy",
+      3: "Overcast",
+      45: "Fog",
+      48: "Rime fog",
+      51: "Light drizzle",
+      53: "Drizzle",
+      55: "Dense drizzle",
+      56: "Freezing drizzle",
+      57: "Dense freezing drizzle",
+      61: "Light rain",
+      63: "Rain",
+      65: "Heavy rain",
+      66: "Freezing rain",
+      67: "Heavy freezing rain",
+      71: "Light snow",
+      73: "Snow",
+      75: "Heavy snow",
+      77: "Snow grains",
+      80: "Rain showers",
+      81: "Heavy showers",
+      82: "Violent showers",
+      85: "Snow showers",
+      86: "Heavy snow showers",
+      95: "Thunderstorm",
+      96: "Storm + hail",
+      99: "Severe storm + hail"
+    };
+
+    const SITES = [
+      { name:"ChatGPT", url:"https://chatgpt.com/", icon:"openai.svg", color:"#10a37f", section:"essentials", scale:1.00, offsetY:0, invertInDark:true },
+      { name:"Claude", url:"https://claude.ai/", icon:"claude-color.svg", color:"#d97757", section:"essentials", scale:1.02, offsetY:0 },
+      { name:"Copilot", url:"https://copilot.microsoft.com/", icon:"copilot-color.svg", color:"#0078d4", section:"essentials", scale:1.02, offsetY:0 },
+      { name:"Gemini", url:"https://gemini.google.com/", icons:["gemini.svg", "gemini-color.svg"], dual:true, color:"#4e85ff", section:"essentials", scale:1.14, offsetY:0, invertInDark:true },
+      { name:"X", url:"https://x.com/", icon:"x.svg", color:"#ffffff", section:"essentials", scale:1.06, offsetY:0, invertInDark:true },
+      { name:"GitHub", url:"https://github.com/", icon:"github.svg", color:"#ffffff", section:"essentials", scale:1.02, offsetY:0, invertInDark:true },
+
+      { name:"Gmail", url:"https://mail.google.com/", icon:"google-gmail.svg", color:"#ea4335", section:"essentials", scale:1.06, offsetY:0 },
+      { name:"Google", url:"https://www.google.com/", icon:"google-color.svg", color:"#4285f4", section:"essentials", scale:1.05, offsetY:0 },
+      { name:"Notion", url:"https://www.notion.so/", icon:"notion.svg", color:"#ffffff", section:"essentials", scale:1.06, offsetY:0, invertInDark:true },
+      { name:"Reddit", url:"https://www.reddit.com/", icon:"reddit.svg", color:"#ff4500", section:"essentials", scale:1.05, offsetY:0, invertInDark:true },
+      { name:"Telegram", url:"https://web.telegram.org/", icon:"telegram.svg", color:"#2aabee", section:"essentials", scale:1.05, offsetY:0, invertInDark:true },
+      { name:"YouTube", url:"https://www.youtube.com/", icon:"youtube_red.svg", color:"#ff0000", section:"essentials", scale:1.08, offsetY:0 },
+
+      { name:"AWS", url:"https://aws.amazon.com/", icon:"aws.svg", color:"#ff9900", section:"extended", scale:1.06, offsetY:0, invertInDark:true },
+      { name:"Oracle", url:"https://www.oracle.com/cloud/sign-in.html/", icon:"oracle.svg", color:"#f80000", section:"extended", scale:1.06, offsetY:0 },
+      { name:"Bing", url:"https://www.bing.com/", icon:"bing.svg", color:"#008373", section:"extended", scale:1.04, offsetY:0, invertInDark:true },
+      { name:"Microsoft", url:"https://www.microsoft.com/", icon:"microsoft.svg", color:"#ffffff", section:"extended", scale:1.06, offsetY:0, invertInDark:true },
+      { name:"Netflix", url:"https://www.netflix.com/", icon:"netflix-icon.svg", color:"#e50914", section:"extended", scale:1.06, offsetY:0, invertInDark:true },
+      { name:"Cloudflare", url:"https://dash.cloudflare.com/", icon:"cloudflare-color.svg", color:"#f48120", section:"extended", scale:1.03, offsetY:0 },
+      { name:"Apple", url:"https://www.apple.com/", icon:"apple.svg", color:"#ffffff", section:"extended", scale:1.08, offsetY:0, invertInDark:true }
+    ];
+
+    let weatherTimer = null;
+    let clockTimer = null;
+    let locationCache = null;
+
+    function iconPath(filename){
+      return ICON_BASE + encodeURIComponent(filename);
     }
 
-    // Full list (ESSENTIALS: r<=2, EXTENDED: r>=3)
-    // s: scale, y: vertical adjust px, w: whiteInvert, gem: gemini dual-layer
-   const SITES = [
-  // Essentials row 1（保持不动）
-  { n:"ChatGPT", u:"https://chatgpt.com/", icons:["openai.svg"], c:"#10a37f", r:1, s:1.00, y:0, w:true },
-  { n:"Claude", u:"https://claude.ai/", icons:["claude-color.svg"], c:"#d97757", r:1, s:1.02, y:0 },
-  { n:"Copilot", u:"https://copilot.microsoft.com/", icons:["copilot-color.svg"], c:"#0078d4", r:1, s:1.02, y:0 },
-  { n:"Gemini", u:"https://gemini.google.com/", gem:true, c:"#4e85ff", r:1, s:1.14, y:0, w:true },
-  { n:"X", u:"https://x.com/", icons:["x.svg"], c:"#ffffff", r:1, s:1.06, y:0, w:true },
-  { n:"GitHub", u:"https://github.com/", icons:["github.svg"], c:"#ffffff", r:1, s:1.02, y:0, w:true },
+    function createIconImage(filename, extraClass = ""){
+      const img = document.createElement("img");
+      if (extraClass) img.className = extraClass;
+      img.src = iconPath(filename);
+      img.loading = "lazy";
+      img.decoding = "async";
+      img.alt = "";
+      img.addEventListener("error", () => {
+        img.src = FALLBACK_ICON;
+      }, { once:true });
+      return img;
+    }
 
-  // Essentials row 2（把 Notion / Reddit / Telegram 提上来）
-  { n:"Gmail", u:"https://mail.google.com/", icons:["google-gmail.svg"], c:"#ea4335", r:2, s:1.06, y:0 },
-  { n:"Google", u:"https://www.google.com/", icons:["google-color.svg"], c:"#4285f4", r:2, s:1.05, y:0 },
-  { n:"Notion", u:"https://www.notion.so/", icons:["notion.svg"], c:"#ffffff", r:2, s:1.06, y:0, w:true },
-  { n:"Reddit", u:"https://www.reddit.com/", icons:["reddit.svg"], c:"#ff4500", r:2, s:1.05, y:0, w:true },
-  { n:"Telegram", u:"https://web.telegram.org/", icons:["telegram.svg"], c:"#2aabee", r:2, s:1.05, y:0, w:true },
-  { n:"YouTube", u:"https://www.youtube.com/", icons:["youtube_red.svg"], c:"#ff0000", r:2, s:1.08, y:0 },
+    function createItem(site){
+      const a = document.createElement("a");
+      a.className = `item ${site.invertInDark ? "white-invert" : ""}`;
+      a.href = site.url;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.role = "listitem";
+      a.setAttribute("aria-label", `Open ${site.name}`);
+      a.style.setProperty("--brand-color", site.color || "#7C5CFF");
+      a.style.setProperty("--s", String(site.scale ?? 1));
+      a.style.setProperty("--y", `${site.offsetY ?? 0}px`);
 
-  // Extended
-  { n:"AWS", u:"https://aws.amazon.com/", icons:["aws.svg"], c:"#ff9900", r:3, s:1.06, y:0, w:true },
+      const icon = document.createElement("div");
+      icon.className = `icon${site.dual ? " gemini" : ""}`;
+      icon.setAttribute("aria-hidden", "true");
 
-  // LinkedIn → Oracle
-  { n:"Oracle", u:"https://www.oracle.com/cloud/sign-in.html/", icons:["oracle.svg"], c:"#f80000", r:3, s:1.06, y:0 },
+      if (site.dual && Array.isArray(site.icons)){
+        icon.append(createIconImage(site.icons[0], "g0"), createIconImage(site.icons[1], "g1"));
+      } else {
+        icon.append(createIconImage(site.icon));
+      }
 
-  { n:"Bing", u:"https://www.bing.com/", icons:["bing.svg"], c:"#008373", r:3, s:1.04, y:0, w:true },
-  { n:"Microsoft", u:"https://www.microsoft.com/", icons:["microsoft.svg"], c:"#ffffff", r:3, s:1.06, y:0, w:true },
-  { n:"Netflix", u:"https://www.netflix.com/", icons:["netflix-icon.svg"], c:"#e50914", r:3, s:1.06, y:0, w:true },
-  { n:"Cloudflare", u:"https://dash.cloudflare.com/", icons:["cloudflare-color.svg"], c:"#f48120", r:3, s:1.03, y:0 },
-  { n:"Apple", u:"https://www.apple.com/", icons:["apple.svg"], c:"#ffffff", r:3, s:1.08, y:0, w:true }
-];
+      const label = document.createElement("div");
+      label.className = "label";
+      label.textContent = site.name;
+
+      a.append(icon, label);
+      return a;
+    }
 
     function render(){
       const ess = document.getElementById("ess");
       const ext = document.getElementById("ext");
-      ess.innerHTML = ext.innerHTML = "";
+      const essFrag = document.createDocumentFragment();
+      const extFrag = document.createDocumentFragment();
 
-      SITES.forEach(s=>{
-        const a = document.createElement("a");
-        a.className = `item ${s.w ? "white-invert" : ""}`;
-        a.href = s.u;
-        a.target = "_blank";
-        a.rel = "noopener noreferrer";
-        a.setAttribute("role","listitem");
+      for (const site of SITES){
+        const item = createItem(site);
+        (site.section === "extended" ? extFrag : essFrag).appendChild(item);
+      }
 
-        a.style.setProperty("--brand-color", s.c || "#7C5CFF");
-        if (s.s) a.style.setProperty("--s", String(s.s));
-        if (typeof s.y === "number") a.style.setProperty("--y", `${s.y}px`);
-
-        const iconHTML = s.gem
-          ? `<div class="icon gemini" aria-hidden="true">
-               ${imgTag("gemini.svg","g0")}
-               ${imgTag("gemini-color.svg","g1")}
-             </div>`
-          : `<div class="icon" aria-hidden="true">
-               ${imgTag(s.icons[0])}
-             </div>`;
-
-        a.innerHTML = `${iconHTML}<div class="label">${s.n}</div>`;
-        (s.r <= 2 ? ess : ext).appendChild(a);
-      });
+      ess.replaceChildren(essFrag);
+      ext.replaceChildren(extFrag);
     }
 
     function toggleMore(){
       const more = document.getElementById("moreArea");
-      const btn  = document.getElementById("toggleBtn");
-      const isOpen = more.getAttribute("aria-hidden") === "false";
-
-      more.setAttribute("aria-hidden", String(isOpen)); // close->true, open->false
+      const btn = document.getElementById("toggleBtn");
+      const isOpen = !more.hidden;
+      more.hidden = isOpen;
       btn.setAttribute("aria-expanded", String(!isOpen));
       btn.textContent = isOpen ? "More Icons" : "Less Icons";
     }
 
     function updateQuote(){
-      const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
-      document.getElementById("quote").textContent = `"${q.t}"`;
-      document.getElementById("author").textContent = q.a;
+      const quote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+      document.getElementById("quote").textContent = `“${quote.text}”`;
+      document.getElementById("author").textContent = quote.author;
+    }
+
+    function updateGreeting(now = new Date()){
+      const hour = now.getHours();
+      let text = "Hello.";
+      if (hour < 5) text = "Still up?";
+      else if (hour < 12) text = "Good morning.";
+      else if (hour < 17) text = "Good afternoon.";
+      else if (hour < 22) text = "Good evening.";
+      else text = "Good night.";
+      document.getElementById("greet").textContent = text;
+    }
+
+    function shouldUseDarkTheme(now = new Date()){
+      const media = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+      if (media && typeof media.matches === "boolean") return media.matches;
+      const hour = now.getHours();
+      return hour >= 17 || hour < 8;
     }
 
     function updateTheme(){
-      const h = new Date().getHours();
-      const night = h >= 17 || h < 8;
-      document.body.classList.toggle("theme-night", night);
-      document.getElementById("greet").textContent =
-        night ? "Good night." : (h < 12 ? "Good morning." : "Good afternoon.");
+      const now = new Date();
+      document.body.classList.toggle("theme-night", shouldUseDarkTheme(now));
+      document.documentElement.style.colorScheme = document.body.classList.contains("theme-night") ? "dark" : "light";
+      updateGreeting(now);
     }
 
-    function tick(){
-      const d = new Date();
-      const hhmm = `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
-      const el = document.getElementById("clock");
-      if (el.textContent !== hhmm) el.textContent = hhmm;
+    function formatTime(date){
+      return new Intl.DateTimeFormat(navigator.language || "en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+        hourCycle: "h23"
+      }).format(date);
     }
 
-    document.getElementById("searchForm").onsubmit = (e)=>{
-      e.preventDefault();
-      const q = document.getElementById("q").value.trim();
-      if (!q) return;
-      window.open("https://www.google.com/search?q=" + encodeURIComponent(q), "_blank");
-    };
+    function updateClock(){
+      document.getElementById("clock").textContent = formatTime(new Date());
+    }
+
+    function scheduleClock(){
+      updateClock();
+      clearTimeout(clockTimer);
+      const now = new Date();
+      const msUntilNextMinute = ((60 - now.getSeconds()) * 1000) - now.getMilliseconds() + 20;
+      clockTimer = setTimeout(scheduleClock, msUntilNextMinute);
+    }
+
+    async function fetchJSON(url, { timeout = 5000 } = {}){
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeout);
+      try {
+        const response = await fetch(url, {
+          cache: "no-store",
+          signal: controller.signal,
+          headers: { "Accept": "application/json" }
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return await response.json();
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    async function getGrantedGeolocation(){
+      if (!("geolocation" in navigator)) return null;
+      try {
+        if (!("permissions" in navigator) || !navigator.permissions.query) return null;
+        const status = await navigator.permissions.query({ name: "geolocation" });
+        if (status.state !== "granted") return null;
+      } catch {
+        return null;
+      }
+
+      return new Promise((resolve) => {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => resolve({
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+            city: "LOCAL"
+          }),
+          () => resolve(null),
+          {
+            enableHighAccuracy: false,
+            timeout: 4000,
+            maximumAge: LOCATION_CACHE_MS
+          }
+        );
+      });
+    }
+
+    async function getLocation(){
+      if (locationCache && (Date.now() - locationCache.at) < LOCATION_CACHE_MS){
+        return locationCache.data;
+      }
+
+      const preciseLocation = await getGrantedGeolocation();
+      if (preciseLocation){
+        locationCache = { at: Date.now(), data: preciseLocation };
+        return preciseLocation;
+      }
+
+      const ip = await fetchJSON("https://ipapi.co/json/", { timeout: 5000 });
+      const location = {
+        latitude: ip.latitude,
+        longitude: ip.longitude,
+        city: String(ip.city || "LOCAL").toUpperCase()
+      };
+      locationCache = { at: Date.now(), data: location };
+      return location;
+    }
 
     async function updateWeather(){
       const tempEl = document.getElementById("temp");
       const cityEl = document.getElementById("city");
       const condEl = document.getElementById("condition");
-      try{
-        const ipRes = await fetch("https://ipapi.co/json/", { cache:"no-store" });
-        const ip = await ipRes.json();
-        const wRes = await fetch(
-          `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(ip.latitude)}&longitude=${encodeURIComponent(ip.longitude)}&current=temperature_2m,weather_code&temperature_unit=celsius`,
-          { cache:"no-store" }
+
+      try {
+        const location = await getLocation();
+        const weather = await fetchJSON(
+          `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(location.latitude)}&longitude=${encodeURIComponent(location.longitude)}&current=temperature_2m,weather_code&temperature_unit=celsius`,
+          { timeout: 5000 }
         );
-        const w = await wRes.json();
-        tempEl.textContent = `${Math.round(w.current.temperature_2m)}°C`;
-        cityEl.textContent = String(ip.city || "LOCAL").toUpperCase();
-        condEl.textContent = "";
-      }catch{
+
+        const current = weather.current || {};
+        const temperature = typeof current.temperature_2m === "number" ? `${Math.round(current.temperature_2m)}°C` : "--";
+        const weatherText = WEATHER_TEXT[current.weather_code] || "";
+
+        tempEl.textContent = temperature;
+        cityEl.textContent = location.city || "LOCAL";
+        condEl.textContent = weatherText;
+      } catch {
         tempEl.textContent = "";
         cityEl.textContent = "WEATHER UNAVAILABLE";
         condEl.textContent = "";
       }
     }
 
-    // ===== Tap-to-wake: first tap highlight, second tap open (iOS safe) =====
-    (function enableTapWake(){
+    function scheduleWeather(){
+      clearInterval(weatherTimer);
+      updateWeather();
+      weatherTimer = setInterval(updateWeather, WEATHER_REFRESH_MS);
+    }
+
+    function enableTapWake(){
       let activeEl = null;
       let timer = null;
 
-      const clearActive = ()=>{
+      const coarsePointer = () => window.matchMedia && window.matchMedia("(hover: none), (pointer: coarse)").matches;
+      const clearActive = () => {
         if (activeEl) activeEl.classList.remove("is-active");
         activeEl = null;
         if (timer) clearTimeout(timer);
         timer = null;
       };
-
-      const wake = (a)=>{
+      const wake = (a) => {
         clearActive();
         a.classList.add("is-active");
         activeEl = a;
         timer = setTimeout(clearActive, 900);
       };
 
-      // touchstart: first tap wakes
-      document.addEventListener("touchstart", (e)=>{
+      document.addEventListener("pointerdown", (e) => {
+        if (!coarsePointer()) return;
         const a = e.target.closest("a.item");
         if (!a) { clearActive(); return; }
         if (a !== activeEl){
-          e.preventDefault(); // block navigation on first tap
+          e.preventDefault();
           wake(a);
         }
-        // if a === activeEl: do nothing, let click navigate
       }, { passive:false, capture:true });
 
-      // click: handles non-touch + ensures 2nd tap opens
-      document.addEventListener("click", (e)=>{
+      document.addEventListener("click", (e) => {
+        if (!coarsePointer()) return;
         const a = e.target.closest("a.item");
         if (!a) { clearActive(); return; }
-        if (a === activeEl) return; // allow navigation on second tap
+        if (a === activeEl) return;
         e.preventDefault();
         e.stopPropagation();
         wake(a);
       }, { capture:true });
 
       document.addEventListener("scroll", clearActive, { passive:true });
-    })();
+    }
 
-    document.getElementById("toggleBtn").addEventListener("click", toggleMore);
+    function bindEvents(){
+      document.getElementById("toggleBtn").addEventListener("click", toggleMore);
+      document.getElementById("searchForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const q = document.getElementById("q").value.trim();
+        if (!q) return;
+        window.open("https://www.google.com/search?q=" + encodeURIComponent(q), "_blank", "noopener,noreferrer");
+      });
 
-    // Init
-    updateTheme();
-    tick();
-    render();
-    updateWeather();
-    updateQuote();
+      if (window.matchMedia){
+        const darkMedia = window.matchMedia("(prefers-color-scheme: dark)");
+        const onThemeChange = () => updateTheme();
+        if (typeof darkMedia.addEventListener === "function") darkMedia.addEventListener("change", onThemeChange);
+        else if (typeof darkMedia.addListener === "function") darkMedia.addListener(onThemeChange);
+      }
+    }
 
-    setInterval(tick, 1000);
-    setInterval(updateTheme, 60000);
-    setInterval(updateWeather, 600000);
+    function init(){
+      updateTheme();
+      scheduleClock();
+      render();
+      updateQuote();
+      scheduleWeather();
+      bindEvents();
+      enableTapWake();
+    }
+
+    init();
   </script>
 </body>
 </html>
