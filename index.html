@@ -56,23 +56,16 @@
     }
     @keyframes drift{ from{ transform:translate(-8%,-8%) } to{ transform:translate(10%,10%) } }
 
+    @media (prefers-reduced-motion: reduce){
+      *{ animation:none !important; transition:none !important; }
+      .bg-flow{ display:none; }
+    }
+
     .wrap{ max-width: 1040px; margin:auto; padding: calc(22px + env(safe-area-inset-top)) 20px 58px; }
 
     .top{ display:flex; justify-content:space-between; align-items:flex-end; gap:14px; margin-bottom: 10px; opacity:.92; }
     .top-left .greet{ font-size:22px; font-weight:650; margin-bottom:2px; letter-spacing:-.2px; }
     .top-left .weather{ font-size:13px; color:var(--muted); display:flex; gap:8px; align-items:center; min-height:18px; }
-    
-    /* ✅ 监控文字样式补丁 */
-    #monitor-status {
-      font-family: "JetBrains Mono";
-      font-size: 11px;
-      margin-left: 2px;
-      padding-left: 8px;
-      border-left: 1px solid var(--hair);
-      letter-spacing: 0;
-      transition: color .3s ease;
-    }
-
     .clock{ font-family:"JetBrains Mono"; font-weight:600; font-size:24px; letter-spacing:-1px; white-space:nowrap; }
 
     .quote-area{ margin:14px 0 18px; padding:0 10px; border-left:2px solid var(--hair); opacity:.78; }
@@ -88,6 +81,11 @@
       backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
       transition: transform .28s var(--ease), box-shadow .28s var(--ease), border-color .28s var(--ease);
       box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+    .search:focus-within{
+      transform: scale(1.01);
+      border-color: var(--focus-border);
+      box-shadow: 0 14px 38px rgba(0,0,0,0.10);
     }
     .search input{
       flex:1; width:100%;
@@ -114,9 +112,19 @@
       text-decoration:none; color:var(--muted);
       transition: transform .22s var(--ease);
       min-height: 92px;
+      -webkit-tap-highlight-color: transparent;
       border-radius:18px;
       padding:6px 4px 8px;
+      isolation:isolate;
     }
+    .item:active{ transform: scale(0.96); transition: transform .08s; }
+    .item:focus-visible{ outline:none; }
+    .item:focus-visible .icon{
+      border-color: var(--focus-border);
+      box-shadow: 0 0 0 3px var(--focus), 0 14px 30px rgba(0,0,0,0.10);
+    }
+    .item:focus-visible .label{ color:var(--text); }
+
     .icon{
       width:56px; height:56px;
       display:grid; place-items:center;
@@ -128,27 +136,80 @@
       transition: transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);
       overflow:hidden;
     }
+
+    /* ===== 图标滤镜：默认灰度，唤醒/hover 全彩 ===== */
     .icon img{
       width:36px; height:36px; object-fit:contain;
+      transform: translateY(var(--y, 0px)) scale(var(--s, 1));
       filter: grayscale(100%) opacity(var(--icon-default-opacity));
       transition: transform .35s var(--ease), filter .35s var(--ease), opacity .35s var(--ease);
+      will-change: filter, transform, opacity;
     }
+
+    /* 夜间：需要反白的 logo */
     body.theme-night .white-invert .icon img{
       filter: grayscale(100%) invert(1) brightness(2) opacity(1);
     }
-    
-    /* Hover & Active Effects */
-    .item:hover .icon img, .item.is-active .icon img {
-      filter: grayscale(0%) invert(0%) brightness(1) opacity(1) !important;
-      transform: translateY(-6px);
+
+    /* Gemini 双层 */
+    .icon.gemini img.g1{ position:absolute; opacity:0; }
+    .item:hover .icon.gemini img.g0,
+    .item.is-active .icon.gemini img.g0{ opacity:0; }
+    .item:hover .icon.gemini img.g1,
+    .item.is-active .icon.gemini img.g1{ opacity:1; }
+
+    /* hover：仅桌面设备用（手机不依赖 hover） */
+    @media (hover:hover) and (pointer:fine){
+      .item:hover{ transform: translateY(-2px); }
+      .item:hover .icon{ box-shadow: 0 16px 34px rgba(0,0,0,0.12); }
+      .item:hover .icon img{
+        filter: grayscale(0%) invert(0%) brightness(1) opacity(1) !important;
+        transform: translateY(calc(var(--y, 0px) - 6px)) scale(var(--s, 1));
+      }
+      .item:hover .icon::after{
+        content:""; position:absolute; inset:-14px; border-radius:22px; z-index:-1;
+        filter: blur(34px); opacity: var(--glow-opacity);
+        background: radial-gradient(circle, var(--brand-color, #7C5CFF), transparent 72%);
+      }
+      .item:hover .label{ color:var(--text); }
     }
+
+    /* ===== Tap-to-wake：手机/平板靠 is-active ===== */
+    .item.is-active .label{ color:var(--text); }
+    .item.is-active .icon{ box-shadow: 0 16px 34px rgba(0,0,0,0.12); }
+    .item.is-active .icon img{
+      filter: grayscale(0%) invert(0%) brightness(1) opacity(1) !important;
+      transform: translateY(calc(var(--y, 0px) - 6px)) scale(var(--s, 1));
+    }
+    .item.is-active .icon::after{
+      content:""; position:absolute; inset:-14px; border-radius:22px; z-index:-1;
+      filter: blur(34px); opacity: var(--glow-opacity);
+      background: radial-gradient(circle, var(--brand-color, #7C5CFF), transparent 72%);
+    }
+
     .label{ font-size:13px; text-align:center; white-space:nowrap; transition: color .25s var(--ease); letter-spacing:-.12px; }
 
     #moreArea[aria-hidden="true"]{ display:none; }
     .morebtn{
-      background: var(--surface); border: 1px solid var(--hair); color: var(--text);
-      padding: 9px 24px; border-radius: 999px; cursor:pointer; font-size: 13px;
-      opacity: .72; margin: 26px auto 0; display:block;
+      background: var(--surface);
+      border: 1px solid var(--hair);
+      color: var(--text);
+      padding: 9px 24px;
+      border-radius: 999px;
+      cursor:pointer;
+      font-size: 13px;
+      opacity: .72;
+      transition: transform .25s var(--ease), opacity .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);
+      margin: 26px auto 0;
+      display:block;
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    }
+    .morebtn:hover{ opacity:1; transform: scale(1.03); }
+    .morebtn:focus-visible{
+      outline:none;
+      border-color: var(--focus-border);
+      box-shadow: 0 0 0 3px var(--focus);
+      opacity: 1;
     }
   </style>
 </head>
@@ -160,33 +221,37 @@
     <div class="top">
       <div class="top-left">
         <div id="greet" class="greet">Hello.</div>
-        <div class="weather">
+        <div class="weather" aria-live="polite">
           <span id="temp">…</span>
           <span id="city">WEATHER</span>
-          <span id="monitor-status"></span>
+          <span id="condition"></span>
         </div>
       </div>
-      <div class="clock" id="clock">00:00</div>
+      <div class="clock" id="clock" aria-label="Current time">00:00</div>
     </div>
 
-    <div class="quote-area">
+    <div class="quote-area" aria-hidden="true">
       <div id="quote" class="quote-text"></div>
       <div id="author" class="quote-author"></div>
     </div>
 
-    <form class="search" id="searchForm">
-      <input id="q" type="search" placeholder="Search..." autofocus />
+    <form class="search" id="searchForm" autocomplete="off" role="search" aria-label="Search the web">
+      <input id="q" type="search" inputmode="search" autocomplete="off"
+             autocapitalize="none" spellcheck="false"
+             placeholder="Search..." autofocus />
     </form>
 
     <div class="section">ESSENTIALS<div class="line"></div></div>
-    <div id="ess" class="grid"></div>
+    <div id="ess" class="grid" role="list"></div>
 
     <div id="moreArea" aria-hidden="true">
       <div class="section" style="margin-top:18px;">EXTENDED<div class="line"></div></div>
-      <div id="ext" class="grid"></div>
+      <div id="ext" class="grid" role="list"></div>
     </div>
 
-    <button class="morebtn" id="toggleBtn">More Icons</button>
+    <button class="morebtn" id="toggleBtn" aria-expanded="false" aria-controls="moreArea" type="button">
+      More Icons
+    </button>
   </div>
 
   <script>
@@ -203,115 +268,188 @@
 
     function imgTag(src, extraClass=""){
       const safe = ICON_BASE + encodeURIComponent(src);
-      return `<img class="${extraClass}" src="${safe}" loading="lazy" decoding="async" onerror="this.src='${ICON_BASE}${FALLBACK}'">`;
+      return `<img class="${extraClass}" src="${safe}" loading="lazy" decoding="async" alt=""
+              onerror="this.onerror=null;this.src='${ICON_BASE}${FALLBACK}'">`;
     }
 
-    const SITES = [
-      { n:"ChatGPT", u:"https://chatgpt.com/", icons:["openai.svg"], c:"#10a37f", r:1, s:1.00, y:0, w:true },
-      { n:"Claude", u:"https://claude.ai/", icons:["claude-color.svg"], c:"#d97757", r:1, s:1.02, y:0 },
-      { n:"Copilot", u:"https://copilot.microsoft.com/", icons:["copilot-color.svg"], c:"#0078d4", r:1, s:1.02, y:0 },
-      { n:"Gemini", u:"https://gemini.google.com/", gem:true, c:"#4e85ff", r:1, s:1.14, y:0, w:true },
-      { n:"X", u:"https://x.com/", icons:["x.svg"], c:"#ffffff", r:1, s:1.06, y:0, w:true },
-      { n:"GitHub", u:"https://github.com/", icons:["github.svg"], c:"#ffffff", r:1, s:1.02, y:0, w:true },
-      { n:"Gmail", u:"https://mail.google.com/", icons:["google-gmail.svg"], c:"#ea4335", r:2, s:1.06, y:0 },
-      { n:"Google", u:"https://www.google.com/", icons:["google-color.svg"], c:"#4285f4", r:2, s:1.05, y:0 },
-      { n:"Notion", u:"https://www.notion.so/", icons:["notion.svg"], c:"#ffffff", r:2, s:1.06, y:0, w:true },
-      { n:"Reddit", u:"https://www.reddit.com/", icons:["reddit.svg"], c:"#ff4500", r:2, s:1.05, y:0, w:true },
-      { n:"Telegram", u:"https://web.telegram.org/", icons:["telegram.svg"], c:"#2aabee", r:2, s:1.05, y:0, w:true },
-      { n:"YouTube", u:"https://www.youtube.com/", icons:["youtube_red.svg"], c:"#ff0000", r:2, s:1.08, y:0 },
-      { n:"AWS", u:"https://aws.amazon.com/", icons:["aws.svg"], c:"#ff9900", r:3, s:1.06, y:0, w:true },
-      { n:"Oracle", u:"https://www.oracle.com/", icons:["oracle.svg"], c:"#f80000", r:3, s:1.06, y:0 },
-      { n:"Bing", u:"https://www.bing.com/", icons:["bing.svg"], c:"#008373", r:3, s:1.04, y:0, w:true },
-      { n:"Microsoft", u:"https://www.microsoft.com/", icons:["microsoft.svg"], c:"#ffffff", r:3, s:1.06, y:0, w:true },
-      { n:"Netflix", u:"https://www.netflix.com/", icons:["netflix-icon.svg"], c:"#e50914", r:3, s:1.06, y:0, w:true },
-      { n:"Cloudflare", u:"https://dash.cloudflare.com/", icons:["cloudflare-color.svg"], c:"#f48120", r:3, s:1.03, y:0 },
-      { n:"Apple", u:"https://www.apple.com/", icons:["apple.svg"], c:"#ffffff", r:3, s:1.08, y:0, w:true }
-    ];
+    // Full list (ESSENTIALS: r<=2, EXTENDED: r>=3)
+    // s: scale, y: vertical adjust px, w: whiteInvert, gem: gemini dual-layer
+   const SITES = [
+  // Essentials row 1（保持不动）
+  { n:"ChatGPT", u:"https://chatgpt.com/", icons:["openai.svg"], c:"#10a37f", r:1, s:1.00, y:0, w:true },
+  { n:"Claude", u:"https://claude.ai/", icons:["claude-color.svg"], c:"#d97757", r:1, s:1.02, y:0 },
+  { n:"Copilot", u:"https://copilot.microsoft.com/", icons:["copilot-color.svg"], c:"#0078d4", r:1, s:1.02, y:0 },
+  { n:"Gemini", u:"https://gemini.google.com/", gem:true, c:"#4e85ff", r:1, s:1.14, y:0, w:true },
+  { n:"X", u:"https://x.com/", icons:["x.svg"], c:"#ffffff", r:1, s:1.06, y:0, w:true },
+  { n:"GitHub", u:"https://github.com/", icons:["github.svg"], c:"#ffffff", r:1, s:1.02, y:0, w:true },
+
+  // Essentials row 2（把 Notion / Reddit / Telegram 提上来）
+  { n:"Gmail", u:"https://mail.google.com/", icons:["google-gmail.svg"], c:"#ea4335", r:2, s:1.06, y:0 },
+  { n:"Google", u:"https://www.google.com/", icons:["google-color.svg"], c:"#4285f4", r:2, s:1.05, y:0 },
+  { n:"Notion", u:"https://www.notion.so/", icons:["notion.svg"], c:"#ffffff", r:2, s:1.06, y:0, w:true },
+  { n:"Reddit", u:"https://www.reddit.com/", icons:["reddit.svg"], c:"#ff4500", r:2, s:1.05, y:0, w:true },
+  { n:"Telegram", u:"https://web.telegram.org/", icons:["telegram.svg"], c:"#2aabee", r:2, s:1.05, y:0, w:true },
+  { n:"YouTube", u:"https://www.youtube.com/", icons:["youtube_red.svg"], c:"#ff0000", r:2, s:1.08, y:0 },
+
+  // Extended
+  { n:"AWS", u:"https://aws.amazon.com/", icons:["aws.svg"], c:"#ff9900", r:3, s:1.06, y:0, w:true },
+
+  // LinkedIn → Oracle
+  { n:"Oracle", u:"https://www.oracle.com/cloud/sign-in.html/", icons:["oracle.svg"], c:"#f80000", r:3, s:1.06, y:0 },
+
+  { n:"Bing", u:"https://www.bing.com/", icons:["bing.svg"], c:"#008373", r:3, s:1.04, y:0, w:true },
+  { n:"Microsoft", u:"https://www.microsoft.com/", icons:["microsoft.svg"], c:"#ffffff", r:3, s:1.06, y:0, w:true },
+  { n:"Netflix", u:"https://www.netflix.com/", icons:["netflix-icon.svg"], c:"#e50914", r:3, s:1.06, y:0, w:true },
+  { n:"Cloudflare", u:"https://dash.cloudflare.com/", icons:["cloudflare-color.svg"], c:"#f48120", r:3, s:1.03, y:0 },
+  { n:"Apple", u:"https://www.apple.com/", icons:["apple.svg"], c:"#ffffff", r:3, s:1.08, y:0, w:true }
+];
 
     function render(){
       const ess = document.getElementById("ess");
       const ext = document.getElementById("ext");
       ess.innerHTML = ext.innerHTML = "";
+
       SITES.forEach(s=>{
         const a = document.createElement("a");
         a.className = `item ${s.w ? "white-invert" : ""}`;
-        a.href = s.u; a.target = "_blank"; a.style.setProperty("--brand-color", s.c || "#7C5CFF");
+        a.href = s.u;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        a.setAttribute("role","listitem");
+
+        a.style.setProperty("--brand-color", s.c || "#7C5CFF");
         if (s.s) a.style.setProperty("--s", String(s.s));
         if (typeof s.y === "number") a.style.setProperty("--y", `${s.y}px`);
-        const iconHTML = s.gem ? `<div class="icon gemini">${imgTag("gemini.svg","g0")}${imgTag("gemini-color.svg","g1")}</div>` : `<div class="icon">${imgTag(s.icons[0])}</div>`;
+
+        const iconHTML = s.gem
+          ? `<div class="icon gemini" aria-hidden="true">
+               ${imgTag("gemini.svg","g0")}
+               ${imgTag("gemini-color.svg","g1")}
+             </div>`
+          : `<div class="icon" aria-hidden="true">
+               ${imgTag(s.icons[0])}
+             </div>`;
+
         a.innerHTML = `${iconHTML}<div class="label">${s.n}</div>`;
         (s.r <= 2 ? ess : ext).appendChild(a);
       });
-    }
-
-    // ✅ 新增：哪吒监控函数
-    async function updateNezha() {
-      const statusEl = document.getElementById("monitor-status");
-      try {
-        const res = await fetch("/monitor-api");
-        const data = await res.json();
-        const servers = data.result || [];
-        const total = servers.length;
-        const online = servers.filter(s => s.status === "online" || s.state === 1).length;
-        const isAllUp = online === total && total > 0;
-        statusEl.innerHTML = `<span style="color:${isAllUp ? '#34A853' : '#EA4335'}">●</span> ${online}/${total} NODES`;
-      } catch (e) {
-        statusEl.innerHTML = `<span style="color:var(--muted)">●</span> OFFLINE`;
-      }
     }
 
     function toggleMore(){
       const more = document.getElementById("moreArea");
       const btn  = document.getElementById("toggleBtn");
       const isOpen = more.getAttribute("aria-hidden") === "false";
-      more.setAttribute("aria-hidden", String(isOpen));
+
+      more.setAttribute("aria-hidden", String(isOpen)); // close->true, open->false
+      btn.setAttribute("aria-expanded", String(!isOpen));
       btn.textContent = isOpen ? "More Icons" : "Less Icons";
+    }
+
+    function updateQuote(){
+      const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+      document.getElementById("quote").textContent = `"${q.t}"`;
+      document.getElementById("author").textContent = q.a;
     }
 
     function updateTheme(){
       const h = new Date().getHours();
       const night = h >= 17 || h < 8;
       document.body.classList.toggle("theme-night", night);
-      document.getElementById("greet").textContent = night ? "Good night." : (h < 12 ? "Good morning." : "Good afternoon.");
+      document.getElementById("greet").textContent =
+        night ? "Good night." : (h < 12 ? "Good morning." : "Good afternoon.");
     }
 
     function tick(){
       const d = new Date();
-      document.getElementById("clock").textContent = `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
-    }
-
-    async function updateWeather(){
-      try{
-        const ipRes = await fetch("https://ipapi.co/json/");
-        const ip = await ipRes.json();
-        const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${ip.latitude}&longitude=${ip.longitude}&current=temperature_2m`);
-        const w = await wRes.json();
-        document.getElementById("temp").textContent = `${Math.round(w.current.temperature_2m)}°C`;
-        document.getElementById("city").textContent = String(ip.city || "LOCAL").toUpperCase();
-      }catch{ document.getElementById("city").textContent = "WEATHER UNAVAILABLE"; }
+      const hhmm = `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+      const el = document.getElementById("clock");
+      if (el.textContent !== hhmm) el.textContent = hhmm;
     }
 
     document.getElementById("searchForm").onsubmit = (e)=>{
       e.preventDefault();
       const q = document.getElementById("q").value.trim();
-      if(q) window.open("https://www.google.com/search?q=" + encodeURIComponent(q), "_blank");
+      if (!q) return;
+      window.open("https://www.google.com/search?q=" + encodeURIComponent(q), "_blank");
     };
+
+    async function updateWeather(){
+      const tempEl = document.getElementById("temp");
+      const cityEl = document.getElementById("city");
+      const condEl = document.getElementById("condition");
+      try{
+        const ipRes = await fetch("https://ipapi.co/json/", { cache:"no-store" });
+        const ip = await ipRes.json();
+        const wRes = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(ip.latitude)}&longitude=${encodeURIComponent(ip.longitude)}&current=temperature_2m,weather_code&temperature_unit=celsius`,
+          { cache:"no-store" }
+        );
+        const w = await wRes.json();
+        tempEl.textContent = `${Math.round(w.current.temperature_2m)}°C`;
+        cityEl.textContent = String(ip.city || "LOCAL").toUpperCase();
+        condEl.textContent = "";
+      }catch{
+        tempEl.textContent = "";
+        cityEl.textContent = "WEATHER UNAVAILABLE";
+        condEl.textContent = "";
+      }
+    }
+
+    // ===== Tap-to-wake: first tap highlight, second tap open (iOS safe) =====
+    (function enableTapWake(){
+      let activeEl = null;
+      let timer = null;
+
+      const clearActive = ()=>{
+        if (activeEl) activeEl.classList.remove("is-active");
+        activeEl = null;
+        if (timer) clearTimeout(timer);
+        timer = null;
+      };
+
+      const wake = (a)=>{
+        clearActive();
+        a.classList.add("is-active");
+        activeEl = a;
+        timer = setTimeout(clearActive, 900);
+      };
+
+      // touchstart: first tap wakes
+      document.addEventListener("touchstart", (e)=>{
+        const a = e.target.closest("a.item");
+        if (!a) { clearActive(); return; }
+        if (a !== activeEl){
+          e.preventDefault(); // block navigation on first tap
+          wake(a);
+        }
+        // if a === activeEl: do nothing, let click navigate
+      }, { passive:false, capture:true });
+
+      // click: handles non-touch + ensures 2nd tap opens
+      document.addEventListener("click", (e)=>{
+        const a = e.target.closest("a.item");
+        if (!a) { clearActive(); return; }
+        if (a === activeEl) return; // allow navigation on second tap
+        e.preventDefault();
+        e.stopPropagation();
+        wake(a);
+      }, { capture:true });
+
+      document.addEventListener("scroll", clearActive, { passive:true });
+    })();
 
     document.getElementById("toggleBtn").addEventListener("click", toggleMore);
 
     // Init
-    updateTheme(); tick(); render(); updateWeather();
-    const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
-    document.getElementById("quote").textContent = `"${q.t}"`;
-    document.getElementById("author").textContent = q.a;
-    
-    // ✅ 启动监控
-    updateNezha();
+    updateTheme();
+    tick();
+    render();
+    updateWeather();
+    updateQuote();
 
     setInterval(tick, 1000);
     setInterval(updateTheme, 60000);
     setInterval(updateWeather, 600000);
-    setInterval(updateNezha, 30000); // 30秒同步一次监控
   </script>
 </body>
 </html>
