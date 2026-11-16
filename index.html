@@ -319,9 +319,26 @@
       line-height:1.55;
       color:var(--muted-strong);
     }
-    .now-card .meta-pill{
-      margin-top:14px;
-      max-width:100%;
+    .wx-main{
+      display:flex;
+      align-items:baseline;
+      gap:10px;
+      margin:2px 0 2px;
+    }
+    .wx-main #wxTemp{
+      font-size:44px;
+      font-weight:700;
+      letter-spacing:-0.03em;
+      line-height:1;
+    }
+    .wx-main #wxCond{
+      font-size:14px;
+      color:var(--muted-strong);
+    }
+    .wx-city{
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:8px;
     }
 
     .clock{
@@ -746,13 +763,6 @@
         <div class="clock" id="clock">00:00</div>
         <div class="date-line" id="dateLine"></div>
         <div class="lunar-line" id="lunarLine"></div>
-        <div class="meta-pill" aria-live="polite">
-          <span id="temp">…</span>
-          <span class="sep" aria-hidden="true"></span>
-          <span id="city">WEATHER</span>
-          <span class="sep" aria-hidden="true"></span>
-          <span id="condition">--</span>
-        </div>
       </div>
       <div class="side-card">
         <h3>Ask AI</h3>
@@ -771,9 +781,13 @@
         <div class="recent-row" id="recentRow" aria-label="Recent searches"></div>
       </div>
       <div class="side-card">
-        <h3>World clock</h3>
-        <div class="shortcut-row"><span>Qingdao</span><span id="timeQD">--:--</span></div>
-        <div class="shortcut-row"><span>Los Angeles</span><span id="timeLA">--:--</span></div>
+        <h3>Local weather</h3>
+        <div class="wx-main"><span id="wxTemp">--°</span><span id="wxCond">--</span></div>
+        <div class="wx-city" id="wxCity">Locating…</div>
+        <div class="shortcut-row"><span>Feels like</span><span id="wxFeels">--</span></div>
+        <div class="shortcut-row"><span>Humidity</span><span id="wxHum">--</span></div>
+        <div class="shortcut-row"><span>Wind</span><span id="wxWind">--</span></div>
+        <div class="shortcut-row"><span>Today</span><span id="wxRange">--</span></div>
       </div>
       <div class="side-card">
         <h3>Shortcuts</h3>
@@ -986,20 +1000,6 @@
       }).format(date);
     }
 
-    function updateWorldClock(now = new Date()){
-      const fmt = (tz) => {
-        try {
-          return new Intl.DateTimeFormat("en-US", {
-            weekday: "short", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: tz
-          }).format(now);
-        } catch { return "--:--"; }
-      };
-      const qd = document.getElementById("timeQD");
-      if (qd) qd.textContent = fmt("Asia/Shanghai");
-      const la = document.getElementById("timeLA");
-      if (la) la.textContent = fmt("America/Los_Angeles");
-    }
-
     function updateClock(){
       const now = new Date();
       document.getElementById("clock").textContent = formatTime(now);
@@ -1017,7 +1017,6 @@
           }).format(now);
         } catch { lunarEl.textContent = ""; }
       }
-      updateWorldClock(now);
       updateGreeting(now);
       updateTheme();
     }
@@ -1105,30 +1104,41 @@
     }
 
     async function updateWeather(){
-      const tempEl = document.getElementById("temp");
-      const cityEl = document.getElementById("city");
-      const condEl = document.getElementById("condition");
+      const tempEl = document.getElementById("wxTemp");
+      const condEl = document.getElementById("wxCond");
+      const cityEl = document.getElementById("wxCity");
+      const feelsEl = document.getElementById("wxFeels");
+      const humEl = document.getElementById("wxHum");
+      const windEl = document.getElementById("wxWind");
+      const rangeEl = document.getElementById("wxRange");
 
       try {
         const location = await getLocation();
         const weather = await fetchJSON(
-          `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(location.latitude)}&longitude=${encodeURIComponent(location.longitude)}&current=temperature_2m,weather_code&temperature_unit=celsius`,
+          `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(location.latitude)}&longitude=${encodeURIComponent(location.longitude)}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min&forecast_days=1&temperature_unit=celsius&wind_speed_unit=kmh`,
           { timeout: 5000 }
         );
 
         const current = weather.current || {};
-        const temperature = typeof current.temperature_2m === "number" ? `${Math.round(current.temperature_2m)}°C` : "--";
+        const daily = weather.daily || {};
+        const temperature = typeof current.temperature_2m === "number" ? `${Math.round(current.temperature_2m)}°` : "--";
         const weatherText = WEATHER_TEXT[current.weather_code] || "Weather";
 
         tempEl.textContent = temperature;
         tempEl.dataset.ok = "1";
-        cityEl.textContent = location.city || "LOCAL";
         condEl.textContent = weatherText;
+        cityEl.textContent = location.city || "LOCAL";
+        feelsEl.textContent = typeof current.apparent_temperature === "number" ? `${Math.round(current.apparent_temperature)}°C` : "--";
+        humEl.textContent = typeof current.relative_humidity_2m === "number" ? `${Math.round(current.relative_humidity_2m)}%` : "--";
+        windEl.textContent = typeof current.wind_speed_10m === "number" ? `${Math.round(current.wind_speed_10m)} km/h` : "--";
+        const hi = Array.isArray(daily.temperature_2m_max) ? daily.temperature_2m_max[0] : undefined;
+        const lo = Array.isArray(daily.temperature_2m_min) ? daily.temperature_2m_min[0] : undefined;
+        rangeEl.textContent = (typeof hi === "number" && typeof lo === "number") ? `${Math.round(lo)}° / ${Math.round(hi)}°` : "--";
       } catch {
         if (!tempEl.dataset.ok){
           tempEl.textContent = "--";
-          cityEl.textContent = "WEATHER";
           condEl.textContent = "Unavailable";
+          cityEl.textContent = "WEATHER";
         }
       }
     }
