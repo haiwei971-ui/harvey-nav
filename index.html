@@ -527,12 +527,6 @@
       filter:grayscale(100%) invert(1) brightness(2) opacity(1);
     }
 
-    .icon.gemini img.g1{ position:absolute; opacity:0; }
-    .item:hover .icon.gemini img.g0,
-    .item.is-active .icon.gemini img.g0{ opacity:0; }
-    .item:hover .icon.gemini img.g1,
-    .item.is-active .icon.gemini img.g1{ opacity:1; }
-
     @media (hover:hover) and (pointer:fine){
       .item:hover{ transform:translateY(-2px); }
       .item:hover .icon,
@@ -797,8 +791,8 @@
       { name:"ChatGPT", url:"https://chatgpt.com/", icon:"openai.svg", color:"#10a37f", section:"favorites", scale:1.00, offsetY:0, invertInDark:true },
       { name:"Claude", url:"https://claude.ai/", icon:"claude-color.svg", color:"#d97757", section:"favorites", scale:1.02, offsetY:0 },
       { name:"Muse", url:"https://muse.ai/", icon:"muse-v2.svg", color:"#0081fb", section:"favorites", scale:1.00, offsetY:0 },
-      { name:"Copilot", url:"https://copilot.microsoft.com/", icon:"copilot-color.svg", color:"#0078d4", section:"favorites", scale:1.02, offsetY:0 },
-      { name:"Gemini", url:"https://gemini.google.com/", icons:["gemini.svg", "gemini-color.svg"], dual:true, color:"#4e85ff", section:"favorites", scale:1.14, offsetY:0, invertInDark:true },
+      { name:"Copilot", url:"https://copilot.microsoft.com/", icon:"copilot-v2.svg", color:"#0078d4", section:"favorites", scale:1.02, offsetY:0 },
+      { name:"Gemini", url:"https://gemini.google.com/", icon:"gemini-color.svg", color:"#4e85ff", section:"favorites", scale:1.14, offsetY:0 },
       { name:"Perplexity", url:"https://www.perplexity.ai/", icon:"perplexity-color.svg", color:"#20808d", section:"favorites", scale:1.00, offsetY:0 },
       { name:"Grok", url:"https://grok.com/", icon:"grok-v2.svg", color:"#000000", section:"favorites", scale:1.00, offsetY:0, invertInDark:true },
       { name:"DeepSeek", url:"https://chat.deepseek.com/", icon:"deepseek-color.svg", color:"#4d6bfe", section:"favorites", scale:1.00, offsetY:0 },
@@ -858,14 +852,9 @@
       a.style.setProperty("--y", `${site.offsetY ?? 0}px`);
 
       const icon = document.createElement("div");
-      icon.className = `icon${site.dual ? " gemini" : ""}`;
+      icon.className = "icon";
       icon.setAttribute("aria-hidden", "true");
-
-      if (site.dual && Array.isArray(site.icons)){
-        icon.append(createIconImage(site.icons[0], "g0"), createIconImage(site.icons[1], "g1"));
-      } else {
-        icon.append(createIconImage(site.icon));
-      }
+      icon.append(createIconImage(site.icon));
 
       const label = document.createElement("div");
       label.className = "label";
