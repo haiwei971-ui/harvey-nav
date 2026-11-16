@@ -112,9 +112,64 @@
     }
 
     .wrap{
-      width:min(1080px, calc(100% - 32px));
+      width:min(1320px, calc(100% - 48px));
       margin:0 auto;
       padding:calc(26px + env(safe-area-inset-top)) 0 56px;
+    }
+
+    /* Desktop: main column + sticky right sidebar */
+    .layout{
+      display:grid;
+      grid-template-columns:minmax(0, 1fr) 300px;
+      gap:36px;
+      align-items:start;
+    }
+    .main-col{ min-width:0; }
+    .side-col{
+      position:sticky;
+      top:26px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+    .side-card{
+      padding:16px 18px 18px;
+      border-radius:20px;
+      border:1px solid var(--hair);
+      background:var(--surface);
+      box-shadow:var(--shadow-soft);
+      backdrop-filter:blur(22px);
+      -webkit-backdrop-filter:blur(22px);
+    }
+    .side-card h3{
+      margin:0 0 12px;
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:0.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+    .shortcut-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:7px 0;
+      font-size:13px;
+      color:var(--muted-strong);
+      border-bottom:1px solid var(--hair);
+    }
+    .shortcut-row:last-child{ border-bottom:0; padding-bottom:0; }
+    .shortcut-row:first-of-type{ padding-top:0; }
+    .side-card .recent-row{ padding:0; }
+    .side-card .recent-row[hidden]{ display:none; }
+    .side-empty{
+      font-size:13px;
+      color:var(--muted);
+    }
+    @media (max-width:1099px){
+      .layout{ display:block; }
+      .side-col{ position:static; margin-top:28px; }
     }
 
     .hero{
@@ -546,6 +601,23 @@
 
     #moreArea[hidden]{ display:none; }
 
+    @media (min-width:1100px){
+      .grid{
+        grid-template-columns:repeat(6, 1fr);
+        gap:22px 16px;
+      }
+      .icon{ width:64px; height:64px; }
+      .icon img{
+        filter:grayscale(0%) opacity(1);
+        width:40px;
+        height:40px;
+      }
+      .item{ min-height:112px; }
+      .search{ min-height:72px; }
+      .search input{ font-size:19px; }
+      .greet{ font-size:40px; }
+    }
+
     @media (max-width:720px){
       .hero{
         align-items:stretch;
@@ -590,6 +662,8 @@
   </div>
 
   <div class="wrap">
+    <div class="layout">
+    <main class="main-col">
     <header class="hero">
       <div class="hero-main">
         <div id="greet" class="greet">Hello.</div>
@@ -639,7 +713,6 @@
         <span class="search-note-right"><span class="engine-chip" id="engineChip">Google</span><span class="kbd">/</span> Focus search</span>
       </div>
       <div class="bang-hints" id="bangHints" aria-label="Quick jumps"></div>
-      <div class="recent-row" id="recentRow" aria-label="Recent searches" hidden></div>
     </section>
 
     <section class="section-block">
@@ -662,6 +735,22 @@
       </div>
       <div id="ext" class="grid" role="list"></div>
     </section>
+    </main>
+    <aside class="side-col" aria-label="Shortcuts and recent">
+      <div class="side-card">
+        <h3>Shortcuts</h3>
+        <div class="shortcut-row"><span>Focus search</span><span><span class="kbd">/</span> <span class="kbd">⌘K</span></span></div>
+        <div class="shortcut-row"><span>Clear / close</span><span class="kbd">Esc</span></div>
+        <div class="shortcut-row"><span>Jump to a site</span><span class="kbd">!gh</span> <span class="kbd">!yt</span> <span class="kbd">!gpt</span></div>
+        <div class="shortcut-row"><span>Open result</span><span class="kbd">Enter</span></div>
+      </div>
+      <div class="side-card">
+        <h3>Recent</h3>
+        <div class="recent-row" id="recentRow" aria-label="Recent searches" hidden></div>
+        <div class="side-empty" id="recentEmpty">No recent searches yet.</div>
+      </div>
+    </aside>
+    </div>
   </div>
 
   <script>
@@ -1121,6 +1210,8 @@
       if (!box) return;
       const list = loadRecent();
       box.hidden = list.length === 0;
+      const empty = document.getElementById("recentEmpty");
+      if (empty) empty.hidden = list.length !== 0;
       box.replaceChildren(...list.map((q) => {
         const b = document.createElement("button");
         b.type = "button";
