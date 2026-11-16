@@ -731,12 +731,20 @@
       gpt:    { label:"ChatGPT", url:q => "https://chatgpt.com/?q=" + encodeURIComponent(q) },
       chatgpt:{ label:"ChatGPT", url:q => "https://chatgpt.com/?q=" + encodeURIComponent(q) },
       claude: { label:"Claude",  url:q => "https://claude.ai/new?q=" + encodeURIComponent(q) },
+      muse:   { label:"Muse",    url:q => "https://muse.ai/" },
       gemini: { label:"Gemini",  url:q => "https://gemini.google.com/app?q=" + encodeURIComponent(q) },
       copilot:{ label:"Copilot", url:q => "https://copilot.microsoft.com/?q=" + encodeURIComponent(q) },
+      pplx:   { label:"Perplexity", url:q => "https://www.perplexity.ai/search?q=" + encodeURIComponent(q) },
+      perplexity:{ label:"Perplexity", url:q => "https://www.perplexity.ai/search?q=" + encodeURIComponent(q) },
+      grok:   { label:"Grok",    url:q => "https://grok.com/?q=" + encodeURIComponent(q) },
+      deepseek:{ label:"DeepSeek", url:q => "https://chat.deepseek.com/" },
+      metaai: { label:"Meta AI", url:q => "https://www.meta.ai/" },
+      wiki:   { label:"Wikipedia", url:q => "https://en.wikipedia.org/wiki/Special:Search?search=" + encodeURIComponent(q) },
+      spotify:{ label:"Spotify", url:q => "https://open.spotify.com/search/" + encodeURIComponent(q) },
       gmail:  { label:"Gmail",   url:q => "https://mail.google.com/mail/u/0/#search/" + encodeURIComponent(q) },
       maps:   { label:"Maps",    url:q => "https://www.google.com/maps/search/" + encodeURIComponent(q) },
     };
-    const BANG_ORDER = ["gpt","claude","gemini","gh","yt","x","reddit","bing","gmail","maps"];
+    const BANG_ORDER = ["gpt","claude","muse","gemini","pplx","grok","gh","yt","x","reddit","bing","gmail","maps"];
     const STORAGE_KEY_RECENT = "harveyi-recent-searches";
     const FALLBACK_LOCATION = { latitude: 36.0671, longitude: 120.3826, city: "QINGDAO" };
     const WEATHER_REFRESH_MS = 10 * 60 * 1000;
@@ -788,8 +796,13 @@
     const SITES = [
       { name:"ChatGPT", url:"https://chatgpt.com/", icon:"openai.svg", color:"#10a37f", section:"favorites", scale:1.00, offsetY:0, invertInDark:true },
       { name:"Claude", url:"https://claude.ai/", icon:"claude-color.svg", color:"#d97757", section:"favorites", scale:1.02, offsetY:0 },
+      { name:"Muse", url:"https://muse.ai/", icon:"muse-color.svg", color:"#0081fb", section:"favorites", scale:1.00, offsetY:0 },
       { name:"Copilot", url:"https://copilot.microsoft.com/", icon:"copilot-color.svg", color:"#0078d4", section:"favorites", scale:1.02, offsetY:0 },
       { name:"Gemini", url:"https://gemini.google.com/", icons:["gemini.svg", "gemini-color.svg"], dual:true, color:"#4e85ff", section:"favorites", scale:1.14, offsetY:0, invertInDark:true },
+      { name:"Perplexity", url:"https://www.perplexity.ai/", icon:"perplexity-color.svg", color:"#20808d", section:"favorites", scale:1.00, offsetY:0 },
+      { name:"Grok", url:"https://grok.com/", icon:"grok.svg", color:"#000000", section:"favorites", scale:1.00, offsetY:0, invertInDark:true },
+      { name:"DeepSeek", url:"https://chat.deepseek.com/", icon:"deepseek-color.svg", color:"#4d6bfe", section:"favorites", scale:1.00, offsetY:0 },
+      { name:"Meta AI", url:"https://www.meta.ai/", icon:"metaai-color.svg", color:"#0081fb", section:"favorites", scale:1.00, offsetY:0 },
       { name:"X", url:"https://x.com/", icon:"x.svg", color:"#ffffff", section:"favorites", scale:1.06, offsetY:0, invertInDark:true },
       { name:"GitHub", url:"https://github.com/", icon:"github.svg", color:"#ffffff", section:"favorites", scale:1.02, offsetY:0, invertInDark:true },
 
@@ -799,6 +812,8 @@
       { name:"Reddit", url:"https://www.reddit.com/", icon:"reddit.svg", color:"#ff4500", section:"favorites", scale:1.05, offsetY:0, invertInDark:true },
       { name:"Telegram", url:"https://web.telegram.org/", icon:"telegram.svg", color:"#2aabee", section:"favorites", scale:1.05, offsetY:0, invertInDark:true },
       { name:"YouTube", url:"https://www.youtube.com/", icon:"youtube_red.svg", color:"#ff0000", section:"favorites", scale:1.08, offsetY:0 },
+      { name:"Spotify", url:"https://open.spotify.com/", icon:"spotify-icon.svg", color:"#1db954", section:"favorites", scale:1.00, offsetY:0 },
+      { name:"Wikipedia", url:"https://www.wikipedia.org/", icon:"wikipedia-color.svg", color:"#000000", section:"favorites", scale:1.00, offsetY:0, invertInDark:true },
 
       { name:"AWS", url:"https://aws.amazon.com/", icon:"aws.svg", color:"#ff9900", section:"more", scale:1.06, offsetY:0, invertInDark:true },
       { name:"Oracle", url:"https://www.oracle.com/cloud/sign-in.html/", icon:"oracle.svg", color:"#f80000", section:"more", scale:1.06, offsetY:0 },
