@@ -9,7 +9,10 @@
   <meta name="color-scheme" content="light dark" />
   <meta name="theme-color" content="#f5f6fb" />
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+  <meta name="description" content="Harveyi — Google search with one clean jump to ChatGPT, Claude, Gemini, GitHub, Gmail, Notion, YouTube and more." />
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f5f6fb" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#091018" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%237c5cff'/%3E%3Ctext x='32' y='44' font-size='36' font-family='sans-serif' font-weight='700' text-anchor='middle' fill='white'%3EH%3C/text%3E%3C/svg%3E" />
 
   <style>
     :root{
@@ -56,7 +59,7 @@
     body{
       margin:0;
       min-height:100vh;
-      font-family:Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
       color:var(--text);
       background:
         radial-gradient(circle at 18% 18%, rgba(124,92,255,0.10), transparent 28%),
@@ -199,7 +202,7 @@
     }
 
     .clock{
-      font-family:"JetBrains Mono", ui-monospace, monospace;
+      font-family:ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
       font-size:clamp(28px, 4vw, 34px);
       line-height:1;
       font-weight:600;
@@ -288,6 +291,64 @@
       letter-spacing:-0.01em;
     }
 
+    .date-line{
+      margin-top:6px;
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:-0.01em;
+    }
+    .engine-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      min-height:24px;
+      padding:0 10px;
+      border-radius:999px;
+      border:1px solid var(--hair);
+      background:var(--surface);
+      font-size:12px;
+      font-weight:600;
+      color:var(--muted-strong);
+      white-space:nowrap;
+    }
+    .bang-hints{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      padding:10px 6px 0;
+    }
+    .bang-hints button{
+      border:1px solid var(--hair);
+      background:var(--surface);
+      color:var(--muted-strong);
+      border-radius:999px;
+      padding:4px 10px;
+      font-size:12px;
+      cursor:pointer;
+      font-family:inherit;
+    }
+    .bang-hints button:hover{ color:var(--text); border-color:var(--focus-border); }
+    .recent-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      padding:10px 6px 0;
+    }
+    .recent-row button{
+      border:1px solid var(--hair);
+      background:transparent;
+      color:var(--muted);
+      border-radius:999px;
+      padding:4px 10px;
+      font-size:12px;
+      cursor:pointer;
+      font-family:inherit;
+      max-width:220px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .recent-row button:hover{ color:var(--text); border-color:var(--focus-border); }
     .search-note-right{
       display:inline-flex;
       align-items:center;
@@ -305,7 +366,7 @@
       border:1px solid var(--hair);
       background:var(--surface);
       box-shadow:var(--shadow-soft);
-      font-family:"JetBrains Mono", ui-monospace, monospace;
+      font-family:ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
       font-size:11px;
       color:var(--muted-strong);
     }
@@ -546,6 +607,7 @@
       <div class="time-card" aria-label="Current time">
         <div class="time-label">Local time</div>
         <div class="clock" id="clock">00:00</div>
+        <div class="date-line" id="dateLine"></div>
       </div>
     </header>
 
@@ -574,8 +636,10 @@
       </form>
       <div class="search-note">
         <span>Google search with one clean jump.</span>
-        <span class="search-note-right"><span class="kbd">/</span> Focus search</span>
+        <span class="search-note-right"><span class="engine-chip" id="engineChip">Google</span><span class="kbd">/</span> Focus search</span>
       </div>
+      <div class="bang-hints" id="bangHints" aria-label="Quick jumps"></div>
+      <div class="recent-row" id="recentRow" aria-label="Recent searches" hidden></div>
     </section>
 
     <section class="section-block">
@@ -603,6 +667,28 @@
   <script>
     const ICON_BASE = "icons/";
     const SEARCH_ENGINE = "https://www.google.com/search?q=";
+    // !bang quick jumps: type "!gh react" to search GitHub, "!yt lofi" for YouTube, etc.
+    const BANGS = {
+      g:      { label:"Google",  url:q => "https://www.google.com/search?q=" + encodeURIComponent(q) },
+      google: { label:"Google",  url:q => "https://www.google.com/search?q=" + encodeURIComponent(q) },
+      bing:   { label:"Bing",    url:q => "https://www.bing.com/search?q=" + encodeURIComponent(q) },
+      yt:     { label:"YouTube", url:q => "https://www.youtube.com/results?search_query=" + encodeURIComponent(q) },
+      youtube:{ label:"YouTube", url:q => "https://www.youtube.com/results?search_query=" + encodeURIComponent(q) },
+      gh:     { label:"GitHub",  url:q => "https://github.com/search?q=" + encodeURIComponent(q) },
+      github: { label:"GitHub",  url:q => "https://github.com/search?q=" + encodeURIComponent(q) },
+      x:      { label:"X",       url:q => "https://x.com/search?q=" + encodeURIComponent(q) },
+      reddit: { label:"Reddit",  url:q => "https://www.reddit.com/search/?q=" + encodeURIComponent(q) },
+      gpt:    { label:"ChatGPT", url:q => "https://chatgpt.com/?q=" + encodeURIComponent(q) },
+      chatgpt:{ label:"ChatGPT", url:q => "https://chatgpt.com/?q=" + encodeURIComponent(q) },
+      claude: { label:"Claude",  url:q => "https://claude.ai/new?q=" + encodeURIComponent(q) },
+      gemini: { label:"Gemini",  url:q => "https://gemini.google.com/app?q=" + encodeURIComponent(q) },
+      copilot:{ label:"Copilot", url:q => "https://copilot.microsoft.com/?q=" + encodeURIComponent(q) },
+      gmail:  { label:"Gmail",   url:q => "https://mail.google.com/mail/u/0/#search/" + encodeURIComponent(q) },
+      maps:   { label:"Maps",    url:q => "https://www.google.com/maps/search/" + encodeURIComponent(q) },
+    };
+    const BANG_ORDER = ["gpt","claude","gemini","gh","yt","x","reddit","bing","gmail","maps"];
+    const STORAGE_KEY_RECENT = "harveyi-recent-searches";
+    const FALLBACK_LOCATION = { latitude: 36.0671, longitude: 120.3826, city: "QINGDAO" };
     const WEATHER_REFRESH_MS = 10 * 60 * 1000;
     const LOCATION_CACHE_MS = 30 * 60 * 1000;
     const STORAGE_KEY_MORE_OPEN = "harveyi-more-open";
@@ -802,6 +888,12 @@
     function updateClock(){
       const now = new Date();
       document.getElementById("clock").textContent = formatTime(now);
+      const dateEl = document.getElementById("dateLine");
+      if (dateEl){
+        dateEl.textContent = new Intl.DateTimeFormat(navigator.language || "en-US", {
+          weekday: "short", month: "short", day: "numeric"
+        }).format(now);
+      }
       updateGreeting(now);
       updateTheme();
     }
@@ -868,14 +960,24 @@
         return preciseLocation;
       }
 
-      const ip = await fetchJSON("https://ipapi.co/json/", { timeout: 5000 });
-      const location = {
-        latitude: ip.latitude,
-        longitude: ip.longitude,
-        city: String(ip.city || "LOCAL").toUpperCase()
-      };
-      locationCache = { at: Date.now(), data: location };
-      return location;
+      // IP geolocation with fallbacks: ipapi.co is often rate-limited, so try
+      // ip-api.com next, then fall back to a fixed home city instead of "--".
+      const ipEndpoints = [
+        { url:"https://ipapi.co/json/", parse:j => ({ latitude:j.latitude, longitude:j.longitude, city:String(j.city || "LOCAL").toUpperCase() }) },
+        { url:"https://ip-api.com/json/?fields=status,city,lat,lon", parse:j => j.status === "success" ? ({ latitude:j.lat, longitude:j.lon, city:String(j.city || "LOCAL").toUpperCase() }) : null },
+      ];
+      for (const ep of ipEndpoints){
+        try {
+          const j = await fetchJSON(ep.url, { timeout: 4000 });
+          const location = ep.parse(j);
+          if (location && typeof location.latitude === "number" && typeof location.longitude === "number"){
+            locationCache = { at: Date.now(), data: location };
+            return location;
+          }
+        } catch {}
+      }
+      locationCache = { at: Date.now(), data: FALLBACK_LOCATION };
+      return FALLBACK_LOCATION;
     }
 
     async function updateWeather(){
@@ -895,12 +997,15 @@
         const weatherText = WEATHER_TEXT[current.weather_code] || "Weather";
 
         tempEl.textContent = temperature;
+        tempEl.dataset.ok = "1";
         cityEl.textContent = location.city || "LOCAL";
         condEl.textContent = weatherText;
       } catch {
-        tempEl.textContent = "--";
-        cityEl.textContent = "WEATHER";
-        condEl.textContent = "Unavailable";
+        if (!tempEl.dataset.ok){
+          tempEl.textContent = "--";
+          cityEl.textContent = "WEATHER";
+          condEl.textContent = "Unavailable";
+        }
       }
     }
 
@@ -963,18 +1068,102 @@
       input.select();
     }
 
+    function parseBang(raw){
+      const m = raw.match(/^!([a-z]+)\s+(.+)$/i);
+      if (!m) return null;
+      const bang = BANGS[m[1].toLowerCase()];
+      return bang ? { bang, query: m[2].trim() } : null;
+    }
+
+    function resolveSearchUrl(raw){
+      const parsed = parseBang(raw);
+      if (parsed && parsed.query) return parsed.bang.url(parsed.query);
+      // bare domain? go straight there instead of Googling it
+      if (/^([a-z0-9-]+\.)+[a-z]{2,}(\/\S*)?$/i.test(raw) && !/\s/.test(raw)){
+        return "https://" + raw;
+      }
+      return SEARCH_ENGINE + encodeURIComponent(raw);
+    }
+
+    function updateEngineChip(value){
+      const chip = document.getElementById("engineChip");
+      if (!chip) return;
+      const parsed = parseBang(value.trim());
+      chip.textContent = parsed ? parsed.bang.label : "Google";
+    }
+
+    function renderBangHints(){
+      const box = document.getElementById("bangHints");
+      if (!box) return;
+      box.replaceChildren(...BANG_ORDER.map((key) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.dataset.bang = key;
+        b.textContent = "!" + key + " " + BANGS[key].label;
+        return b;
+      }));
+    }
+
+    function loadRecent(){
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY_RECENT) || "[]"); } catch { return []; }
+    }
+
+    function saveRecent(raw){
+      try {
+        const list = loadRecent().filter((x) => x !== raw);
+        list.unshift(raw);
+        localStorage.setItem(STORAGE_KEY_RECENT, JSON.stringify(list.slice(0, 5)));
+      } catch {}
+    }
+
+    function renderRecent(){
+      const box = document.getElementById("recentRow");
+      if (!box) return;
+      const list = loadRecent();
+      box.hidden = list.length === 0;
+      box.replaceChildren(...list.map((q) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.dataset.q = q;
+        b.textContent = q;
+        b.title = q;
+        return b;
+      }));
+    }
+
     function bindEvents(){
       document.getElementById("toggleBtn").addEventListener("click", toggleMore);
 
       document.getElementById("searchForm").addEventListener("submit", (e) => {
         e.preventDefault();
-        const q = document.getElementById("q").value.trim();
-        if (!q) return;
-        window.open(SEARCH_ENGINE + encodeURIComponent(q), "_blank", "noopener,noreferrer");
+        const raw = document.getElementById("q").value.trim();
+        if (!raw) return;
+        window.open(resolveSearchUrl(raw), "_blank", "noopener,noreferrer");
+        saveRecent(raw);
+        renderRecent();
       });
 
+      const input = document.getElementById("q");
+      input.addEventListener("input", () => { updateEngineChip(input.value); });
+      document.getElementById("bangHints").addEventListener("click", (e) => {
+        const b = e.target.closest("button[data-bang]");
+        if (!b) return;
+        input.value = "!" + b.dataset.bang + " ";
+        input.focus();
+        updateEngineChip(input.value);
+      });
+      document.getElementById("recentRow").addEventListener("click", (e) => {
+        const b = e.target.closest("button[data-q]");
+        if (!b) return;
+        input.value = b.dataset.q;
+        input.focus();
+        updateEngineChip(input.value);
+      });
+      renderBangHints();
+      renderRecent();
+
       document.addEventListener("keydown", (e) => {
-        if (e.key === "/" && !e.metaKey && !e.ctrlKey && !e.altKey && !isTextInput(document.activeElement)){
+        if ((e.key === "/" || ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k")) && !e.altKey && !isTextInput(document.activeElement)){
           e.preventDefault();
           focusSearch();
         }
