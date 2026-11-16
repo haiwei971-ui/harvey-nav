@@ -460,33 +460,6 @@
       background:var(--hair);
     }
 
-    .section-toggle{
-      flex:none;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      min-height:36px;
-      padding:0 14px;
-      border-radius:999px;
-      border:1px solid var(--hair);
-      background:var(--surface);
-      color:var(--text);
-      cursor:pointer;
-      font-size:13px;
-      font-weight:600;
-      letter-spacing:-0.01em;
-      box-shadow:var(--shadow-soft);
-      transition:transform .22s var(--ease), opacity .22s var(--ease), border-color .22s var(--ease), background .22s var(--ease);
-    }
-
-    .section-toggle:hover,
-    .section-toggle:focus-visible{
-      outline:none;
-      transform:translateY(-1px);
-      border-color:var(--focus-border);
-      background:var(--surface-strong);
-    }
-
     .grid{
       display:grid;
       grid-template-columns:repeat(auto-fit, minmax(104px, 1fr));
@@ -598,8 +571,6 @@
       -webkit-box-orient:vertical;
       -webkit-line-clamp:2;
     }
-
-    #moreArea[hidden]{ display:none; }
 
     @media (min-width:1100px){
       .grid{
@@ -721,20 +692,10 @@
           <span class="section-title">Favorites</span>
           <span class="section-line"></span>
         </div>
-        <button class="section-toggle" id="toggleBtn" aria-expanded="false" aria-controls="moreArea" type="button">Show More</button>
       </div>
       <div id="ess" class="grid" role="list"></div>
     </section>
 
-    <section class="section-block" id="moreArea" hidden>
-      <div class="section-head">
-        <div class="section-copy">
-          <span class="section-title">More</span>
-          <span class="section-line"></span>
-        </div>
-      </div>
-      <div id="ext" class="grid" role="list"></div>
-    </section>
     </main>
     <aside class="side-col" aria-label="Shortcuts and recent">
       <div class="side-card">
@@ -780,7 +741,6 @@
     const FALLBACK_LOCATION = { latitude: 36.0671, longitude: 120.3826, city: "QINGDAO" };
     const WEATHER_REFRESH_MS = 10 * 60 * 1000;
     const LOCATION_CACHE_MS = 30 * 60 * 1000;
-    const STORAGE_KEY_MORE_OPEN = "harveyi-more-open";
     const FALLBACK_ICON = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`
       <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72">
         <defs>
@@ -901,42 +861,12 @@
     }
 
     function render(){
-      const favorites = document.getElementById("ess");
-      const more = document.getElementById("ext");
-      const favoritesFrag = document.createDocumentFragment();
-      const moreFrag = document.createDocumentFragment();
-
+      const grid = document.getElementById("ess");
+      const frag = document.createDocumentFragment();
       for (const site of SITES){
-        const item = createItem(site);
-        (site.section === "more" ? moreFrag : favoritesFrag).appendChild(item);
+        frag.appendChild(createItem(site));
       }
-
-      favorites.replaceChildren(favoritesFrag);
-      more.replaceChildren(moreFrag);
-    }
-
-    function setMoreState(isOpen, { persist = true } = {}){
-      const moreArea = document.getElementById("moreArea");
-      const toggleBtn = document.getElementById("toggleBtn");
-      moreArea.hidden = !isOpen;
-      toggleBtn.setAttribute("aria-expanded", String(isOpen));
-      toggleBtn.textContent = isOpen ? "Show Less" : "Show More";
-      if (persist){
-        try { localStorage.setItem(STORAGE_KEY_MORE_OPEN, isOpen ? "1" : "0"); } catch {}
-      }
-    }
-
-    function restoreMoreState(){
-      let isOpen = false;
-      try {
-        isOpen = localStorage.getItem(STORAGE_KEY_MORE_OPEN) === "1";
-      } catch {}
-      setMoreState(isOpen, { persist:false });
-    }
-
-    function toggleMore(){
-      const isOpen = document.getElementById("moreArea").hidden;
-      setMoreState(isOpen);
+      grid.replaceChildren(frag);
     }
 
     function updateGreeting(now = new Date()){
@@ -1223,8 +1153,6 @@
     }
 
     function bindEvents(){
-      document.getElementById("toggleBtn").addEventListener("click", toggleMore);
-
       document.getElementById("searchForm").addEventListener("submit", (e) => {
         e.preventDefault();
         const raw = document.getElementById("q").value.trim();
@@ -1280,7 +1208,6 @@
       updateTheme();
       updateGreeting(new Date());
       render();
-      restoreMoreState();
       scheduleClock();
       scheduleWeather();
       bindEvents();
