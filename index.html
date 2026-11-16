@@ -149,6 +149,35 @@
       text-transform:uppercase;
       color:var(--muted);
     }
+    .ai-grid{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:8px;
+    }
+    .ai-btn{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:6px;
+      padding:10px 4px 9px;
+      border-radius:14px;
+      border:1px solid var(--hair);
+      background:var(--surface-strong);
+      color:var(--muted-strong);
+      font-size:11px;
+      font-family:inherit;
+      cursor:pointer;
+      transition:border-color .2s var(--ease), transform .2s var(--ease);
+    }
+    .ai-btn:hover{ border-color:var(--focus-border); transform:translateY(-1px); }
+    .ai-btn img{ width:22px; height:22px; object-fit:contain; }
+    body.theme-night .ai-btn img.invert-dark{ filter:invert(1); }
+    .ai-note{
+      margin-top:10px;
+      font-size:12px;
+      line-height:1.5;
+      color:var(--muted);
+    }
     .shortcut-row{
       display:flex;
       align-items:center;
@@ -161,15 +190,67 @@
     }
     .shortcut-row:last-child{ border-bottom:0; padding-bottom:0; }
     .shortcut-row:first-of-type{ padding-top:0; }
-    .side-card .recent-row{ padding:0; }
-    .side-card .recent-row[hidden]{ display:none; }
-    .side-empty{
-      font-size:13px;
-      color:var(--muted);
+    .side-card .recent-row{ display:block; padding:0; }
+    .recent-head{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      margin-bottom:6px;
     }
+    .recent-head h3{ margin-bottom:0; }
+    .clear-btn{
+      border:0;
+      background:none;
+      padding:0;
+      font-size:12px;
+      font-family:inherit;
+      color:var(--muted);
+      cursor:pointer;
+    }
+    .clear-btn:hover{ color:var(--text); }
+    .recent-item{
+      display:flex;
+      align-items:center;
+      gap:4px;
+      padding:7px 0;
+      border-bottom:1px solid var(--hair);
+    }
+    .recent-item:last-child{ border-bottom:0; padding-bottom:0; }
+    .recent-item button[data-q]{
+      flex:1;
+      min-width:0;
+      max-width:none;
+      border:0;
+      background:none;
+      padding:0;
+      font-size:13px;
+      font-family:inherit;
+      text-align:left;
+      color:var(--muted-strong);
+      cursor:pointer;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .recent-item button[data-q]:hover{ color:var(--text); }
+    .recent-item button[data-del]{
+      flex:none;
+      width:22px;
+      height:22px;
+      border:0;
+      border-radius:999px;
+      background:none;
+      color:var(--muted);
+      font-size:15px;
+      line-height:1;
+      cursor:pointer;
+    }
+    .recent-item button[data-del]:hover{ color:var(--text); background:var(--surface-strong); }
     @media (max-width:1099px){
-      .layout{ display:block; }
-      .side-col{ position:static; margin-top:28px; }
+      .layout{ display:flex; flex-direction:column; }
+      .side-col{ display:contents; }
+      .side-card{ margin-top:16px; }
+      .now-card{ order:-1; margin-top:0; }
     }
 
     .hero{
@@ -193,16 +274,7 @@
       margin:0 0 12px;
     }
 
-    .meta-row{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-      min-height:36px;
-    }
-
     .meta-pill,
-    .time-card,
     .search{
       backdrop-filter:blur(22px);
       -webkit-backdrop-filter:blur(22px);
@@ -236,24 +308,20 @@
       flex:none;
     }
 
-    .time-card{
-      flex:none;
-      min-width:156px;
-      padding:14px 18px 15px;
-      border-radius:24px;
-      border:1px solid var(--hair);
-      background:var(--surface);
-      box-shadow:var(--shadow-soft);
-      text-align:right;
+    .now-card .clock{
+      font-size:46px;
+      font-weight:700;
+      margin:2px 0 6px;
     }
-
-    .time-label{
-      margin-bottom:6px;
-      font-size:11px;
-      font-weight:650;
-      letter-spacing:0.18em;
-      text-transform:uppercase;
-      color:var(--muted);
+    .now-card .date-line,
+    .now-card .lunar-line{
+      font-size:13px;
+      line-height:1.55;
+      color:var(--muted-strong);
+    }
+    .now-card .meta-pill{
+      margin-top:14px;
+      max-width:100%;
     }
 
     .clock{
@@ -588,10 +656,6 @@
         align-items:stretch;
         flex-direction:column;
       }
-      .time-card{
-        width:100%;
-        text-align:left;
-      }
     }
 
     @media (max-width:540px){
@@ -632,21 +696,6 @@
     <header class="hero">
       <div class="hero-main">
         <div id="greet" class="greet">Hello.</div>
-        <div class="meta-row">
-          <div class="meta-pill" aria-live="polite">
-            <span id="temp">…</span>
-            <span class="sep" aria-hidden="true"></span>
-            <span id="city">WEATHER</span>
-            <span class="sep" aria-hidden="true"></span>
-            <span id="condition">--</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="time-card" aria-label="Current time">
-        <div class="time-label">Local time</div>
-        <div class="clock" id="clock">00:00</div>
-        <div class="date-line" id="dateLine"></div>
       </div>
     </header>
 
@@ -691,18 +740,47 @@
     </section>
 
     </main>
-    <aside class="side-col" aria-label="Shortcuts and recent">
+    <aside class="side-col" aria-label="Today sidebar">
+      <div class="side-card now-card">
+        <h3>Now</h3>
+        <div class="clock" id="clock">00:00</div>
+        <div class="date-line" id="dateLine"></div>
+        <div class="lunar-line" id="lunarLine"></div>
+        <div class="meta-pill" aria-live="polite">
+          <span id="temp">…</span>
+          <span class="sep" aria-hidden="true"></span>
+          <span id="city">WEATHER</span>
+          <span class="sep" aria-hidden="true"></span>
+          <span id="condition">--</span>
+        </div>
+      </div>
+      <div class="side-card">
+        <h3>Ask AI</h3>
+        <div class="ai-grid" id="aiGrid" aria-label="Send search to an AI">
+          <button type="button" class="ai-btn" data-bang="gpt"><img class="invert-dark" src="icons/openai.svg" alt=""><span>ChatGPT</span></button>
+          <button type="button" class="ai-btn" data-bang="claude"><img src="icons/claude-color.svg" alt=""><span>Claude</span></button>
+          <button type="button" class="ai-btn" data-bang="muse"><img src="icons/muse-v2.svg" alt=""><span>Muse</span></button>
+          <button type="button" class="ai-btn" data-bang="gemini"><img src="icons/gemini-color.svg" alt=""><span>Gemini</span></button>
+          <button type="button" class="ai-btn" data-bang="pplx"><img src="icons/perplexity-color.svg" alt=""><span>Perplexity</span></button>
+          <button type="button" class="ai-btn" data-bang="grok"><img class="invert-dark" src="icons/grok-v2.svg" alt=""><span>Grok</span></button>
+        </div>
+        <div class="ai-note">Sends the text in the search box to that AI.</div>
+      </div>
+      <div class="side-card" id="recentCard" hidden>
+        <div class="recent-head"><h3>Recent</h3><button type="button" class="clear-btn" id="clearRecent">Clear</button></div>
+        <div class="recent-row" id="recentRow" aria-label="Recent searches"></div>
+      </div>
+      <div class="side-card">
+        <h3>World clock</h3>
+        <div class="shortcut-row"><span>Qingdao</span><span id="timeQD">--:--</span></div>
+        <div class="shortcut-row"><span>Los Angeles</span><span id="timeLA">--:--</span></div>
+      </div>
       <div class="side-card">
         <h3>Shortcuts</h3>
         <div class="shortcut-row"><span>Focus search</span><span><span class="kbd">/</span> <span class="kbd">⌘K</span></span></div>
         <div class="shortcut-row"><span>Clear / close</span><span class="kbd">Esc</span></div>
         <div class="shortcut-row"><span>Jump to a site</span><span class="kbd">!gh</span> <span class="kbd">!yt</span> <span class="kbd">!gpt</span></div>
         <div class="shortcut-row"><span>Open result</span><span class="kbd">Enter</span></div>
-      </div>
-      <div class="side-card">
-        <h3>Recent</h3>
-        <div class="recent-row" id="recentRow" aria-label="Recent searches" hidden></div>
-        <div class="side-empty" id="recentEmpty">No recent searches yet.</div>
       </div>
     </aside>
     </div>
@@ -908,6 +986,20 @@
       }).format(date);
     }
 
+    function updateWorldClock(now = new Date()){
+      const fmt = (tz) => {
+        try {
+          return new Intl.DateTimeFormat("en-US", {
+            weekday: "short", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: tz
+          }).format(now);
+        } catch { return "--:--"; }
+      };
+      const qd = document.getElementById("timeQD");
+      if (qd) qd.textContent = fmt("Asia/Shanghai");
+      const la = document.getElementById("timeLA");
+      if (la) la.textContent = fmt("America/Los_Angeles");
+    }
+
     function updateClock(){
       const now = new Date();
       document.getElementById("clock").textContent = formatTime(now);
@@ -917,6 +1009,15 @@
           weekday: "short", month: "short", day: "numeric"
         }).format(now);
       }
+      const lunarEl = document.getElementById("lunarLine");
+      if (lunarEl){
+        try {
+          lunarEl.textContent = "农历" + new Intl.DateTimeFormat("zh-CN-u-ca-chinese", {
+            month: "long", day: "numeric"
+          }).format(now);
+        } catch { lunarEl.textContent = ""; }
+      }
+      updateWorldClock(now);
       updateGreeting(now);
       updateTheme();
     }
@@ -1141,18 +1242,26 @@
 
     function renderRecent(){
       const box = document.getElementById("recentRow");
-      if (!box) return;
+      const card = document.getElementById("recentCard");
+      if (!box || !card) return;
       const list = loadRecent();
-      box.hidden = list.length === 0;
-      const empty = document.getElementById("recentEmpty");
-      if (empty) empty.hidden = list.length !== 0;
+      card.hidden = list.length === 0;
       box.replaceChildren(...list.map((q) => {
+        const row = document.createElement("div");
+        row.className = "recent-item";
         const b = document.createElement("button");
         b.type = "button";
         b.dataset.q = q;
         b.textContent = q;
         b.title = q;
-        return b;
+        const del = document.createElement("button");
+        del.type = "button";
+        del.dataset.del = q;
+        del.textContent = "×";
+        del.title = "Remove";
+        del.setAttribute("aria-label", `Remove ${q}`);
+        row.append(b, del);
+        return row;
       }));
     }
 
@@ -1176,11 +1285,34 @@
         updateEngineChip(input.value);
       });
       document.getElementById("recentRow").addEventListener("click", (e) => {
+        const del = e.target.closest("button[data-del]");
+        if (del){
+          try {
+            localStorage.setItem(STORAGE_KEY_RECENT, JSON.stringify(loadRecent().filter((x) => x !== del.dataset.del)));
+          } catch {}
+          renderRecent();
+          return;
+        }
         const b = e.target.closest("button[data-q]");
         if (!b) return;
         input.value = b.dataset.q;
         input.focus();
         updateEngineChip(input.value);
+      });
+      document.getElementById("clearRecent").addEventListener("click", () => {
+        try { localStorage.removeItem(STORAGE_KEY_RECENT); } catch {}
+        renderRecent();
+      });
+      document.getElementById("aiGrid").addEventListener("click", (e) => {
+        const b = e.target.closest("button[data-bang]");
+        if (!b) return;
+        const q = input.value.trim();
+        if (!q){ input.focus(); return; }
+        const bang = BANGS[b.dataset.bang];
+        if (!bang) return;
+        window.open(bang.url(q), "_blank", "noopener,noreferrer");
+        saveRecent(q);
+        renderRecent();
       });
       renderBangHints();
       renderRecent();
