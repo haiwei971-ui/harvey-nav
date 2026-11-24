@@ -844,9 +844,10 @@
         </div>
         <div class="term-tabs" id="termTabs" role="tablist">
           <button type="button" class="tab active" data-demo="pipefail" role="tab" aria-selected="true">01 · pipefail</button>
-          <button type="button" class="tab" data-demo="json" role="tab" aria-selected="false">02 · json NaN</button>
-          <button type="button" class="tab" data-demo="regex" role="tab" aria-selected="false">03 · date regex</button>
-          <button type="button" class="tab" data-demo="csv" role="tab" aria-selected="false">04 · csv strict</button>
+          <button type="button" class="tab" data-demo="mock" role="tab" aria-selected="false">02 · mock parens</button>
+          <button type="button" class="tab" data-demo="json" role="tab" aria-selected="false">03 · json NaN</button>
+          <button type="button" class="tab" data-demo="regex" role="tab" aria-selected="false">04 · date regex</button>
+          <button type="button" class="tab" data-demo="csv" role="tab" aria-selected="false">05 · csv strict</button>
         </div>
         <div class="term-body" id="termBody"></div>
       </div>
@@ -893,18 +894,18 @@
       <div class="bento-2">
         <article class="card card-featured">
           <div class="badges">
-            <span class="badge badge-green">● CI PASSING</span>
+            <span class="badge badge-green">● CI PASSING · v1.1.0</span>
             <span class="badge">FREE · MIT LICENSE</span>
             <span class="badge badge-blue">ZERO DEPENDENCIES</span>
           </div>
           <h3 class="repo-h">haiwei971-ui/ai-verify-guards</h3>
           <p class="sec-p" style="margin-top:0">
-            My open-source verification CLI and Claude Code <code>PostToolUse</code> hook. Catches syntax breaks, hidden CRLF endings, non-strict JSON, dropped files, false-green pipes, and leaked API secrets in logs.
+            My open-source verification CLI and Claude Code <code>PostToolUse</code> hook. Catches syntax breaks, hidden CRLF endings, non-strict JSON, Python <code>unittest.mock</code> missing-parens tautologies (new in <code>v1.1.0</code>), dropped files, false-green pipes, and leaked API secrets in logs.
           </p>
           <div class="mod-grid">
             <div class="mod">
               <code>bin/verify-ai.sh</code>
-              <span>Script syntax, CRLF, strict JSON, dir diff, adversarial regex &amp; pipefail runner.</span>
+              <span>Script syntax, CRLF, strict JSON, Python mock AST check (py-test), dir diff, regex &amp; pipefail runner.</span>
             </div>
             <div class="mod">
               <code>bin/sanitize-log.sh</code>
@@ -916,7 +917,7 @@
             </div>
             <div class="mod">
               <code>tests/run_tests.sh</code>
-              <span>7 automated self-test suites verified on every commit via GitHub Actions.</span>
+              <span>8 automated self-test suites verified on every commit via GitHub Actions.</span>
             </div>
           </div>
           <div class="code-bar">
@@ -925,27 +926,59 @@
           </div>
           <div class="ctas" style="margin-bottom:0">
             <a class="btn btn-primary" href="https://github.com/haiwei971-ui/ai-verify-guards" target="_blank" rel="noopener noreferrer">Star on GitHub →</a>
+            <a class="btn" href="https://www.agensi.io/skills/ai-verify-guards" target="_blank" rel="noopener noreferrer">Agensi Free Skill</a>
             <a class="btn" href="https://github.com/haiwei971-ui/ai-verify-guards/actions" target="_blank" rel="noopener noreferrer">Live CI Runs</a>
-            <a class="btn" href="https://x.com/lxy71/status/2124316230475821218" target="_blank" rel="noopener noreferrer">Pinned Checklist</a>
           </div>
         </article>
 
         <article class="card">
           <div class="badges">
-            <span class="badge badge-blue">PRO KIT</span>
-            <span class="badge">SOLO $15 · TEAM $49</span>
+            <span class="badge badge-blue">AGENSI SKILLS HUB</span>
+            <span class="badge badge-green">2 FREE · PRO $9</span>
           </div>
-          <h3 style="font-size:21px;margin:0 0 8px;">AI Coding Verification Pro Kit</h3>
+          <h3 style="font-size:21px;margin:0 0 8px;">Verified Agent Skills &amp; Pro Guards</h3>
           <p>
-            Everything pre-wired for teams and indie builders who want a 5-minute drop-in defense layer across Git, Claude Code, Cursor, and GitHub Actions.
+            Install my security-scanned <code>SKILL.md</code> bundles directly into Claude Code, Cursor, Codex, and 20+ coding agents on Agensi:
           </p>
           <ul class="check-list">
-            <li>Drop-in Git <code>pre-commit</code> hook blocking secrets, conflict markers, CRLF &amp; broken syntax</li>
-            <li>Ready-to-paste Claude Code, Cursor (<code>.mdc</code>) &amp; <code>AGENTS.md</code> verification rules</li>
-            <li>GitHub Actions PR guard workflow enforcing strict JSON &amp; syntax on every PR</li>
-            <li>Field Manual: <strong>25 Silent AI Coding Failures</strong> &amp; copy-pasteable checks</li>
+            <li><strong>AI Verify Guards (Free)</strong> — Shell, strict JSON, CRLF, <code>pipefail</code> &amp; log sanitizer guards</li>
+            <li><strong>AI Diff Audit (Free)</strong> — Read-only <code>git diff</code> auditor catching skipped tests, deleted assertions &amp; <code>except: pass</code></li>
+            <li><strong>Test Integrity Guard Pro ($9)</strong> — AST-level 4-tier assertion strength comparison for pytest/unittest &amp; Jest/Vitest + Claude Code <code>Stop</code> hook</li>
+            <li><strong>Safe Context Scrubber Pro ($9)</strong> — Reversible <code>chmod 600</code> secret vault &amp; chronological stack-trace deduplicator</li>
           </ul>
-          <a class="btn btn-primary" style="width:100%" href="https://x.com/lxy71" target="_blank" rel="noopener noreferrer">Follow @lxy71 for Release Link →</a>
+          <a class="btn btn-primary" style="width:100%" href="https://www.agensi.io/creators/harvey-liu" target="_blank" rel="noopener noreferrer">Browse Skills on Agensi →</a>
+        </article>
+      </div>
+
+      <div class="grid-3" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr));margin-top:20px;">
+        <article class="card">
+          <div class="badges">
+            <span class="badge badge-green">● CI PASSING · v1.0.0</span>
+            <span class="badge">MIT · ZERO DEPS</span>
+          </div>
+          <h3 class="repo-h" style="font-size:19px;">haiwei971-ui/ai-diff-audit</h3>
+          <p style="margin-bottom:16px;">
+            Read-only Git diff auditor for AI coding agents. Scans only changed diff hunks to catch added <code>@pytest.mark.skip</code> / <code>it.skip</code>, net-deleted test assertions, <code>except: pass</code>, <code>|| true</code>, silenced linters, leaked secrets, and out-of-scope edits (<code>--allow-path</code>).
+          </p>
+          <div class="ctas" style="margin-bottom:0">
+            <a class="btn btn-primary" href="https://github.com/haiwei971-ui/ai-diff-audit" target="_blank" rel="noopener noreferrer">GitHub Repo →</a>
+            <a class="btn" href="https://www.agensi.io/skills/ai-diff-audit" target="_blank" rel="noopener noreferrer">Agensi Free Skill</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="badges">
+            <span class="badge badge-green">● CI PASSING · v1.0.0</span>
+            <span class="badge badge-blue">WEB UI + MULTI-LLM</span>
+          </div>
+          <h3 class="repo-h" style="font-size:19px;">haiwei971-ui/ai-signal-radar</h3>
+          <p style="margin-bottom:16px;">
+            Single-file 24/7 AI Opportunity, Bounty, Lead &amp; Deal Radar in pure Python 3 stdlib. Watches GitHub paid bounties, Hacker News leads, remote USD feeds &amp; custom JSON/RSS endpoints with SQLite WAL deduplication, Ollama/OpenAI/Claude/Gemini scoring, dark Web UI, and 5 webhook channels.
+          </p>
+          <div class="ctas" style="margin-bottom:0">
+            <a class="btn btn-primary" href="https://github.com/haiwei971-ui/ai-signal-radar" target="_blank" rel="noopener noreferrer">GitHub Repo →</a>
+            <a class="btn" href="https://github.com/haiwei971-ui/ai-signal-radar/blob/main/README.zh-CN.md" target="_blank" rel="noopener noreferrer">中文文档</a>
+          </div>
         </article>
       </div>
     </section>
@@ -987,7 +1020,7 @@
           <p class="sec-p">Every finding below was reproduced locally — no theory, no hype.</p>
         </div>
         <div class="snippet-tabs" id="receiptFilters" role="group" aria-label="Filter receipts">
-          <button type="button" class="pill-btn active" data-filter="all">All (6)</button>
+          <button type="button" class="pill-btn active" data-filter="all">All (9)</button>
           <button type="button" class="pill-btn" data-filter="shell">Shell</button>
           <button type="button" class="pill-btn" data-filter="python">Python</button>
           <button type="button" class="pill-btn" data-filter="agents">AI Agents</button>
@@ -1014,8 +1047,10 @@
       <span style="display:flex;gap:18px;flex-wrap:wrap;">
         <a href="https://x.com/lxy71" target="_blank" rel="noopener noreferrer">X (@lxy71)</a>
         <a href="https://github.com/haiwei971-ui" target="_blank" rel="noopener noreferrer">GitHub</a>
-        <a href="https://github.com/haiwei971-ui/ai-verify-guards" target="_blank" rel="noopener noreferrer">ai-verify-guards</a>
-        <a href="https://github.com/haiwei971-ui/harvey-nav" target="_blank" rel="noopener noreferrer">Site Source</a>
+        <a href="https://github.com/haiwei971-ui/ai-verify-guards" target="_blank" rel="noopener noreferrer">ai-verify-guards (v1.1)</a>
+        <a href="https://github.com/haiwei971-ui/ai-diff-audit" target="_blank" rel="noopener noreferrer">ai-diff-audit (v1.0)</a>
+        <a href="https://github.com/haiwei971-ui/ai-signal-radar" target="_blank" rel="noopener noreferrer">ai-signal-radar (v1.0)</a>
+        <a href="https://www.agensi.io/creators/harvey-liu" target="_blank" rel="noopener noreferrer">Agensi Skills</a>
       </span>
     </footer>
   </main>
@@ -1030,6 +1065,13 @@
         receiptTitle: "SHELL RECEIPT · CAUGHT",
         cmd: "bash -o pipefail -c 'pytest | tail -n 20'",
         output: "FAILED tests/test_billing.py::test_tax - AssertionError\nexit 1  # tail hid the upstream failure with its own exit 0"
+      },
+      mock: {
+        claimTitle: "AGENT CLAIM · MOCK VERIFIED",
+        claimText: 'assert mock_send.assert_called_once\n→ exit 0  ("Verified mock_send was called exactly once!")',
+        receiptTitle: "AST RECEIPT · CAUGHT (v1.1.0)",
+        cmd: "./bin/verify-ai.sh py-test tests/test_notify.py",
+        output: "[FAIL] Tautological mock assertion 'assert ...assert_called_once' without '()'\n# Bound method object is always truthy even when mock_send.called == False"
       },
       json: {
         claimTitle: "AGENT CLAIM · VALID JSON",
@@ -1078,6 +1120,36 @@
     };
 
     const RECEIPTS = [
+      {
+        cat: "python",
+        tag: "PYTHON MOCK · v1.1",
+        date: "2026-11-24",
+        title: "assert mock_send.assert_called_once passes when never called",
+        desc: "Agents mix up mock_send.called (a bool) with mock_send.assert_called_once() (a method). Without (), the bound method is always truthy.",
+        cmd: "./bin/verify-ai.sh py-test tests/test_notify.py",
+        url: "https://x.com/lxy71/status/2125035282613641270",
+        linkText: "Read X receipt →"
+      },
+      {
+        cat: "agents",
+        tag: "GIT DIFF AUDIT",
+        date: "2026-11-23",
+        title: "Catch skipped tests, deleted asserts & except: pass in diffs",
+        desc: "When a test refuses to turn green, agents sneak in @pytest.mark.skip, delete 1 assert line, or wrap calls in except: pass. Audit only changed diff hunks.",
+        cmd: "bash ai-diff-audit/scripts/ai-diff-audit.sh --staged",
+        url: "https://x.com/lxy71/status/2124844582727024965",
+        linkText: "Get ai-diff-audit →"
+      },
+      {
+        cat: "python",
+        tag: "SQLITE 3.54",
+        date: "2026-11-23",
+        title: "SQLite silently ignores REFERENCES foreign keys by default",
+        desc: "On SQLite 3.54.0, REFERENCES constraints are parsed and ignored unless each connection runs PRAGMA foreign_keys = ON. Orphan rows exit 0 quietly.",
+        cmd: "sqlite3 app.db 'PRAGMA foreign_keys = ON; PRAGMA foreign_key_check;'",
+        url: "https://x.com/lxy71/status/2124654804396089402",
+        linkText: "Read X receipt →"
+      },
       {
         cat: "agents",
         tag: "AI AGENTS",
